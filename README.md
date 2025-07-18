@@ -130,17 +130,17 @@ This system now uses Firebase Realtime Database for real-time check-in sync acro
 4. Copy the Firebase config object
 
 ### 3. Update Configuration
-Replace the placeholder values in both `index.html` and `admin.html`:
+The Firebase configuration is already set up in `/docs/scripts/env.js`:
 
 ```javascript
-const firebaseConfig = {
-  apiKey: "your-api-key-here",
-  authDomain: "your-project.firebaseapp.com", 
-  databaseURL: "https://your-project-default-rtdb.firebaseio.com",
-  projectId: "your-project-id",
-  storageBucket: "your-project.appspot.com",
-  messagingSenderId: "123456789",
-  appId: "your-app-id"
+export const firebaseConfig = {
+  apiKey: "AIzaSyAk7BBzX1FejPjW-d6QVz1G9T2E001RWeQ",
+  authDomain: "campusministry-d8400.firebaseapp.com", 
+  databaseURL: "https://campusministry-d8400-default-rtdb.firebaseio.com",
+  projectId: "campusministry-d8400",
+  storageBucket: "campusministry-d8400.appspot.com",
+  messagingSenderId: "647659158955",
+  appId: "1:647659158955:web:0dad448d9ad7ad7f6926ee"
 };
 ```
 

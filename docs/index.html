@@ -8,6 +8,7 @@
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <script type="module" src="scripts/app.js"></script>
     <style>
         * {
             margin: 0;
@@ -227,7 +228,7 @@
         }
     </style>
 </head>
-<body>
+<body id="checkinPage">
     <div class="container">
         <img src="assets/mk-logo-300.png" alt="MK Logo" class="logo-icon">
         <h1>Campus Ministry Check-In</h1>
@@ -260,32 +261,8 @@
     </div>
 
     <script>
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "API_KEY",
-            authDomain: "PROJECT_ID.firebaseapp.com",
-            databaseURL: "https://PROJECT_ID-default-rtdb.firebaseio.com",
-            projectId: "PROJECT_ID",
-            storageBucket: "PROJECT_ID.appspot.com",
-            messagingSenderId: "SENDER_ID",
-            appId: "APP_ID"
-        };
-
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-
-        // Get today's date in YYYY-MM-DD format
-        function getTodayPath() {
-            const today = new Date();
-            const year = today.getFullYear();
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const day = String(today.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        }
-
-        // This will be populated with actual participant data
-        let participants = [
+        // Participant data for the check-in system
+        window.participants = [
   {
     "name": "AARON ABEBE",
     "campus": "New Participant",
@@ -2943,180 +2920,6 @@
     "role": "COORDINATOR"
   }
 ];
-        let checkedInParticipants = new Set();
-        let selectedPerson = null;
-        
-        // Load participant data (this would come from your CSV)
-        function loadParticipants() {
-            // This will be replaced with actual data from your CSV file
-            updateStats();
-        }
-        
-        function updateStats() {
-            document.getElementById('totalCount').textContent = participants.length;
-            document.getElementById('checkedInCount').textContent = checkedInParticipants.size;
-        }
-        
-        function filterParticipants(searchText) {
-            if (!searchText || searchText.length < 2) {
-                return [];
-            }
-            
-            const text = searchText.toLowerCase();
-            return participants.filter(person => 
-                person.name.toLowerCase().includes(text)
-            ).slice(0, 10); // Limit to 10 suggestions
-        }
-        
-        function showSuggestions(matches) {
-            const suggestionsDiv = document.getElementById('suggestions');
-            
-            if (matches.length === 0) {
-                suggestionsDiv.style.display = 'none';
-                return;
-            }
-            
-            suggestionsDiv.innerHTML = matches.map(person => `
-                <div class="suggestion-item" onclick="selectPerson('${person.name}')">
-                    <strong>${person.name}</strong><br>
-                    <small>${person.campus} • ${person.dorm}</small>
-                </div>
-            `).join('');
-            
-            suggestionsDiv.style.display = 'block';
-        }
-        
-        function selectPerson(name) {
-            selectedPerson = participants.find(p => p.name === name);
-            document.getElementById('nameSearch').value = name;
-            document.getElementById('suggestions').style.display = 'none';
-            showPersonInfo(selectedPerson);
-        }
-        
-        function showPersonInfo(person) {
-            const personInfo = document.getElementById('personInfo');
-            const personDetails = document.getElementById('personDetails');
-            
-            const isCheckedIn = checkedInParticipants.has(person.name);
-            const statusBadge = isCheckedIn ? '<span class="icon-check">✓</span> Already Checked In' : '<span class="icon-pending">○</span> Not Checked In';
-            const statusColor = isCheckedIn ? '#28a745' : '#ffc107';
-            
-            personDetails.innerHTML = `
-                <p><strong>Name:</strong> ${person.name}</p>
-                <p><strong>Campus Ministry:</strong> ${person.campus}</p>
-                <p><strong>Dorm:</strong> ${person.dorm}</p>
-                <p><strong>Table Assignment:</strong> ${person.table}</p>
-                <p><strong>Discussion Group:</strong> ${person.discussion}</p>
-                <p style="color: ${statusColor}; font-weight: bold;"><strong>Status:</strong> ${statusBadge}</p>
-            `;
-            
-            personInfo.style.display = 'block';
-            
-            // Disable check-in button if already checked in
-            const checkInBtn = personInfo.querySelector('button');
-            checkInBtn.disabled = isCheckedIn;
-            checkInBtn.textContent = isCheckedIn ? '✓ Already Checked In' : '✓ Yes, Check Me In';
-        }
-        
-        // Save check-in to Firebase
-        async function saveCheckinToFirebase(participantName) {
-            try {
-                const todayPath = getTodayPath();
-                const participant = participants.find(p => p.name === participantName);
-                const checkinData = {
-                    name: participantName,
-                    campus: participant ? participant.campus : 'Unknown',
-                    timestamp: Date.now()
-                };
-                
-                await database.ref(`checkins/${todayPath}`).push(checkinData);
-                console.log(`Successfully checked in ${participantName} to Firebase`);
-                return true;
-            } catch (error) {
-                console.error('Error saving to Firebase:', error);
-                return false;
-            }
-        }
-
-        async function confirmCheckIn() {
-            if (!selectedPerson) return;
-            
-            // Add to checked-in set
-            checkedInParticipants.add(selectedPerson.name);
-            
-            // Save to Firebase
-            await saveCheckinToFirebase(selectedPerson.name);
-            
-            // Show success message
-            document.getElementById('personInfo').style.display = 'none';
-            document.getElementById('successMessage').style.display = 'block';
-            
-            // Update stats
-            updateStats();
-            
-            // Clear form after 3 seconds
-            setTimeout(() => {
-                clearForm();
-            }, 3000);
-        }
-        
-        function clearSelection() {
-            document.getElementById('personInfo').style.display = 'none';
-            selectedPerson = null;
-        }
-        
-        function clearForm() {
-            document.getElementById('nameSearch').value = '';
-            document.getElementById('suggestions').style.display = 'none';
-            document.getElementById('personInfo').style.display = 'none';
-            document.getElementById('successMessage').style.display = 'none';
-            document.getElementById('errorMessage').style.display = 'none';
-            selectedPerson = null;
-        }
-        
-        // Event listeners
-        document.getElementById('nameSearch').addEventListener('input', function(e) {
-            const searchText = e.target.value;
-            const matches = filterParticipants(searchText);
-            showSuggestions(matches);
-            
-            // Hide person info if search is cleared
-            if (!searchText) {
-                clearSelection();
-            }
-        });
-        
-        // Hide suggestions when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.search-container')) {
-                document.getElementById('suggestions').style.display = 'none';
-            }
-        });
-        
-        // Load checked-in participants from Firebase
-        function loadCheckedInData() {
-            const todayPath = getTodayPath();
-            
-            database.ref(`checkins/${todayPath}`).on('child_added', (snapshot) => {
-                const checkinData = snapshot.val();
-                if (checkinData && checkinData.name) {
-                    checkedInParticipants.add(checkinData.name);
-                    updateStats();
-                    console.log(`Loaded check-in for ${checkinData.name}`);
-                }
-            });
-            
-            console.log(`Listening for check-ins on ${todayPath}`);
-        }
-        
-        // Initialize the app
-        function init() {
-            loadCheckedInData();
-            loadParticipants();
-        }
-        
-        // Start the app when page loads
-        window.addEventListener('load', init);
     </script>
 </body>
 </html>

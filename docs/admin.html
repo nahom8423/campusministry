@@ -11,6 +11,7 @@
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <script type="module" src="scripts/app.js"></script>
     <style>
         * {
             margin: 0;
@@ -636,7 +637,7 @@
         }
     </style>
 </head>
-<body>
+<body id="adminPage">
     <!-- Login Container -->
     <div class="login-container" id="loginContainer">
         <div class="login-box">
@@ -873,13 +874,13 @@
         const ADMIN_PASSWORD = "campus2024"; // Change this to your desired password
         // Firebase configuration
         const firebaseConfig = {
-            apiKey: "API_KEY",
-            authDomain: "PROJECT_ID.firebaseapp.com",
-            databaseURL: "https://PROJECT_ID-default-rtdb.firebaseio.com",
-            projectId: "PROJECT_ID",
-            storageBucket: "PROJECT_ID.appspot.com",
-            messagingSenderId: "SENDER_ID",
-            appId: "APP_ID"
+            apiKey: "AIzaSyAk7BBzX1FejPjW-d6QVz1G9T2E001RWeQ",
+            authDomain: "campusministry-d8400.firebaseapp.com",
+            databaseURL: "https://campusministry-d8400-default-rtdb.firebaseio.com",
+            projectId: "campusministry-d8400",
+            storageBucket: "campusministry-d8400.appspot.com",
+            messagingSenderId: "647659158955",
+            appId: "1:647659158955:web:0dad448d9ad7ad7f6926ee"
         };
 
         // Initialize Firebase
@@ -917,6 +918,16 @@
         
         function logout() {
             document.getElementById('loginContainer').style.display = 'flex';
+            document.getElementById('adminContainer').style.display = 'none';
+            document.getElementById('passwordInput').value = '';
+        }
+        
+        // Make functions global for onclick handlers
+        window.login = login;
+        window.logout = logout;
+    </script>
+</body>
+</html>
             document.getElementById('adminContainer').style.display = 'none';
             document.getElementById('passwordInput').value = '';
             document.getElementById('loginError').style.display = 'none';
