@@ -197,9 +197,34 @@
             color: #155724;
         }
         
+        .status-checked-out {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
         .status-pending {
             background: #fff3cd;
             color: #856404;
+        }
+        
+        .checkout-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: background 0.3s;
+        }
+        
+        .checkout-btn:hover {
+            background: #c82333;
+        }
+        
+        .checkout-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
         }
     </style>
 </head>
@@ -274,12 +299,13 @@
                         <th>Campus</th>
                         <th>Time</th>
                         <th>Status</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <!-- Real-time check-ins will appear here -->
                     <tr id="loadingRow">
-                        <td colspan="4" style="text-align: center; padding: 30px; color: #666;">
+                        <td colspan="5" style="text-align: center; padding: 30px; color: #666;">
                             🔄 Loading check-ins...
                         </td>
                     </tr>
@@ -294,6 +320,7 @@
         
         // Global variables for stats
         let totalCheckedIn = 0;
+        let participantStatus = new Map(); // Track current status of each participant
         
         // Authentication functions
         function login() {
@@ -313,15 +340,41 @@
             document.getElementById('passwordInput').value = '';
         }
         
+        // Checkout function
+        window.checkoutParticipant = async function(name, campus) {
+            if (!window.saveCheckout) {
+                console.error("Checkout function not available");
+                return;
+            }
+            
+            try {
+                await window.saveCheckout(name, campus);
+                console.log("Participant checked out:", name);
+            } catch (error) {
+                console.error("Error during checkout:", error);
+                if (window.showAdminError) {
+                    window.showAdminError("Failed to check out participant: " + error.message);
+                }
+            }
+        };
+        
         // Update stats display
         function updateStats() {
             const total = 332; // Total participants
-            const checkedIn = totalCheckedIn;
-            const pending = total - checkedIn;
-            const percentage = total > 0 ? Math.round((checkedIn / total) * 100) : 0;
+            
+            // Count current checked-in participants
+            let currentCheckedIn = 0;
+            for (const [name, status] of participantStatus) {
+                if (status === 'checked-in') {
+                    currentCheckedIn++;
+                }
+            }
+            
+            const pending = total - currentCheckedIn;
+            const percentage = total > 0 ? Math.round((currentCheckedIn / total) * 100) : 0;
             
             document.getElementById('totalParticipants').textContent = total;
-            document.getElementById('checkedInCount').textContent = checkedIn;
+            document.getElementById('checkedInCount').textContent = currentCheckedIn;
             document.getElementById('pendingCount').textContent = pending;
             document.getElementById('checkedInPercentage').textContent = percentage + '%';
         }
@@ -332,20 +385,40 @@
             const row = document.createElement('tr');
             
             // Remove empty state message if it exists
-            const emptyMessage = tbody.querySelector('td[colspan="4"]');
+            const emptyMessage = tbody.querySelector('td[colspan="5"]');
             if (emptyMessage && !emptyMessage.parentElement.id === 'loadingRow') {
                 emptyMessage.parentElement.remove();
             }
             
+            const status = checkinData.status || 'checked-in';
+            const isCheckedOut = status === 'checked-out';
+            
+            // Update participant status tracking
+            participantStatus.set(checkinData.name, status);
+            
+            // Update stats based on current status
             if (!isInitialLoad) {
-                totalCheckedIn++;
+                if (status === 'checked-in') {
+                    totalCheckedIn++;
+                } else if (status === 'checked-out') {
+                    totalCheckedIn--;
+                }
             }
+            
+            const statusBadge = isCheckedOut ? 
+                '<span class="status-badge status-checked-out">🚪 Checked Out</span>' : 
+                '<span class="status-badge status-checked-in">✅ Checked In</span>';
+                
+            const actionButton = isCheckedOut ? 
+                `<button class="checkout-btn" disabled>Checked Out</button>` :
+                `<button class="checkout-btn" onclick="checkoutParticipant('${checkinData.name}', '${checkinData.campus}')">🚪 Check Out</button>`;
             
             row.innerHTML = `
                 <td><strong>${checkinData.name}</strong></td>
                 <td>${checkinData.campus}</td>
                 <td>${new Date(checkinData.ts).toLocaleString()}</td>
-                <td><span class="status-badge status-checked-in">✅ Checked In</span></td>
+                <td>${statusBadge}</td>
+                <td>${actionButton}</td>
             `;
             
             // Add to top of table
@@ -355,8 +428,9 @@
             if (!isInitialLoad) {
                 updateStats();
                 
-                // Add a little animation for new check-ins
-                row.style.backgroundColor = '#d4edda';
+                // Add animation for new entries
+                const bgColor = isCheckedOut ? '#f8d7da' : '#d4edda';
+                row.style.backgroundColor = bgColor;
                 setTimeout(() => {
                     row.style.backgroundColor = '';
                 }, 2000);
@@ -365,9 +439,16 @@
         
         // Initialize admin stats with existing check-ins count
         window.initializeAdminStats = function(existingCount) {
-            totalCheckedIn = existingCount;
+            // Calculate actual checked-in count from participant status
+            let currentCheckedIn = 0;
+            for (const [name, status] of participantStatus) {
+                if (status === 'checked-in') {
+                    currentCheckedIn++;
+                }
+            }
+            
             updateStats();
-            console.log("Admin stats initialized with", existingCount, "existing check-ins");
+            console.log("Admin stats initialized with", currentCheckedIn, "currently checked-in participants");
             
             // Update connection status
             const statusElement = document.getElementById('connectionStatus');
@@ -381,12 +462,12 @@
                 loadingRow.remove();
             }
             
-            // If no check-ins, show empty state
-            if (existingCount === 0) {
+            // If no entries, show empty state
+            if (participantStatus.size === 0) {
                 const tbody = document.querySelector('#checkinsTable tbody');
                 const emptyRow = document.createElement('tr');
                 emptyRow.innerHTML = `
-                    <td colspan="4" style="text-align: center; padding: 30px; color: #666;">
+                    <td colspan="5" style="text-align: center; padding: 30px; color: #666;">
                         📋 No check-ins yet. They will appear here in real-time!
                     </td>
                 `;

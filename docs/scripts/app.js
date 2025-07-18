@@ -42,7 +42,8 @@ function saveCheckin(name, campus) {
   return push(checkinsRef(getTodayPath()), { 
     name, 
     campus, 
-    ts: Date.now() 
+    ts: Date.now(),
+    status: 'checked-in'
   }).then(() => {
     console.log("Check-in saved successfully:", name);
   }).catch(error => {
@@ -51,11 +52,30 @@ function saveCheckin(name, campus) {
   });
 }
 
+function saveCheckout(name, campus) {
+  if (!db || !checkinsRef) {
+    console.error("Firebase not initialized properly");
+    return Promise.reject("Firebase not initialized");
+  }
+  
+  return push(checkinsRef(getTodayPath()), { 
+    name, 
+    campus, 
+    ts: Date.now(),
+    status: 'checked-out'
+  }).then(() => {
+    console.log("Check-out saved successfully:", name);
+  }).catch(error => {
+    console.error("Error saving check-out:", error);
+    throw error;
+  });
+}
+
 // ========== index.html code ==========
 if (document.body.id === "checkinPage") {
   // Initialize checkin page functionality
   let participants = window.participants || [];
-  let checkedInParticipants = new Set();
+  let participantStatus = new Map(); // Track participant status (checked-in, checked-out)
   let selectedPerson = null;
 
   // Load participants from embedded data
@@ -65,8 +85,17 @@ if (document.body.id === "checkinPage") {
   }
 
   function updateStats() {
-    document.getElementById('totalCount').textContent = participants.length;
-    document.getElementById('checkedInCount').textContent = checkedInParticipants.size;
+    const total = participants.length;
+    let checkedInCount = 0;
+    
+    for (const [name, status] of participantStatus) {
+      if (status === 'checked-in') {
+        checkedInCount++;
+      }
+    }
+    
+    document.getElementById('totalCount').textContent = total;
+    document.getElementById('checkedInCount').textContent = checkedInCount;
   }
 
   function filterParticipants(searchText) {
@@ -109,9 +138,28 @@ if (document.body.id === "checkinPage") {
     const personInfo = document.getElementById('personInfo');
     const personDetails = document.getElementById('personDetails');
     
-    const isCheckedIn = checkedInParticipants.has(person.name);
-    const statusBadge = isCheckedIn ? '<span class="icon-check">✓</span> Already Checked In' : '<span class="icon-pending">○</span> Not Checked In';
-    const statusColor = isCheckedIn ? '#28a745' : '#ffc107';
+    const currentStatus = participantStatus.get(person.name) || 'not-checked-in';
+    const isCheckedIn = currentStatus === 'checked-in';
+    const isCheckedOut = currentStatus === 'checked-out';
+    
+    let statusBadge, statusColor, buttonText, buttonDisabled;
+    
+    if (isCheckedIn) {
+      statusBadge = '<span class="icon-check">✓</span> Already Checked In';
+      statusColor = '#28a745';
+      buttonText = '✓ Already Checked In';
+      buttonDisabled = true;
+    } else if (isCheckedOut) {
+      statusBadge = '<span class="icon-pending">🚪</span> Checked Out - Can Check In Again';
+      statusColor = '#ffc107';
+      buttonText = '✓ Check Me In Again';
+      buttonDisabled = false;
+    } else {
+      statusBadge = '<span class="icon-pending">○</span> Not Checked In';
+      statusColor = '#ffc107';
+      buttonText = '✓ Yes, Check Me In';
+      buttonDisabled = false;
+    }
     
     personDetails.innerHTML = `
       <p><strong>Name:</strong> ${person.name}</p>
@@ -125,15 +173,15 @@ if (document.body.id === "checkinPage") {
     personInfo.style.display = 'block';
     
     const checkInBtn = personInfo.querySelector('button');
-    checkInBtn.disabled = isCheckedIn;
-    checkInBtn.textContent = isCheckedIn ? '✓ Already Checked In' : '✓ Yes, Check Me In';
+    checkInBtn.disabled = buttonDisabled;
+    checkInBtn.textContent = buttonText;
   }
 
   window.confirmCheckIn = async function() {
     if (!selectedPerson) return;
     
     try {
-      checkedInParticipants.add(selectedPerson.name);
+      participantStatus.set(selectedPerson.name, 'checked-in');
       
       // Save to Firebase
       await saveCheckin(selectedPerson.name, selectedPerson.campus);
@@ -150,8 +198,8 @@ if (document.body.id === "checkinPage") {
     } catch (error) {
       console.error("Error during check-in:", error);
       
-      // Remove from checked in set if save failed
-      checkedInParticipants.delete(selectedPerson.name);
+      // Remove from status if save failed
+      participantStatus.delete(selectedPerson.name);
       
       // Show error message
       document.getElementById('errorMessage').style.display = 'block';
@@ -196,8 +244,10 @@ if (document.body.id === "checkinPage") {
   // Load existing check-ins
   if (db && checkinsRef) {
     onChildAdded(checkinsRef(getTodayPath()), snap => {
-      const { name } = snap.val();
-      checkedInParticipants.add(name);
+      const data = snap.val();
+      const status = data.status || 'checked-in'; // Default to checked-in for backward compatibility
+      
+      participantStatus.set(data.name, status);
       updateStats();
     }, error => {
       console.error("Error loading check-ins:", error);
@@ -212,6 +262,9 @@ if (document.body.id === "checkinPage") {
 if (document.body.id === "adminPage") {
   let isInitialLoad = true;
   let initialCheckinsCount = 0;
+  
+  // Make checkout function available globally
+  window.saveCheckout = saveCheckout;
   
   if (db && checkinsRef) {    
     onChildAdded(checkinsRef(getTodayPath()), snap => {
