@@ -314,12 +314,23 @@
         }
         
         .action-btn {
-            padding: 6px 12px;
-            font-size: 12px;
+            padding: 8px 16px;
+            font-size: 13px;
             border: none;
-            border-radius: 5px;
+            border-radius: 6px;
             cursor: pointer;
-            margin: 0 2px;
+            margin: 0 4px;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            min-width: 80px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
         .check-in-btn {
@@ -327,9 +338,86 @@
             color: white;
         }
         
+        .check-in-btn:hover {
+            background: #218838;
+        }
+        
         .check-out-btn {
             background: #dc3545;
             color: white;
+        }
+        
+        .check-out-btn:hover {
+            background: #c82333;
+        }
+        
+        .action-btn.btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .action-btn.btn-primary:hover {
+            background: #5a6fd8;
+        }
+        
+        .actions-cell {
+            text-align: center;
+            white-space: nowrap;
+            padding: 10px;
+        }
+        
+        /* Mobile responsiveness for action buttons */
+        @media (max-width: 768px) {
+            .action-btn {
+                padding: 6px 12px;
+                font-size: 12px;
+                margin: 2px;
+                min-width: 70px;
+            }
+            
+            .actions-cell {
+                padding: 8px 4px;
+            }
+        }
+        
+        /* Improved table styling */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+        
+        th, td {
+            border: 1px solid #e1e5e9;
+            padding: 12px 8px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        tbody tr:nth-child(even) {
+            background-color: #fdfdfe;
+        }
+        
+        /* Status badges improvements */
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         
         .modal {
@@ -490,9 +578,7 @@
         <!-- Header -->
         <div class="header">
             <h1>
-                <svg class="icon icon-xl" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
+                <img src="assets/mk-logo-300.png" alt="MK Logo" class="icon icon-xl" style="border-radius: 50%; object-fit: cover;">
                 Campus Ministry Admin Panel
             </h1>
             <div class="header-actions">
@@ -628,6 +714,7 @@
         let participants = [];
         let checkedInParticipants = new Set();
         let currentSort = { field: 'name', direction: 'asc' };
+        let initialSort = true;
         let filteredParticipants = [];
         
         // Authentication
@@ -663,6 +750,11 @@
             loadCheckedInData();
             setupEventListeners();
             updateStats();
+            
+            // Set initial sort state
+            initialSort = true;
+            currentSort = { field: 'name', direction: 'asc' };
+            
             updateTable();
             populateCampusFilter();
             
@@ -771,13 +863,15 @@
         }
         
         // Sort table
-        function sortTable(field) {
-            if (currentSort.field === field) {
+        function sortTable(field, preventToggle = false) {
+            if (!preventToggle && currentSort.field === field && !initialSort) {
                 currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
             } else {
                 currentSort.field = field;
                 currentSort.direction = 'asc';
             }
+            
+            initialSort = false;
             
             // Update sort indicators
             document.querySelectorAll('th.sortable').forEach(th => {
@@ -791,6 +885,10 @@
                 let aVal, bVal;
                 
                 switch (field) {
+                    case 'name':
+                        aVal = a.name.toLowerCase();
+                        bVal = b.name.toLowerCase();
+                        break;
                     case 'status':
                         aVal = checkedInParticipants.has(a.name) ? 1 : 0;
                         bVal = checkedInParticipants.has(b.name) ? 1 : 0;
@@ -815,7 +913,7 @@
         // Update table
         function updateTable() {
             filterParticipants();
-            sortTable(currentSort.field);
+            sortTable(currentSort.field, true); // Prevent toggle when refreshing
             updateCounts();
         }
         
@@ -843,7 +941,7 @@
                         </span>
                     </td>
                     <td>${checkinTimeStr}</td>
-                    <td>
+                    <td class="actions-cell">
                         <button class="action-btn ${isCheckedIn ? 'check-out-btn' : 'check-in-btn'}" 
                                 onclick="${isCheckedIn ? 'checkOut' : 'checkIn'}('${participant.name}')">
                             ${isCheckedIn ? 'Check Out' : 'Check In'}
