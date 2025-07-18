@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify, send_file, send_from_directory
 from flask_cors import CORS
 import pandas as pd
 import os
@@ -414,6 +414,28 @@ def get_checkin_count():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+# Serve the landing page
+@app.route('/')
+def landing_page():
+    """Serve the landing page for easy access"""
+    try:
+        with open('/Users/nahomnigatu/Downloads/campusministrybadges/public_access/landing_page.html', 'r') as f:
+            return f.read()
+    except:
+        # Fallback to main check-in page
+        return send_from_directory('/Users/nahomnigatu/Downloads/campusministrybadges/docs', 'index.html')
+
+# Serve static files
+@app.route('/docs/<path:filename>')
+def serve_docs(filename):
+    """Serve files from docs directory"""
+    return send_from_directory('/Users/nahomnigatu/Downloads/campusministrybadges/docs', filename)
+
+@app.route('/assets/<path:filename>')
+def serve_assets(filename):
+    """Serve asset files"""
+    return send_from_directory('/Users/nahomnigatu/Downloads/campusministrybadges/docs/assets', filename)
+
 if __name__ == '__main__':
     print("Starting Admin Server...")
     print("Admin panel will be available at: http://localhost:5001")
@@ -426,5 +448,7 @@ if __name__ == '__main__':
     print("  GET /api/checkin?name=NAME - Get check-in status for participant")
     print("  GET /api/checkin/all - Get all checked-in participants")
     print("  GET /api/checkin/count - Get total check-in count")
+    print("  GET / - Landing page for public access")
+    print("  GET /docs/<file> - Serve check-in and admin pages")
     
     app.run(debug=True, port=5001, host='0.0.0.0')

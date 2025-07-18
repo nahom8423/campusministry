@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Ministry Check-In</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            color: #333;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .logo {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            color: #667eea;
+        }
+        h1 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        .button {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.2em;
+            font-weight: bold;
+            margin: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        .button:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        .admin-button {
+            background: #48bb78;
+            box-shadow: 0 4px 15px rgba(72, 187, 120, 0.4);
+        }
+        .admin-button:hover {
+            background: #38a169;
+            box-shadow: 0 6px 20px rgba(72, 187, 120, 0.6);
+        }
+        .info {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #667eea;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+        .stat {
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+        }
+        @media (max-width: 480px) {
+            .container {
+                margin: 10px;
+                padding: 20px;
+            }
+            .button {
+                display: block;
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">📱</div>
+        <h1>Campus Ministry</h1>
+        <p class="subtitle">Welcome! Please check in below</p>
+        
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-number" id="totalCount">332</div>
+                <div class="stat-label">Total Registered</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number" id="checkedInCount">-</div>
+                <div class="stat-label">Checked In</div>
+            </div>
+        </div>
+        
+        <a href="/" class="button">
+            📝 Check In Here
+        </a>
+        
+        <a href="/docs/admin_enhanced.html" class="button admin-button">
+            👥 Staff/Admin Panel
+        </a>
+        
+        <div class="info">
+            <strong>Instructions:</strong><br>
+            1. Click "Check In Here"<br>
+            2. Search for your name<br>
+            3. Tap your name to check in<br>
+            4. You're done! ✅
+        </div>
+        
+        <div class="info">
+            <strong>Need Help?</strong><br>
+            Ask any staff member or volunteer
+        </div>
+    </div>
+
+    <script>
+        // Load checked-in count
+        async function loadStats() {
+            try {
+                const response = await fetch('/api/checkin/count');
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('checkedInCount').textContent = data.count || 0;
+                }
+            } catch (e) {
+                document.getElementById('checkedInCount').textContent = '0';
+            }
+        }
+        
+        // Update stats every 10 seconds
+        loadStats();
+        setInterval(loadStats, 10000);
+    </script>
+</body>
+</html>
