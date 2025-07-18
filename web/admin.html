@@ -824,13 +824,13 @@
         let filteredParticipants = [];
         
         // Authentication
-        function login() {
+        async function login() {
             const password = document.getElementById('passwordInput').value;
             if (password === ADMIN_PASSWORD) {
                 document.getElementById('loginContainer').style.display = 'none';
                 document.getElementById('adminContainer').style.display = 'block';
                 document.getElementById('loginError').style.display = 'none';
-                initializeAdmin();
+                await initializeAdmin();
             } else {
                 document.getElementById('loginError').style.display = 'block';
             }
@@ -850,8 +850,8 @@
         });
         
         // Initialize admin panel
-        function initializeAdmin() {
-            loadParticipants();
+        async function initializeAdmin() {
+            await loadParticipants();
             loadCheckedInData();
             setupEventListeners();
             updateStats();
@@ -881,6 +881,15 @@
                 }
             } catch (error) {
                 console.log('API not available, using static data');
+                participants = PARTICIPANT_DATA;
+                participants.forEach((participant, index) => {
+                    participant.id = index;
+                });
+                populateCampusFilter();
+            }
+            
+            // Ensure participants array is populated
+            if (!participants || participants.length === 0) {
                 participants = PARTICIPANT_DATA;
                 participants.forEach((participant, index) => {
                     participant.id = index;
@@ -1209,12 +1218,11 @@
             document.getElementById('errorMessage').style.display = 'none';
         }
         
-        function refreshData() {
-            loadParticipants().then(() => {
-                loadCheckedInData();
-                updateStats();
-                updateTable();
-            });
+        async function refreshData() {
+            await loadParticipants();
+            loadCheckedInData();
+            updateStats();
+            updateTable();
         }
         
         // Export functions
