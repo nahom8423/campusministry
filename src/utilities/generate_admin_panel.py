@@ -37,8 +37,8 @@ def create_admin_panel_with_data():
     # Sort participants by name for easier searching
     participants.sort(key=lambda x: x['name'])
     
-    # Read the HTML template
-    with open('/Users/nahomnigatu/Downloads/campusministrybadges/docs/admin.html', 'r', encoding='utf-8') as f:
+    # Read the enhanced HTML template
+    with open('/Users/nahomnigatu/Downloads/campusministrybadges/docs/admin_enhanced.html', 'r', encoding='utf-8') as f:
         html_content = f.read()
     
     # Convert participants to JavaScript format
