@@ -10,8 +10,8 @@ app = Flask(__name__)
 CORS(app)
 
 # File paths
-BADGE_ASSIGNMENTS_CSV = '/Users/nahomnigatu/Downloads/campusministrybadges/input_data/badge_assignments.csv'
-BADGE_ASSIGNMENTS_XLSX = '/Users/nahomnigatu/Downloads/campusministrybadges/input_data/BADGE_ASSIGNMENTS_FINAL.xlsx'
+BADGE_ASSIGNMENTS_CSV = '/Users/nahomnigatu/Downloads/campusministrybadges/data/csv/badge_assignments.csv'
+BADGE_ASSIGNMENTS_XLSX = '/Users/nahomnigatu/Downloads/campusministrybadges/data/excel/BADGE_ASSIGNMENTS_FINAL.xlsx'
 
 def get_next_table_assignment():
     """Get the next available table assignment"""

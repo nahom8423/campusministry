@@ -3,12 +3,16 @@ from pptx import Presentation
 from pptx.dml.color import RGBColor
 import copy
 import math
+import os
 
-excel_file = "BADGE (CLEAN FILE).xlsx"
-excel_file_2 = "General Assembly Dorm Assignment1.xlsx"
-excel_file_3 = "General Assembly Dorm Assignment2.xlsx"
-template_file = "CAMPUSMINISTRYBADGE_PATCHED.pptx"
-output_file = "filled_badges.pptx"
+# Get the absolute path to the project root directory
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+
+excel_file = os.path.join(project_root, "input_data", "BADGE (CLEAN FILE).xlsx")
+excel_file_2 = os.path.join(project_root, "input_data", "General Assembly Dorm Assignment1.xlsx")
+excel_file_3 = os.path.join(project_root, "input_data", "General Assembly Dorm Assignment2.xlsx")
+template_file = os.path.join(project_root, "templates", "CAMPUSMINISTRYBADGE_PATCHED.pptx")
+output_file = os.path.join(project_root, "output", "filled_badges.pptx")
 
 campus_ministry_locations = {
     # Atlanta variations
@@ -121,18 +125,31 @@ campus_ministry_locations = {
 def extract_language_preference(first_name):
     """
     Extract language preference from first name field
-    Examples: 'Solyana E' -> 'English', 'Ruth -A' -> 'Amharic', 'Miriam E&A' -> 'English' (default)
+    Examples: 
+    - 'Solyana E' -> 'English'
+    - 'Ruth -A' -> 'Amharic' 
+    - 'NAHOM&A' -> 'Amharic'
+    - 'SARA&E' -> 'English'
+    - 'Miriam E&A' -> 'English' (E takes precedence)
     """
     if pd.isna(first_name) or str(first_name).strip() == '':
         return 'English'
     
-    name_str = str(first_name).strip()
+    name_str = str(first_name).strip().upper()
     
-    # Check for Amharic indicators
-    if ' -A' in name_str or '- A' in name_str or '-A' in name_str:
+    # Check for Amharic indicators (in order of priority)
+    if '&A' in name_str and '&E' not in name_str:
+        return 'Amharic'
+    elif ' -A' in name_str or '- A' in name_str or '-A' in name_str:
         return 'Amharic'
     
-    # Everything else defaults to English (including E, E&A, New, etc.)
+    # Check for English indicators
+    if '&E' in name_str:
+        return 'English'
+    elif ' E' in name_str or name_str.endswith('E'):
+        return 'English'
+    
+    # Everything else defaults to English (including New, etc.)
     return 'English'
 
 def process_second_excel_file(file_path):
@@ -160,10 +177,8 @@ def process_second_excel_file(file_path):
         
         # Clean the first name (remove "1" and language indicators)
         clean_first_name = first_name_raw[1:]  # Remove the "1" prefix
-        # Remove language indicators
-        for indicator in [' -A', '- A', '-A', ' E', ' E&A', 'E&A', ' -E', '- E', '-E', ' -New', '- New', '-New', ' New', 'New']:
-            clean_first_name = clean_first_name.replace(indicator, '')
-        clean_first_name = clean_first_name.strip()
+        # Use comprehensive cleaning function
+        clean_first_name = clean_name_comprehensive(clean_first_name)
         
         # Get campus ministry
         campus_ministry = str(row['Campus Minstry']) if not pd.isna(row['Campus Minstry']) else 'NEW'
@@ -345,9 +360,54 @@ def assign_tables_and_discussions(df):
     
     return df
 
+def clean_name_comprehensive(name_str):
+    """
+    Comprehensive name cleaning function that removes all language indicators
+    """
+    if pd.isna(name_str) or str(name_str).strip() == '':
+        return ''
+    
+    clean_name = str(name_str).strip()
+    
+    # Remove all possible language indicators comprehensively
+    for indicator in ['&A', '&E', ' &A', ' &E', '&A ', '&E ', ' -A', '- A', '-A', ' -E', '- E', '-E', ' E&A', 'E&A', ' E', 'E', ' A', 'A', ' -New', '- New', '-New', ' New', 'New']:
+        clean_name = clean_name.replace(indicator, '')
+    
+    return clean_name.strip()
+
+def process_main_excel_file(df):
+    """
+    Process the main Excel file to handle names with &A and &E language indicators
+    Clean names and update language preferences if needed
+    """
+    for index, row in df.iterrows():
+        first_name_raw = str(row['First Name ']).strip() if not pd.isna(row['First Name ']) else ''
+        
+        if first_name_raw and ('&A' in first_name_raw or '&E' in first_name_raw):
+            # Extract language preference from name
+            language_pref = extract_language_preference(first_name_raw)
+            
+            # Clean the first name using comprehensive cleaning
+            clean_first_name = clean_name_comprehensive(first_name_raw)
+            
+            # Update the DataFrame
+            df.loc[index, 'First Name '] = clean_first_name
+            
+            # Update language preference if the current one is empty or if we detected from name
+            current_lang_pref = row['What is your preferred language for sermons and/or engaging in group discussions?']
+            if pd.isna(current_lang_pref) or str(current_lang_pref).strip() == '':
+                df.loc[index, 'What is your preferred language for sermons and/or engaging in group discussions?'] = language_pref
+                print(f"Updated language preference for {clean_first_name}: {language_pref}")
+    
+    return df
+
 # Process first Excel file
 df1 = pd.read_excel(excel_file)
 print(f"First Excel file: {len(df1)} rows")
+
+# Process names with &A and &E indicators in the main Excel file
+df1 = process_main_excel_file(df1)
+print("Processed main Excel file for language indicators in names")
 
 # Process second Excel file to get new people
 df2 = process_second_excel_file(excel_file_2)
@@ -369,10 +429,10 @@ for i, df_additional in enumerate(additional_files, 2):
 if len(df_combined) > len(df1):
     print(f"Combined: {len(df_combined)} rows")
     
-    # Remove duplicates based on first name, last name, and campus ministry
-    # This allows people with same names but different ministries to be added
+    # Remove duplicates based on first name and last name only
+    # This ensures no person appears twice regardless of ministry differences
     original_count = len(df_combined)
-    df_combined = df_combined.drop_duplicates(subset=['First Name ', 'Last Name', 'Which campus ministry are you a part of? In case, you are not part of the listed campus ministries, it\'s open to you as well, and please come and join us! '], keep='first')
+    df_combined = df_combined.drop_duplicates(subset=['First Name ', 'Last Name'], keep='first')
     duplicates_removed = original_count - len(df_combined)
     print(f"Removed {duplicates_removed} duplicates")
     print(f"Final count after removing duplicates: {len(df_combined)} rows")
@@ -498,7 +558,7 @@ for batch_idx in range(num_batches):
     new_slide = duplicate_slide(output_pres, template_slide)
 
     # Use existing CSV assignments if available, otherwise generate new ones
-    csv_file = 'badge_assignments.csv'
+    csv_file = os.path.join(project_root, 'input_data', 'badge_assignments.csv')
     slide_table_assignments = {}
     
     try:
@@ -685,10 +745,15 @@ output_pres.save(output_file)
 print(f"Saved {num_batches} slides to {output_file}")
 
 # Use the existing CSV data if it exists, otherwise create new one
-csv_file = 'badge_assignments.csv'
+csv_file = os.path.join(project_root, 'input_data', 'badge_assignments.csv')
 try:
     existing_csv = pd.read_csv(csv_file)
     print(f"\nUsing existing CSV file: {csv_file}")
+    
+    # Remove duplicates from existing CSV before processing
+    print(f"CSV entries before deduplication: {len(existing_csv)}")
+    existing_csv = existing_csv.drop_duplicates(subset=['full_name'], keep='first')
+    print(f"CSV entries after deduplication: {len(existing_csv)}")
     
     # Create new Excel file using the CSV data
     new_excel_data = []
@@ -713,12 +778,23 @@ try:
     
     # Create DataFrame and save to new Excel file
     new_df = pd.DataFrame(new_excel_data)
-    new_excel_filename = 'BADGE_ASSIGNMENTS_FINAL.xlsx'
+    new_excel_filename = os.path.join(project_root, 'input_data', 'BADGE_ASSIGNMENTS_FINAL.xlsx')
     new_df.to_excel(new_excel_filename, index=False)
     print(f"Created new Excel file: {new_excel_filename}")
     
 except FileNotFoundError:
     print(f"\nCSV file not found, creating new assignments...")
+    
+    # Remove duplicates from badge_records before creating final output
+    import pandas as pd
+    badge_records_df = pd.DataFrame(badge_records)
+    print(f"Badge records before deduplication: {len(badge_records_df)}")
+    
+    # Remove duplicates by full name, keeping the first occurrence
+    badge_records_df = badge_records_df.drop_duplicates(subset=['full_name'], keep='first')
+    print(f"Badge records after deduplication: {len(badge_records_df)}")
+    
+    badge_records = badge_records_df.to_dict('records')
     
     # Create new Excel file with the exact data from badges
     new_excel_data = []
@@ -743,17 +819,17 @@ except FileNotFoundError:
     
     # Create DataFrame and save to new Excel file
     new_df = pd.DataFrame(new_excel_data)
-    new_excel_filename = 'BADGE_ASSIGNMENTS_FINAL.xlsx'
+    new_excel_filename = os.path.join(project_root, 'input_data', 'BADGE_ASSIGNMENTS_FINAL.xlsx')
     new_df.to_excel(new_excel_filename, index=False)
     print(f"Created new Excel file: {new_excel_filename}")
     
     # Also save badge assignments to CSV for reference
     badge_assignments_df = pd.DataFrame(badge_records)
-    badge_assignments_df.to_csv('badge_assignments.csv', index=False)
-    print(f"Saved badge assignments to badge_assignments.csv")
+    badge_assignments_df.to_csv(os.path.join(project_root, 'input_data', 'badge_assignments.csv'), index=False)
+    print(f"Saved badge assignments to {os.path.join(project_root, 'input_data', 'badge_assignments.csv')}")
 
 print(f"\nBadge generation complete!")
 print(f"Files created:")
 print(f"  - {output_file} (PowerPoint with badges)")
 print(f"  - {new_excel_filename} (Excel matching badge order)")
-print(f"  - badge_assignments.csv (CSV for reference)")
+print(f"  - {os.path.join(project_root, 'input_data', 'badge_assignments.csv')} (CSV for reference)")

@@ -1,0 +1,2616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Ministry Check-In</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .logo {
+            font-size: 2.5em;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 1.8em;
+        }
+        
+        .search-container {
+            position: relative;
+            margin-bottom: 30px;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 1.1em;
+            border: 2px solid #e1e1e1;
+            border-radius: 10px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus {
+            border-color: #667eea;
+        }
+        
+        .suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #e1e1e1;
+            border-top: none;
+            border-radius: 0 0 10px 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .suggestion-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            text-align: left;
+            transition: background-color 0.2s;
+        }
+        
+        .suggestion-item:hover {
+            background-color: #f8f9ff;
+        }
+        
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+        
+        .person-info {
+            background: #f8f9ff;
+            border: 1px solid #e1e1e1;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            display: none;
+        }
+        
+        .person-info h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+        
+        .person-details {
+            text-align: left;
+            margin: 15px 0;
+        }
+        
+        .person-details p {
+            margin: 8px 0;
+            color: #555;
+        }
+        
+        .person-details strong {
+            color: #333;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin: 10px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            display: none;
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            display: none;
+        }
+        
+        .stats {
+            background: #e3f2fd;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #1565c0;
+        }
+        
+        /* Clean icon styles */
+        .icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        
+        .icon-check {
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        .icon-cross {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        
+        .icon-pending {
+            color: #ffc107;
+            font-weight: bold;
+        }
+        
+        .logo-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px auto;
+            display: block;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            .logo {
+                font-size: 2em;
+            }
+            
+            h1 {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="assets/mk-logo-300.png" alt="MK Logo" class="logo-icon">
+        <h1>Campus Ministry Check-In</h1>
+        
+        <div class="search-container">
+            <input type="text" id="nameSearch" placeholder="Start typing your name..." autocomplete="off">
+            <div class="suggestions" id="suggestions"></div>
+        </div>
+        
+        <div class="person-info" id="personInfo">
+            <h3>Please confirm this is you:</h3>
+            <div class="person-details" id="personDetails"></div>
+            <button onclick="confirmCheckIn()"><span class="icon-check">✓</span> Yes, Check Me In</button>
+            <button onclick="clearSelection()"><span class="icon-cross">✗</span> This is not me</button>
+        </div>
+        
+        <div class="success-message" id="successMessage">
+            <h3><span class="icon-check">✓</span> Check-in Successful!</h3>
+            <p>Welcome to Campus Ministry! Your table assignment is shown above.</p>
+        </div>
+        
+        <div class="error-message" id="errorMessage">
+            <p>There was an error checking you in. Please try again or ask for assistance.</p>
+        </div>
+        
+        <div class="stats" id="stats">
+            <p><strong>Total Registered:</strong> <span id="totalCount">-</span></p>
+            <p><strong>Checked In:</strong> <span id="checkedInCount">-</span></p>
+        </div>
+    </div>
+
+    <script>
+        // This will be populated with actual participant data
+        let participants = [];
+        let checkedInParticipants = new Set();
+        let selectedPerson = null;
+        
+        // Load participant data (this would come from your CSV)
+        function loadParticipants() {
+            // This will be replaced with actual data from your CSV file
+            participants = [
+  {
+    "name": "AARON ABEBE",
+    "campus": "New Participant",
+    "dorm": "604B",
+    "table": "SAT T22 | SUN T14",
+    "discussion": "DE 5"
+  },
+  {
+    "name": "AARON ALEMAYEHU",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T25 | SUN T6",
+    "discussion": "DE 9"
+  },
+  {
+    "name": "AARON DESSIE",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T12 | SUN T15",
+    "discussion": "DE 8"
+  },
+  {
+    "name": "ABEL ADAMU",
+    "campus": "Atlanta",
+    "dorm": "508D",
+    "table": "SAT T2 | SUN T16",
+    "discussion": "DE 11"
+  },
+  {
+    "name": "ABEL SEYEFU",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T5 | SUN T23",
+    "discussion": "DE 16"
+  },
+  {
+    "name": "ABEMELAKE KEBEDE",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T31 | SUN T30",
+    "discussion": "DE 13"
+  },
+  {
+    "name": "ABEMELIK ALELEGN",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T24 | SUN T25",
+    "discussion": "DA 8"
+  },
+  {
+    "name": "ABENEZER GIRMA",
+    "campus": "Graduated from Campus Ministry",
+    "dorm": "506D",
+    "table": "SAT T22 | SUN T26",
+    "discussion": "DA 1"
+  },
+  {
+    "name": "ABENEZER TADESSE",
+    "campus": "University of Maryland (UMD) Campus Ministry",
+    "dorm": "502B",
+    "table": "SAT T12 | SUN T34",
+    "discussion": "DE 4"
+  },
+  {
+    "name": "ABENEZER TEKLETSADIK",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T8 | SUN T31",
+    "discussion": "DE 18"
+  },
+  {
+    "name": "ABIGAIL DEBEBE",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T8 | SUN T3",
+    "discussion": "DE 4"
+  },
+  {
+    "name": "ABIGAIL EWNETU",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T11 | SUN T29",
+    "discussion": "DA 9"
+  },
+  {
+    "name": "ABIGAIL ZERIHUN",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T8 | SUN T17",
+    "discussion": "DE 16"
+  },
+  {
+    "name": "ABRAHAM MAMMO",
+    "campus": "Los Angelos Campus Ministry",
+    "dorm": "514C",
+    "table": "SAT T33 | SUN T22",
+    "discussion": "DE 4"
+  },
+  {
+    "name": "ABRAHAM WUDINEH",
+    "campus": "Los Angelos Campus Ministry",
+    "dorm": "N/A",
+    "table": "SAT T25 | SUN T8",
+    "discussion": "DE 1"
+  },
+  {
+    "name": "ABYALTE BEKELE",
+    "campus": "Virtual campus Ministry",
+    "dorm": "304A",
+    "table": "SAT T7 | SUN T29",
+    "discussion": "DA 6"
+  },
+  {
+    "name": "AFOMIYA KASSIE",
+    "campus": "Virtual campus Ministry",
+    "dorm": "307C",
+    "table": "SAT T29 | SUN T13",
+    "discussion": "DA 5"
+  },
+  {
+    "name": "AFRATA ESHETU",
+    "campus": "Virtual campus Ministry(VCM)",
+    "dorm": "N/A",
+    "table": "SAT T5 | SUN T19",
+    "discussion": "DE 5"
+  },
+  {
+    "name": "AGNATHIOS ERGETEKAL",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T26 | SUN T34",
+    "discussion": "DE 14"
+  },
+  {
+    "name": "AIDOM GIRMA",
+    "campus": "Seattle Campus Ministry",
+    "dorm": "407B",
+    "table": "SAT T27 | SUN T32",
+    "discussion": "DE 3"
+  },
+  {
+    "name": "ALAFE KETSELA",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T22 | SUN T16",
+    "discussion": "DE 14"
+  },
+  {
+    "name": "ALAZAR MASUMBUKO",
+    "campus": "Atlanta",
+    "dorm": "504B",
+    "table": "SAT T6 | SUN T21",
+    "discussion": "DA 8"
+  },
+  {
+    "name": "ALAZAR YONAS",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T21 | SUN T17",
+    "discussion": "DE 23"
+  },
+  {
+    "name": "ALEMU GEBRU",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T19 | SUN T18",
+    "discussion": "DA 6"
+  },
+  {
+    "name": "ALLA ALKATIM",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T33 | SUN T12",
+    "discussion": "DE 15"
+  },
+  {
+    "name": "AMANUEL MULUGETA",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T18 | SUN T5",
+    "discussion": "DE 15"
+  },
+  {
+    "name": "AMY BIRKNEH",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T18 | SUN T26",
+    "discussion": "DE 23"
+  },
+  {
+    "name": "ANANIYA TADESSE",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T2 | SUN T12",
+    "discussion": "DE 11"
+  },
+  {
+    "name": "ANCHINALUSH ABIYE",
+    "campus": "Nova Campus Ministry",
+    "dorm": "N/A",
+    "table": "SAT T24 | SUN T5",
+    "discussion": "DA 2"
+  },
+  {
+    "name": "ANDREW TADROS",
+    "campus": "Atlanta",
+    "dorm": "502A",
+    "table": "SAT T26 | SUN T16",
+    "discussion": "DE 9"
+  },
+  {
+    "name": "ARYAM BIKSS",
+    "campus": "Denver Campus Ministry",
+    "dorm": "413B",
+    "table": "SAT T33 | SUN T19",
+    "discussion": "DA 3"
+  },
+  {
+    "name": "ATINATIWOS GEBRE",
+    "campus": "Graduated from Campus Ministry",
+    "dorm": "503B",
+    "table": "SAT T15 | SUN T13",
+    "discussion": "DA 5"
+  },
+  {
+    "name": "BAMLAK MENGESHA",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T6 | SUN T5",
+    "discussion": "DE 5"
+  },
+  {
+    "name": "BAROK HAILE",
+    "campus": "Atlanta",
+    "dorm": "503A",
+    "table": "SAT T32 | SUN T11",
+    "discussion": "DE 12"
+  },
+  {
+    "name": "BEAMLAK ADMASU",
+    "campus": "Virtual campus Ministry(VCM)",
+    "dorm": "N/A",
+    "table": "SAT T27 | SUN T11",
+    "discussion": "DE 9"
+  },
+  {
+    "name": "BEAMLAK DAGIM",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T25 | SUN T18",
+    "discussion": "DE 18"
+  },
+  {
+    "name": "BEAMLAK TILAHUN",
+    "campus": "New Participant",
+    "dorm": "404A",
+    "table": "SAT T20 | SUN T32",
+    "discussion": "DE 20"
+  },
+  {
+    "name": "BELEN ARAAYA",
+    "campus": "Virginia Tech Campus Ministry(VTech)",
+    "dorm": "407D",
+    "table": "SAT T29 | SUN T13",
+    "discussion": "DE 2"
+  },
+  {
+    "name": "BEMENAT DANIEL",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T7 | SUN T26",
+    "discussion": "DE 18"
+  },
+  {
+    "name": "BEMNET HAILU",
+    "campus": "Atlanta",
+    "dorm": "303A",
+    "table": "SAT T25 | SUN T19",
+    "discussion": "DE 10"
+  },
+  {
+    "name": "BEMNET MAMO",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T12 | SUN T25",
+    "discussion": "DE 12"
+  },
+  {
+    "name": "BEMNET SILESHI",
+    "campus": "Graduated",
+    "dorm": "N/A",
+    "table": "SAT T23 | SUN T32",
+    "discussion": "DE 7"
+  },
+  {
+    "name": "BEREKET BAHIRU",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T6 | SUN T27",
+    "discussion": "DA 6"
+  },
+  {
+    "name": "BERHANE SELASSIE",
+    "campus": "Virtual Campus Ministry",
+    "dorm": "511A",
+    "table": "SAT T21 | SUN T2",
+    "discussion": "DE 3"
+  },
+  {
+    "name": "BETELIHEM ASHEBO",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T24 | SUN T31",
+    "discussion": "DA 9"
+  },
+  {
+    "name": "BETELIHIM - HAILE",
+    "campus": "Graduated",
+    "dorm": "308C",
+    "table": "SAT T30 | SUN T22",
+    "discussion": "DE 8"
+  },
+  {
+    "name": "BETELIHIM HAILE",
+    "campus": "Graduated",
+    "dorm": "308C",
+    "table": "SAT T2 | SUN T18",
+    "discussion": "DE 6"
+  },
+  {
+    "name": "BETEMARIAM MESFIN",
+    "campus": "Virtual campus Ministry",
+    "dorm": "305A",
+    "table": "SAT T34 | SUN T32",
+    "discussion": "DE 5"
+  },
+  {
+    "name": "BETESELAME TEGEGNE",
+    "campus": "University of Maryland (UMD) Campus Ministry",
+    "dorm": "N/A",
+    "table": "SAT T28 | SUN T12",
+    "discussion": "DE 9"
+  },
+  {
+    "name": "BETHANY ESAYAS",
+    "campus": "New Participant",
+    "dorm": "304B",
+    "table": "SAT T20 | SUN T11",
+    "discussion": "DE 22"
+  },
+  {
+    "name": "BETHELEHEM WOLDEGABRIEL",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T5 | SUN T21",
+    "discussion": "DE 22"
+  },
+  {
+    "name": "BETHELHEM BAHIRU",
+    "campus": "University of Maryland (UMD) Campus Ministry",
+    "dorm": "N/A",
+    "table": "SAT T3 | SUN T15",
+    "discussion": "DE 10"
+  },
+  {
+    "name": "BETHELHEM KEBEDE",
+    "campus": "Boston Campus Ministry",
+    "dorm": "308B",
+    "table": "SAT T19 | SUN T32",
+    "discussion": "DA 1"
+  },
+  {
+    "name": "BETHELHEM&E KEBEDE",
+    "campus": "Virtual campus Ministry(VCM)",
+    "dorm": "308B",
+    "table": "SAT T35 | SUN T2",
+    "discussion": "DA 6"
+  },
+  {
+    "name": "BETHLEHEM ADUGNA",
+    "campus": "Los Angelos Campus Ministry",
+    "dorm": "301A",
+    "table": "SAT T30 | SUN T35",
+    "discussion": "DE 9"
+  },
+  {
+    "name": "BETHLEHEM SHUMYE",
+    "campus": "Virtual campus Ministry(VCM)",
+    "dorm": "312C",
+    "table": "SAT T1 | SUN T14",
+    "discussion": "DA 6"
+  },
+  {
+    "name": "BETSE DEREJE",
+    "campus": "Denver Campus Ministry",
+    "dorm": "410B",
+    "table": "SAT T3 | SUN T34",
+    "discussion": "DE 8"
+  },
+  {
+    "name": "BEZA ASHEBIR",
+    "campus": "Virtual campus Ministry",
+    "dorm": "302A",
+    "table": "SAT T17 | SUN T24",
+    "discussion": "DA 4"
+  },
+  {
+    "name": "BEZA ASHEBIR",
+    "campus": "Virtual campus Ministry(VCM)",
+    "dorm": "302A",
+    "table": "SAT T27 | SUN T1",
+    "discussion": "DA 5"
+  },
+  {
+    "name": "BEZA TEWODROS",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T18 | SUN T11",
+    "discussion": "DE 21"
+  },
+  {
+    "name": "BEZAWIT LEMMA",
+    "campus": "Virtual campus Ministry",
+    "dorm": "404C",
+    "table": "SAT T7 | SUN T11",
+    "discussion": "DA 6"
+  },
+  {
+    "name": "BEZAWIT MEZRETAB",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T9 | SUN T9",
+    "discussion": "DE 23"
+  },
+  {
+    "name": "BEZAWIT MEZRETAB",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T23 | SUN T12",
+    "discussion": "DA 3"
+  },
+  {
+    "name": "BEZAWIT SIME",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T11 | SUN T8",
+    "discussion": "DE 16"
+  },
+  {
+    "name": "BEZAYIT URGESSA",
+    "campus": "Virtual campus Ministry",
+    "dorm": "N/A",
+    "table": "SAT T25 | SUN T11",
+    "discussion": "DE 3"
+  },
+  {
+    "name": "BINYAM BELACHEW",
+    "campus": "Virtual campus Ministry(VCM)",
+    "dorm": "N/A",
+    "table": "SAT T8 | SUN T9",
+    "discussion": "DA 3"
+  },
+  {
+    "name": "BIRDIE BERIE",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T15 | SUN T35",
+    "discussion": "DE 21"
+  },
+  {
+    "name": "BIRHANE SELASSIE",
+    "campus": "Atlanta",
+    "dorm": "511A",
+    "table": "SAT T19 | SUN T24",
+    "discussion": "DE 13"
+  },
+  {
+    "name": "BIRUK BERHE",
+    "campus": "New Participant",
+    "dorm": "507C",
+    "table": "SAT T35 | SUN T22",
+    "discussion": "DE 19"
+  },
+  {
+    "name": "BIRUK MEKONNEN",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T34 | SUN T1",
+    "discussion": "DA 8"
+  },
+  {
+    "name": "BISRAT BAHIRU",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T25 | SUN T3",
+    "discussion": "DA 9"
+  },
+  {
+    "name": "BISRAT BAHIRU",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T16 | SUN T5",
+    "discussion": "DA 9"
+  },
+  {
+    "name": "BRIHAN MENKIR",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T28 | SUN T10",
+    "discussion": "DE 13"
+  },
+  {
+    "name": "BROOK DANIEL BEKELE",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T30 | SUN T18",
+    "discussion": "DE 9"
+  },
+  {
+    "name": "DAGMAWIT ADAMU",
+    "campus": "Graduated from Campus Ministry",
+    "dorm": "N/A",
+    "table": "SAT T16 | SUN T6",
+    "discussion": "DA 4"
+  },
+  {
+    "name": "DAGMAWIT BESHAH",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T30 | SUN T8",
+    "discussion": "DA 3"
+  },
+  {
+    "name": "DAGMAWIT ZELEKE",
+    "campus": "Graduated",
+    "dorm": "N/A",
+    "table": "SAT T13 | SUN T10",
+    "discussion": "DA 4"
+  },
+  {
+    "name": "DANAT TADASE",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T11 | SUN T34",
+    "discussion": "DA 8"
+  },
+  {
+    "name": "DAWIT AYELE",
+    "campus": "Virtual campus Ministry",
+    "dorm": "508B",
+    "table": "SAT T3 | SUN T34",
+    "discussion": "DE 7"
+  },
+  {
+    "name": "DEBORA MEKONNEN",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T13 | SUN T34",
+    "discussion": "DE 16"
+  },
+  {
+    "name": "DESSALEGN SHIFRAW",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T31 | SUN T33",
+    "discussion": "DE 21"
+  },
+  {
+    "name": "DINAH ZELALEM",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T16 | SUN T24",
+    "discussion": "DE 17"
+  },
+  {
+    "name": "DN DR. BINYAM BELACHEW",
+    "campus": "VCM Coordinator",
+    "dorm": "513D",
+    "table": "SAT T18 | SUN T16",
+    "discussion": "DE 3"
+  },
+  {
+    "name": "DN. ALAZARE KASSAHUN",
+    "campus": "New Participant",
+    "dorm": "512C",
+    "table": "SAT T18 | SUN T7",
+    "discussion": "DE 20"
+  },
+  {
+    "name": "DN. YOHANNES ASSEFA",
+    "campus": "Graduated from Campus Ministry",
+    "dorm": "508C",
+    "table": "SAT T18 | SUN T4",
+    "discussion": "DE 4"
+  },
+  {
+    "name": "EBENEZER HABTU",
+    "campus": "New Participant",
+    "dorm": "506C",
+    "table": "SAT T9 | SUN T21",
+    "discussion": "DE 17"
+  },
+  {
+    "name": "EDEN AMSALU",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T28 | SUN T19",
+    "discussion": "DE 11"
+  },
+  {
+    "name": "EDEN ASSEFA",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T30 | SUN T35",
+    "discussion": "DA 8"
+  },
+  {
+    "name": "EDEN NIGUSIE",
+    "campus": "Los Angelos Campus Ministry",
+    "dorm": "310D",
+    "table": "SAT T16 | SUN T11",
+    "discussion": "DA 4"
+  },
+  {
+    "name": "EDEN TEFERA",
+    "campus": "New Participant",
+    "dorm": "308D",
+    "table": "SAT T23 | SUN T2",
+    "discussion": "DA 4"
+  },
+  {
+    "name": "EDOME KIBRU",
+    "campus": "New Participant",
+    "dorm": "306C",
+    "table": "SAT T14 | SUN T5",
+    "discussion": "DE 12"
+  },
+  {
+    "name": "EDOME KIBRU",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T28 | SUN T34",
+    "discussion": "DE 20"
+  },
+  {
+    "name": "EFRATA SIME",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T15 | SUN T31",
+    "discussion": "DE 2"
+  },
+  {
+    "name": "ELBETHEL AMAHA",
+    "campus": "Virtual campus Ministry(VCM)",
+    "dorm": "301B",
+    "table": "SAT T7 | SUN T34",
+    "discussion": "DA 7"
+  },
+  {
+    "name": "ELEAZAR ASHEBIR",
+    "campus": "Los Angelos Campus Ministry",
+    "dorm": "510A",
+    "table": "SAT T24 | SUN T18",
+    "discussion": "DE 3"
+  },
+  {
+    "name": "ELIAS BERIE",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T2 | SUN T24",
+    "discussion": "DA 7"
+  },
+  {
+    "name": "ELIJAH WATKINS",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T1 | SUN T17",
+    "discussion": "DE 23"
+  },
+  {
+    "name": "ELIM AFEWERKI",
+    "campus": "Seattle Campus Ministry",
+    "dorm": "406A",
+    "table": "SAT T4 | SUN T24",
+    "discussion": "DE 1"
+  },
+  {
+    "name": "ELSHADAI TESFAYE",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T27 | SUN T5",
+    "discussion": "DE 14"
+  },
+  {
+    "name": "ENDAYLALU ALESEW",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T29 | SUN T32",
+    "discussion": "DA 8"
+  },
+  {
+    "name": "EPHESSON BEKELE",
+    "campus": "New Participant",
+    "dorm": "508A",
+    "table": "SAT T30 | SUN T15",
+    "discussion": "DE 19"
+  },
+  {
+    "name": "EPHRATAH KAHSAY",
+    "campus": "George Mason University (GMU) Campus Ministry",
+    "dorm": "307B",
+    "table": "SAT T4 | SUN T11",
+    "discussion": "DE 1"
+  },
+  {
+    "name": "EPHREM ADUGNA",
+    "campus": "Los Angelos Campus Ministry",
+    "dorm": "510B",
+    "table": "SAT T29 | SUN T30",
+    "discussion": "DE 7"
+  },
+  {
+    "name": "ESROM MESGENA",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T30 | SUN T25",
+    "discussion": "DA 9"
+  },
+  {
+    "name": "ESSEY TESFAI",
+    "campus": "New Participant",
+    "dorm": "501C",
+    "table": "SAT T26 | SUN T12",
+    "discussion": "DE 14"
+  },
+  {
+    "name": "ESTIFANOS HAILU",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T1 | SUN T12",
+    "discussion": "DE 15"
+  },
+  {
+    "name": "ETSEGENET SOLOMON",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T15 | SUN T9",
+    "discussion": "DE 17"
+  },
+  {
+    "name": "ETSUB KASSIE",
+    "campus": "Virtual campus Ministry",
+    "dorm": "307D",
+    "table": "SAT T18 | SUN T12",
+    "discussion": "DE 1"
+  },
+  {
+    "name": "ETSUB SOLOMON",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T24 | SUN T35",
+    "discussion": "DE 11"
+  },
+  {
+    "name": "EYOB TAFESSE",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T23 | SUN T17",
+    "discussion": "DE 16"
+  },
+  {
+    "name": "EZRA WORKENEH",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T5 | SUN T21",
+    "discussion": "DA 8"
+  },
+  {
+    "name": "FANUEL MAMMO",
+    "campus": "Graduated",
+    "dorm": "N/A",
+    "table": "SAT T7 | SUN T9",
+    "discussion": "DA 3"
+  },
+  {
+    "name": "FEVEN TEGEGN",
+    "campus": "University of Maryland (UMD) Campus Ministry",
+    "dorm": "408D",
+    "table": "SAT T19 | SUN T13",
+    "discussion": "DE 5"
+  },
+  {
+    "name": "FREAB ABEBE",
+    "campus": "Seattle Campus Ministry",
+    "dorm": "512B",
+    "table": "SAT T22 | SUN T7",
+    "discussion": "DE 8"
+  },
+  {
+    "name": "GELILA LEGESSE",
+    "campus": "Atlanta",
+    "dorm": "311A",
+    "table": "SAT T18 | SUN T31",
+    "discussion": "DA 1"
+  },
+  {
+    "name": "GELILA MENGESHA",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T16 | SUN T17",
+    "discussion": "DE 11"
+  },
+  {
+    "name": "GELILA YEDEMIE",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T21 | SUN T16",
+    "discussion": "DA 8"
+  },
+  {
+    "name": "GEREMEW BELEW",
+    "campus": "University of Maryland (UMD) Campus Ministry",
+    "dorm": "513A",
+    "table": "SAT T26 | SUN T2",
+    "discussion": "DA 2"
+  },
+  {
+    "name": "HANA RIOT",
+    "campus": "George Mason University (GMU) Campus Ministry",
+    "dorm": "312D",
+    "table": "SAT T2 | SUN T7",
+    "discussion": "DA 1"
+  },
+  {
+    "name": "HANA SISHU RIOT",
+    "campus": "George Mason University (GMU) Campus ministry",
+    "dorm": "312D",
+    "table": "SAT T26 | SUN T3",
+    "discussion": "DE 3"
+  },
+  {
+    "name": "HANNA ASFAW",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T17 | SUN T11",
+    "discussion": "DE 21"
+  },
+  {
+    "name": "HASET MEKONNEN",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T8 | SUN T34",
+    "discussion": "DE 8"
+  },
+  {
+    "name": "HELDANA GEBRE",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T15 | SUN T28",
+    "discussion": "DE 14"
+  },
+  {
+    "name": "HELDANA TESERA",
+    "campus": "Nashville Campus Ministry",
+    "dorm": "413C",
+    "table": "SAT T1 | SUN T20",
+    "discussion": "DE 2"
+  },
+  {
+    "name": "HELENA ZENA",
+    "campus": "Los Angelos Campus Ministry",
+    "dorm": "401B",
+    "table": "SAT T16 | SUN T9",
+    "discussion": "DA 3"
+  },
+  {
+    "name": "HELINA KETSELA",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T15 | SUN T8",
+    "discussion": "DE 12"
+  },
+  {
+    "name": "HEMEN ASSEFA",
+    "campus": "Denver Campus Ministry",
+    "dorm": "413A",
+    "table": "SAT T17 | SUN T28",
+    "discussion": "DE 6"
+  },
+  {
+    "name": "HERAN DEMISSIE",
+    "campus": "Virtual campus Ministry(VCM)",
+    "dorm": "N/A",
+    "table": "SAT T1 | SUN T34",
+    "discussion": "DE 10"
+  },
+  {
+    "name": "HERANY ZELALEM",
+    "campus": "Nashville Campus Ministry",
+    "dorm": "414A",
+    "table": "SAT T19 | SUN T10",
+    "discussion": "DA 2"
+  },
+  {
+    "name": "HERMELA ALEMAYEHU",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T19 | SUN T33",
+    "discussion": "DA 6"
+  },
+  {
+    "name": "HERMELA SILESHI",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T24 | SUN T28",
+    "discussion": "DE 7"
+  },
+  {
+    "name": "HERMELLA MELKAMU",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T18 | SUN T19",
+    "discussion": "DE 21"
+  },
+  {
+    "name": "HEWAN MOTI",
+    "campus": "Los Angelos Campus Ministry",
+    "dorm": "N/A",
+    "table": "SAT T15 | SUN T25",
+    "discussion": "DE 8"
+  },
+  {
+    "name": "HIERAN (ARSEMA) ANDEBERHAN",
+    "campus": "New Participant",
+    "dorm": "408B",
+    "table": "SAT T23 | SUN T8",
+    "discussion": "DE 18"
+  },
+  {
+    "name": "HILENA KEBEDE",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T25 | SUN T18",
+    "discussion": "DE 19"
+  },
+  {
+    "name": "HILINA GENANW",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T21 | SUN T24",
+    "discussion": "DA 4"
+  },
+  {
+    "name": "HIWOT MESFIN",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T8 | SUN T1",
+    "discussion": "DA 1"
+  },
+  {
+    "name": "ILILI WOLDEMICHAEL",
+    "campus": "New Participant",
+    "dorm": "408C",
+    "table": "SAT T15 | SUN T6",
+    "discussion": "DA 5"
+  },
+  {
+    "name": "ISAAC ABRAHAM",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T31 | SUN T19",
+    "discussion": "DE 22"
+  },
+  {
+    "name": "ISABEL MERID",
+    "campus": "Minnesota Campus Ministry",
+    "dorm": "N/A",
+    "table": "SAT T24 | SUN T21",
+    "discussion": "DE 1"
+  },
+  {
+    "name": "JAMAL JAMES",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T20 | SUN T26",
+    "discussion": "DE 13"
+  },
+  {
+    "name": "JOSEPH SINGOY",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T7 | SUN T13",
+    "discussion": "DE 22"
+  },
+  {
+    "name": "KALEAB GEBRE",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T3 | SUN T28",
+    "discussion": "DE 19"
+  },
+  {
+    "name": "KALEABE ARGAW",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T20 | SUN T12",
+    "discussion": "DE 12"
+  },
+  {
+    "name": "KALKIDAN REFERA",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T30 | SUN T19",
+    "discussion": "DE 21"
+  },
+  {
+    "name": "KASSA TIZALE",
+    "campus": "University of Maryland (UMD) Campus Ministry",
+    "dorm": "N/A",
+    "table": "SAT T1 | SUN T11",
+    "discussion": "DA 4"
+  },
+  {
+    "name": "KIDIST ADAMU",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T14 | SUN T13",
+    "discussion": "DE 11"
+  },
+  {
+    "name": "KIDUS DANIEL",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T10 | SUN T22",
+    "discussion": "DE 19"
+  },
+  {
+    "name": "KIDUS FEKADU",
+    "campus": "Los Angelos Campus Ministry",
+    "dorm": "512D",
+    "table": "SAT T1 | SUN T5",
+    "discussion": "DA 1"
+  },
+  {
+    "name": "LAMROT KEBEDE",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T18 | SUN T28",
+    "discussion": "DA 5"
+  },
+  {
+    "name": "LEUL ALEMAYOH",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T26 | SUN T13",
+    "discussion": "DE 6"
+  },
+  {
+    "name": "LEUL HAGOS",
+    "campus": "Virtual campus Ministry",
+    "dorm": "N/A",
+    "table": "SAT T14 | SUN T29",
+    "discussion": "DA 3"
+  },
+  {
+    "name": "LEUL MESFIN",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T8 | SUN T8",
+    "discussion": "DE 11"
+  },
+  {
+    "name": "LEUL NEGASH",
+    "campus": "George Mason University (GMU) Campus Ministry",
+    "dorm": "N/A",
+    "table": "SAT T35 | SUN T27",
+    "discussion": "DE 4"
+  },
+  {
+    "name": "LEUL NEGUSE",
+    "campus": "Virtual campus Ministry",
+    "dorm": "N/A",
+    "table": "SAT T30 | SUN T9",
+    "discussion": "DA 2"
+  },
+  {
+    "name": "LIA JOHANNES",
+    "campus": "Virtual campus Ministry",
+    "dorm": "307A",
+    "table": "SAT T1 | SUN T22",
+    "discussion": "DE 8"
+  },
+  {
+    "name": "LIDIYA AKLILU",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T18 | SUN T31",
+    "discussion": "DE 5"
+  },
+  {
+    "name": "LIDYA THEODROS",
+    "campus": "New Participant",
+    "dorm": "314A",
+    "table": "SAT T1 | SUN T2",
+    "discussion": "DE 17"
+  },
+  {
+    "name": "LIJADIS LAYEW",
+    "campus": "DC campus Ministry",
+    "dorm": "N/A",
+    "table": "SAT T26 | SUN T18",
+    "discussion": "DE 5"
+  },
+  {
+    "name": "LIYA DAWIT",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T32 | SUN T21",
+    "discussion": "DE 18"
+  },
+  {
+    "name": "LIYA SHIBRU",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T4 | SUN T26",
+    "discussion": "DA 7"
+  },
+  {
+    "name": "LOZA AWGECHEW",
+    "campus": "Graduated",
+    "dorm": "314D",
+    "table": "SAT T18 | SUN T28",
+    "discussion": "DE 3"
+  },
+  {
+    "name": "LOZA DAWIT",
+    "campus": "Denver Campus Ministry",
+    "dorm": "N/A",
+    "table": "SAT T28 | SUN T15",
+    "discussion": "DE 4"
+  },
+  {
+    "name": "LOZA WONDIMENEH",
+    "campus": "George Mason University (GMU) Campus Ministry",
+    "dorm": "N/A",
+    "table": "SAT T9 | SUN T13",
+    "discussion": "DA 3"
+  },
+  {
+    "name": "LUBNA ALKATIM",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T13 | SUN T12",
+    "discussion": "DE 15"
+  },
+  {
+    "name": "LUCAS TSEGAYE",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T4 | SUN T21",
+    "discussion": "DA 7"
+  },
+  {
+    "name": "LUDIANA ATNAFU",
+    "campus": "New Participant",
+    "dorm": "302C",
+    "table": "SAT T35 | SUN T11",
+    "discussion": "DA 7"
+  },
+  {
+    "name": "LUEL SHERIFA",
+    "campus": "New Participant",
+    "dorm": "507D",
+    "table": "SAT T27 | SUN T26",
+    "discussion": "DE 18"
+  },
+  {
+    "name": "LYDIA BINYAM",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T16 | SUN T17",
+    "discussion": "DE 23"
+  },
+  {
+    "name": "LYDIA SHEFERAW",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T11 | SUN T6",
+    "discussion": "DE 20"
+  },
+  {
+    "name": "MAHEDRE DAWIT",
+    "campus": "George Washington University Campus Ministry",
+    "dorm": "N/A",
+    "table": "SAT T7 | SUN T4",
+    "discussion": "DE 2"
+  },
+  {
+    "name": "MAHIDER DAWIT",
+    "campus": "New Participant",
+    "dorm": "305C",
+    "table": "SAT T33 | SUN T6",
+    "discussion": "DE 14"
+  },
+  {
+    "name": "MAHILET DAMETE",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T17 | SUN T9",
+    "discussion": "DE 11"
+  },
+  {
+    "name": "MAKIDA BEKELE",
+    "campus": "Graduated",
+    "dorm": "304D",
+    "table": "SAT T6 | SUN T27",
+    "discussion": "DE 5"
+  },
+  {
+    "name": "MAKIDA LEMMA",
+    "campus": "New Participant",
+    "dorm": "310A",
+    "table": "SAT T26 | SUN T12",
+    "discussion": "DA 1"
+  },
+  {
+    "name": "MARIA EDRIS",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T7 | SUN T1",
+    "discussion": "DE 17"
+  },
+  {
+    "name": "MARIAMAWIT BEKELE",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T27 | SUN T10",
+    "discussion": "DE 18"
+  },
+  {
+    "name": "MARIAMAWIT HAILU",
+    "campus": "Graduated from Campus Ministry",
+    "dorm": "N/A",
+    "table": "SAT T26 | SUN T9",
+    "discussion": "DE 2"
+  },
+  {
+    "name": "MARY AYECHEH",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T32 | SUN T34",
+    "discussion": "DE 14"
+  },
+  {
+    "name": "MASTEWAL ADANE",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T31 | SUN T6",
+    "discussion": "DE 18"
+  },
+  {
+    "name": "MATHIEW HAILU",
+    "campus": "New Participant",
+    "dorm": "506A",
+    "table": "SAT T2 | SUN T14",
+    "discussion": "DE 3"
+  },
+  {
+    "name": "MATTHEW BIRRU",
+    "campus": "New Participant",
+    "dorm": "604C",
+    "table": "SAT T15 | SUN T8",
+    "discussion": "DE 11"
+  },
+  {
+    "name": "MEAZA TESFAYE",
+    "campus": "Virtual campus Ministry",
+    "dorm": "404B",
+    "table": "SAT T35 | SUN T22",
+    "discussion": "DA 1"
+  },
+  {
+    "name": "MEAZA TESFAYE",
+    "campus": "Virtual campus Ministry(VCM)",
+    "dorm": "404B",
+    "table": "SAT T18 | SUN T10",
+    "discussion": "DA 1"
+  },
+  {
+    "name": "MEKDES ANILEY",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T8 | SUN T23",
+    "discussion": "DE 15"
+  },
+  {
+    "name": "MEKDES ASSFAW",
+    "campus": "Graduated",
+    "dorm": "302B",
+    "table": "SAT T23 | SUN T2",
+    "discussion": "DE 1"
+  },
+  {
+    "name": "MEKEDELAWET MERSHA",
+    "campus": "Virtual campus Ministry(VCM)",
+    "dorm": "310C",
+    "table": "SAT T19 | SUN T13",
+    "discussion": "DA 7"
+  },
+  {
+    "name": "MEKEDELAWET MERSHA",
+    "campus": "Virtual campus Ministry(VCM)",
+    "dorm": "310C",
+    "table": "SAT T14 | SUN T32",
+    "discussion": "DA 7"
+  },
+  {
+    "name": "MEKLIT ABERA",
+    "campus": "Atlanta",
+    "dorm": "303B",
+    "table": "SAT T22 | SUN T11",
+    "discussion": "DE 17"
+  },
+  {
+    "name": "MEKLIT TARIKU",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T14 | SUN T34",
+    "discussion": "DE 12"
+  },
+  {
+    "name": "MELAT GEBREYUS",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T34 | SUN T2",
+    "discussion": "DE 20"
+  },
+  {
+    "name": "MELAT TESFAYE",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T29 | SUN T28",
+    "discussion": "DE 7"
+  },
+  {
+    "name": "MENA DOCE",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T1 | SUN T1",
+    "discussion": "DE 10"
+  },
+  {
+    "name": "MENBEREMARIAM BEKELE",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T24 | SUN T33",
+    "discussion": "DE 22"
+  },
+  {
+    "name": "MENGESHA ALEBACHEW",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T33 | SUN T13",
+    "discussion": "DA 5"
+  },
+  {
+    "name": "MERON ASSEFA",
+    "campus": "Graduated from Campus Ministry",
+    "dorm": "404D",
+    "table": "SAT T6 | SUN T24",
+    "discussion": "DA 3"
+  },
+  {
+    "name": "MERON BELAYNEH/AMSALU",
+    "campus": "Seattle Campus Ministry",
+    "dorm": "304C",
+    "table": "SAT T5 | SUN T7",
+    "discussion": "DE 5"
+  },
+  {
+    "name": "MERON CHERECHO",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T20 | SUN T15",
+    "discussion": "DE 14"
+  },
+  {
+    "name": "MERON DAMTEW",
+    "campus": "Denver Campus Ministry",
+    "dorm": "410C",
+    "table": "SAT T11 | SUN T4",
+    "discussion": "DE 7"
+  },
+  {
+    "name": "MERON MULUGETA",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T21 | SUN T19",
+    "discussion": "DE 15"
+  },
+  {
+    "name": "MERON MULUGETA",
+    "campus": "New Participant",
+    "dorm": "414C",
+    "table": "SAT T24 | SUN T1",
+    "discussion": "DE 3"
+  },
+  {
+    "name": "MESERET BEZABIH",
+    "campus": "New Participant",
+    "dorm": "305B",
+    "table": "SAT T12 | SUN T28",
+    "discussion": "DA 5"
+  },
+  {
+    "name": "MESERET WORKU",
+    "campus": "Denver Campus Ministry",
+    "dorm": "410A",
+    "table": "SAT T26 | SUN T28",
+    "discussion": "DA 1"
+  },
+  {
+    "name": "MIKE YIMER",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T33 | SUN T14",
+    "discussion": "DE 15"
+  },
+  {
+    "name": "MIKIAS TADESSE",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T24 | SUN T15",
+    "discussion": "DE 22"
+  },
+  {
+    "name": "MIKYAS BESHAH",
+    "campus": "University of Maryland (UMD) Campus Ministry",
+    "dorm": "N/A",
+    "table": "SAT T14 | SUN T5",
+    "discussion": "DE 7"
+  },
+  {
+    "name": "MINASE (LEGAL: JOSEPH) ASFAW KELEMWORK",
+    "campus": "Denver Campus Ministry",
+    "dorm": "501D",
+    "table": "SAT T3 | SUN T5",
+    "discussion": "DE 2"
+  },
+  {
+    "name": "MIRIAM ADUGNA",
+    "campus": "DC campus Ministry",
+    "dorm": "410D",
+    "table": "SAT T31 | SUN T8",
+    "discussion": "DE 4"
+  },
+  {
+    "name": "MISRAK DEMISSIE",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T17 | SUN T23",
+    "discussion": "DE 13"
+  },
+  {
+    "name": "NAHOM TESHOME",
+    "campus": "New Participant",
+    "dorm": "501B",
+    "table": "SAT T6 | SUN T28",
+    "discussion": "DE 10"
+  },
+  {
+    "name": "NAHOM ZEMED",
+    "campus": "New Participant",
+    "dorm": "501A",
+    "table": "SAT T31 | SUN T27",
+    "discussion": "DE 22"
+  },
+  {
+    "name": "NAHOM&A TESHOME",
+    "campus": "Virtual campus Ministry(VCM)",
+    "dorm": "501B",
+    "table": "SAT T6 | SUN T14",
+    "discussion": "DE 9"
+  },
+  {
+    "name": "NAHOMI BINYAM",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T10 | SUN T8",
+    "discussion": "DE 14"
+  },
+  {
+    "name": "NAHOMI MERID",
+    "campus": "Minnesota Campus Ministry",
+    "dorm": "312B",
+    "table": "SAT T25 | SUN T2",
+    "discussion": "DE 5"
+  },
+  {
+    "name": "NAHUM BELAY",
+    "campus": "Virtual campus Ministry(VCM)",
+    "dorm": "505C",
+    "table": "SAT T22 | SUN T32",
+    "discussion": "DE 8"
+  },
+  {
+    "name": "NAHUM TADESSR",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T26 | SUN T4",
+    "discussion": "DE 21"
+  },
+  {
+    "name": "NATENAL TEKLETSON",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T29 | SUN T5",
+    "discussion": "DE 1"
+  },
+  {
+    "name": "NATHAN ENGIDA",
+    "campus": "Virtual campus Ministry",
+    "dorm": "507B",
+    "table": "SAT T32 | SUN T14",
+    "discussion": "DA 7"
+  },
+  {
+    "name": "NATHAN GETNET",
+    "campus": "Virtual campus Ministry(VCM)",
+    "dorm": "505B",
+    "table": "SAT T18 | SUN T31",
+    "discussion": "DE 4"
+  },
+  {
+    "name": "NATHAN LEMMA",
+    "campus": "New Participant",
+    "dorm": "504C",
+    "table": "SAT T8 | SUN T30",
+    "discussion": "DE 10"
+  },
+  {
+    "name": "NATHAN TEWODROS",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T21 | SUN T3",
+    "discussion": "DE 10"
+  },
+  {
+    "name": "NATHENAEL DEMEWOZ",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T21 | SUN T4",
+    "discussion": "DA 7"
+  },
+  {
+    "name": "NAZRAWI ASEFIA",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T26 | SUN T11",
+    "discussion": "DE 12"
+  },
+  {
+    "name": "NESEHA TADESSE",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T28 | SUN T14",
+    "discussion": "DE 13"
+  },
+  {
+    "name": "NIERT (MENEN) ATENAFU",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T18 | SUN T33",
+    "discussion": "DA 9"
+  },
+  {
+    "name": "NINET TESFAYE",
+    "campus": "New Participant",
+    "dorm": "408A",
+    "table": "SAT T21 | SUN T24",
+    "discussion": "DE 20"
+  },
+  {
+    "name": "NOAH KAHSAY",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T34 | SUN T2",
+    "discussion": "DE 12"
+  },
+  {
+    "name": "NOEL YEMANE",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T26 | SUN T26",
+    "discussion": "DE 20"
+  },
+  {
+    "name": "NOHA ASEFA",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T3 | SUN T11",
+    "discussion": "DE 22"
+  },
+  {
+    "name": "NOLAWIT TILAHUN",
+    "campus": "New Participant",
+    "dorm": "314C",
+    "table": "SAT T32 | SUN T14",
+    "discussion": "DE 18"
+  },
+  {
+    "name": "NUHAMIN DEMEKE",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T15 | SUN T9",
+    "discussion": "DE 21"
+  },
+  {
+    "name": "NUHAMIN WONDIMU",
+    "campus": "Los Angelos Campus Ministry",
+    "dorm": "401A",
+    "table": "SAT T10 | SUN T26",
+    "discussion": "DA 5"
+  },
+  {
+    "name": "PERCI WOLDAY",
+    "campus": "New Participant",
+    "dorm": "301C",
+    "table": "SAT T2 | SUN T9",
+    "discussion": "DE 12"
+  },
+  {
+    "name": "RAHEL ABEBE",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T18 | SUN T9",
+    "discussion": "DE 11"
+  },
+  {
+    "name": "REBECCA MAMUYE",
+    "campus": "New Participant",
+    "dorm": "310B",
+    "table": "SAT T31 | SUN T35",
+    "discussion": "DE 15"
+  },
+  {
+    "name": "REDIAT BEKELE",
+    "campus": "Virtual campus Ministry(VCM)",
+    "dorm": "505D",
+    "table": "SAT T5 | SUN T28",
+    "discussion": "DE 7"
+  },
+  {
+    "name": "REDIET BEZA",
+    "campus": "Seattle Campus Ministry",
+    "dorm": "406C",
+    "table": "SAT T22 | SUN T13",
+    "discussion": "DE 9"
+  },
+  {
+    "name": "REDIET SHAMA",
+    "campus": "Los Angelos Campus Ministry",
+    "dorm": "N/A",
+    "table": "SAT T1 | SUN T28",
+    "discussion": "DE 9"
+  },
+  {
+    "name": "ROBEL AKLILU",
+    "campus": "University of Maryland (UMD) Campus Ministry",
+    "dorm": "N/A",
+    "table": "SAT T27 | SUN T14",
+    "discussion": "DE 9"
+  },
+  {
+    "name": "ROBEL WOLDEGYORGIS",
+    "campus": "Virtual campus Ministry",
+    "dorm": "N/A",
+    "table": "SAT T19 | SUN T22",
+    "discussion": "DA 5"
+  },
+  {
+    "name": "ROSIE TEKLU",
+    "campus": "New Participant",
+    "dorm": "313B",
+    "table": "SAT T31 | SUN T2",
+    "discussion": "DE 17"
+  },
+  {
+    "name": "RUHAMA MENGESHA",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T18 | SUN T1",
+    "discussion": "DE 20"
+  },
+  {
+    "name": "RUHAMA MENGESHA",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T4 | SUN T12",
+    "discussion": "DA 7"
+  },
+  {
+    "name": "RUTH BEGASHAW",
+    "campus": "University of Maryland (UMD) Campus Ministry",
+    "dorm": "405C",
+    "table": "SAT T20 | SUN T7",
+    "discussion": "DE 6"
+  },
+  {
+    "name": "RUTH BEGASHAW",
+    "campus": "Virtual campus Ministry(VCM)",
+    "dorm": "405C",
+    "table": "SAT T22 | SUN T32",
+    "discussion": "DA 4"
+  },
+  {
+    "name": "RUTH FISSEHA",
+    "campus": "Denver Campus Ministry",
+    "dorm": "N/A",
+    "table": "SAT T22 | SUN T2",
+    "discussion": "DE 5"
+  },
+  {
+    "name": "RUTH GENANW",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T28 | SUN T7",
+    "discussion": "DA 2"
+  },
+  {
+    "name": "RUTH JANAFA",
+    "campus": "Virtual campus Ministry(VCM)",
+    "dorm": "306D",
+    "table": "SAT T27 | SUN T13",
+    "discussion": "DE 1"
+  },
+  {
+    "name": "RUTH NURE",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T21 | SUN T1",
+    "discussion": "DE 17"
+  },
+  {
+    "name": "RUTH SOLOMON",
+    "campus": "Atlanta",
+    "dorm": "313A",
+    "table": "SAT T27 | SUN T23",
+    "discussion": "DE 6"
+  },
+  {
+    "name": "RUTH TILAHUN",
+    "campus": "New Participant",
+    "dorm": "314B",
+    "table": "SAT T9 | SUN T1",
+    "discussion": "DE 16"
+  },
+  {
+    "name": "RUTH YIMER",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T25 | SUN T27",
+    "discussion": "DA 2"
+  },
+  {
+    "name": "SADOR YOHANNES",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T18 | SUN T6",
+    "discussion": "DA 6"
+  },
+  {
+    "name": "SAHELESELASSE MENKIR",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T19 | SUN T8",
+    "discussion": "DE 16"
+  },
+  {
+    "name": "SALEM HAILEMARIAM",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T30 | SUN T9",
+    "discussion": "DA 2"
+  },
+  {
+    "name": "SAMRAWIT TESFAYE",
+    "campus": "Minnesota Campus Ministry",
+    "dorm": "313C",
+    "table": "SAT T18 | SUN T17",
+    "discussion": "DE 4"
+  },
+  {
+    "name": "SAMUAL DAGNACHEW",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T12 | SUN T11",
+    "discussion": "DE 19"
+  },
+  {
+    "name": "SANA FESSUH",
+    "campus": "Virtual campus Ministry(VCM)",
+    "dorm": "414B",
+    "table": "SAT T13 | SUN T20",
+    "discussion": "DA 5"
+  },
+  {
+    "name": "SARA SOLOMON",
+    "campus": "DC campus Ministry",
+    "dorm": "N/A",
+    "table": "SAT T1 | SUN T35",
+    "discussion": "DE 6"
+  },
+  {
+    "name": "SAREM HAILU",
+    "campus": "New Participant",
+    "dorm": "407C",
+    "table": "SAT T6 | SUN T5",
+    "discussion": "DE 12"
+  },
+  {
+    "name": "SARON YOSEF",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T30 | SUN T26",
+    "discussion": "DE 13"
+  },
+  {
+    "name": "SELAM HAILE",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T8 | SUN T24",
+    "discussion": "DE 22"
+  },
+  {
+    "name": "SELAM SOLOMON",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T11 | SUN T9",
+    "discussion": "DE 15"
+  },
+  {
+    "name": "SELAMAWIT ASMARE",
+    "campus": "University of Maryland (UMD) Campus Ministry",
+    "dorm": "N/A",
+    "table": "SAT T15 | SUN T16",
+    "discussion": "DA 3"
+  },
+  {
+    "name": "SELOME GIRMA",
+    "campus": "Seattle Campus Ministry",
+    "dorm": "407A",
+    "table": "SAT T30 | SUN T16",
+    "discussion": "DE 7"
+  },
+  {
+    "name": "SENA SEGED",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T34 | SUN T1",
+    "discussion": "DE 23"
+  },
+  {
+    "name": "SESAYT KEBEDOM",
+    "campus": "San Jose Campus Ministry",
+    "dorm": "N/A",
+    "table": "SAT T34 | SUN T17",
+    "discussion": "DE 2"
+  },
+  {
+    "name": "SHAM MEHARI",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T23 | SUN T14",
+    "discussion": "DE 8"
+  },
+  {
+    "name": "SION SHEFERAW",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T32 | SUN T24",
+    "discussion": "DE 20"
+  },
+  {
+    "name": "SIRGUT CHERU",
+    "campus": "New Participant",
+    "dorm": "406B",
+    "table": "SAT T25 | SUN T15",
+    "discussion": "DE 16"
+  },
+  {
+    "name": "SOFIA AHMED SEID",
+    "campus": "New Participant",
+    "dorm": "308A",
+    "table": "SAT T26 | SUN T33",
+    "discussion": "DA 8"
+  },
+  {
+    "name": "SOLYANA GOBENA",
+    "campus": "DC campus Ministry",
+    "dorm": "405D",
+    "table": "SAT T6 | SUN T33",
+    "discussion": "DE 2"
+  },
+  {
+    "name": "TEDDY KASSA",
+    "campus": "Los Angelos Campus Ministry",
+    "dorm": "504D",
+    "table": "SAT T11 | SUN T22",
+    "discussion": "DE 6"
+  },
+  {
+    "name": "TEDROS MEKONEN",
+    "campus": "New Participant",
+    "dorm": "504A",
+    "table": "SAT T27 | SUN T4",
+    "discussion": "DE 16"
+  },
+  {
+    "name": "TEKU BELAY",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T25 | SUN T8",
+    "discussion": "DE 17"
+  },
+  {
+    "name": "TIGIST WAKE",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T4 | SUN T34",
+    "discussion": "DE 16"
+  },
+  {
+    "name": "TSEBAOT ZEWDU",
+    "campus": "Los Angelos Campus Ministry",
+    "dorm": "401C",
+    "table": "SAT T27 | SUN T26",
+    "discussion": "DE 7"
+  },
+  {
+    "name": "TSEDAL TESHOME",
+    "campus": "New Participant",
+    "dorm": "405A",
+    "table": "SAT T32 | SUN T28",
+    "discussion": "DE 13"
+  },
+  {
+    "name": "TSEYON YEZIHALEM",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T30 | SUN T20",
+    "discussion": "DE 11"
+  },
+  {
+    "name": "TSION SEHENE",
+    "campus": "Virtual campus Ministry(VCM)",
+    "dorm": "312A",
+    "table": "SAT T8 | SUN T34",
+    "discussion": "DA 4"
+  },
+  {
+    "name": "TSION TESFAYE",
+    "campus": "Virtual campus Ministry(VCM)",
+    "dorm": "406D",
+    "table": "SAT T7 | SUN T34",
+    "discussion": "DE 1"
+  },
+  {
+    "name": "TSION YOHANNES",
+    "campus": "Graduated",
+    "dorm": "N/A",
+    "table": "SAT T9 | SUN T15",
+    "discussion": "DA 2"
+  },
+  {
+    "name": "TSION ZEWDIE",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T34 | SUN T23",
+    "discussion": "DE 21"
+  },
+  {
+    "name": "VICTOR YUSUF",
+    "campus": "Virtual campus Ministry",
+    "dorm": "N/A",
+    "table": "SAT T19 | SUN T19",
+    "discussion": "DE 6"
+  },
+  {
+    "name": "WONDIMAGEGN AZEMACH",
+    "campus": "University of Maryland (UMD) Campus Ministry",
+    "dorm": "510D",
+    "table": "SAT T11 | SUN T4",
+    "discussion": "DE 8"
+  },
+  {
+    "name": "WONDIMU A",
+    "campus": "University of Maryland (UMD) Campus Ministry",
+    "dorm": "N/A",
+    "table": "SAT T29 | SUN T5",
+    "discussion": "DE 10"
+  },
+  {
+    "name": "WUTSIFTE A&E DERBAW",
+    "campus": "Seattle Coordinator",
+    "dorm": "305D",
+    "table": "SAT T35 | SUN T25",
+    "discussion": "DE 3"
+  },
+  {
+    "name": "WUTSIFTE DERBAW",
+    "campus": "Seattle Campus Ministry",
+    "dorm": "305D",
+    "table": "SAT T8 | SUN T8",
+    "discussion": "DE 6"
+  },
+  {
+    "name": "YABSERA MOLLA",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T5 | SUN T23",
+    "discussion": "DE 19"
+  },
+  {
+    "name": "YAFET KEBEDE",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T22 | SUN T4",
+    "discussion": "DE 14"
+  },
+  {
+    "name": "YAFET TARIKU",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T9 | SUN T9",
+    "discussion": "DE 20"
+  },
+  {
+    "name": "YAKOB AKIEL",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T7 | SUN T31",
+    "discussion": "DE 1"
+  },
+  {
+    "name": "YALEMZEWED WODAJE",
+    "campus": "University of Maryland (UMD) Campus Ministry",
+    "dorm": "405B",
+    "table": "SAT T3 | SUN T19",
+    "discussion": "DE 2"
+  },
+  {
+    "name": "YALEMZEWED WODAJE",
+    "campus": "University of Maryland (UMD) Campus Ministry",
+    "dorm": "405B",
+    "table": "SAT T29 | SUN T25",
+    "discussion": "DA 2"
+  },
+  {
+    "name": "YANET KEBEDE",
+    "campus": "Virtual campus Ministry(VCM)",
+    "dorm": "306A",
+    "table": "SAT T22 | SUN T14",
+    "discussion": "DE 6"
+  },
+  {
+    "name": "YARED ALEM",
+    "campus": "New Participant",
+    "dorm": "510C",
+    "table": "SAT T35 | SUN T4",
+    "discussion": "DE 15"
+  },
+  {
+    "name": "YEABSERA DERESSA",
+    "campus": "Atlanta",
+    "dorm": "411A",
+    "table": "SAT T15 | SUN T26",
+    "discussion": "DE 17"
+  },
+  {
+    "name": "YEABSIRA BEREKET BELAYHUN",
+    "campus": "Los Angelos Campus Ministry",
+    "dorm": "N/A",
+    "table": "SAT T16 | SUN T18",
+    "discussion": "DA 4"
+  },
+  {
+    "name": "YEABSIRA FIKRE",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T20 | SUN T22",
+    "discussion": "DE 10"
+  },
+  {
+    "name": "YEABSIRA LEGESSE",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T29 | SUN T27",
+    "discussion": "DE 13"
+  },
+  {
+    "name": "YEABSIRA NIDA",
+    "campus": "VA Campus Ministry",
+    "dorm": "N/A",
+    "table": "SAT T32 | SUN T28",
+    "discussion": "DA 2"
+  },
+  {
+    "name": "YEDI GEBREHANA",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T21 | SUN T23",
+    "discussion": "DE 19"
+  },
+  {
+    "name": "YITBAREK MULUGETA",
+    "campus": "New Participant",
+    "dorm": "502C",
+    "table": "SAT T32 | SUN T28",
+    "discussion": "DE 19"
+  },
+  {
+    "name": "YOFTAHE KAHSAY",
+    "campus": "Atlanta",
+    "dorm": "505A",
+    "table": "SAT T4 | SUN T10",
+    "discussion": "DE 23"
+  },
+  {
+    "name": "YOHANES TEZERA",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T13 | SUN T20",
+    "discussion": "DE 22"
+  },
+  {
+    "name": "YOHANNES ASSEFA",
+    "campus": "New Participant",
+    "dorm": "508C",
+    "table": "SAT T17 | SUN T30",
+    "discussion": "DE 4"
+  },
+  {
+    "name": "YONATAN ACHAMYELEH",
+    "campus": "Los Angelos Campus Ministry",
+    "dorm": "512A",
+    "table": "SAT T14 | SUN T6",
+    "discussion": "DA 6"
+  },
+  {
+    "name": "YOSEF WORKU ALEMAYEHU",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T10 | SUN T20",
+    "discussion": "DA 8"
+  },
+  {
+    "name": "YOSEPH AKIEL",
+    "campus": "Atlanta",
+    "dorm": "N/A",
+    "table": "SAT T13 | SUN T11",
+    "discussion": "DE 18"
+  },
+  {
+    "name": "ZEBULUN HABTU",
+    "campus": "New Participant",
+    "dorm": "506B",
+    "table": "SAT T3 | SUN T3",
+    "discussion": "DE 21"
+  },
+  {
+    "name": "ZELALEM AYALEW",
+    "campus": "VA Campus Ministry",
+    "dorm": "502D",
+    "table": "SAT T12 | SUN T18",
+    "discussion": "DE 2"
+  },
+  {
+    "name": "ZELALEM KING",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T20 | SUN T22",
+    "discussion": "DE 13"
+  },
+  {
+    "name": "ZELALEM&A AYALEW",
+    "campus": "Virtual campus Ministry(VCM)",
+    "dorm": "502D",
+    "table": "SAT T33 | SUN T19",
+    "discussion": "DE 10"
+  },
+  {
+    "name": "ZEMARIAM EPHREM",
+    "campus": "New Participant",
+    "dorm": "507A",
+    "table": "SAT T25 | SUN T7",
+    "discussion": "DE 19"
+  },
+  {
+    "name": "ZERIHUN TEKA",
+    "campus": "New Participant",
+    "dorm": "N/A",
+    "table": "SAT T22 | SUN T10",
+    "discussion": "DA 6"
+  }
+];
+            updateStats();
+        }
+        
+        function updateStats() {
+            document.getElementById('totalCount').textContent = participants.length;
+            document.getElementById('checkedInCount').textContent = checkedInParticipants.size;
+        }
+        
+        function filterParticipants(searchText) {
+            if (!searchText || searchText.length < 2) {
+                return [];
+            }
+            
+            const text = searchText.toLowerCase();
+            return participants.filter(person => 
+                person.name.toLowerCase().includes(text)
+            ).slice(0, 10); // Limit to 10 suggestions
+        }
+        
+        function showSuggestions(matches) {
+            const suggestionsDiv = document.getElementById('suggestions');
+            
+            if (matches.length === 0) {
+                suggestionsDiv.style.display = 'none';
+                return;
+            }
+            
+            suggestionsDiv.innerHTML = matches.map(person => `
+                <div class="suggestion-item" onclick="selectPerson('${person.name}')">
+                    <strong>${person.name}</strong><br>
+                    <small>${person.campus} • ${person.dorm}</small>
+                </div>
+            `).join('');
+            
+            suggestionsDiv.style.display = 'block';
+        }
+        
+        function selectPerson(name) {
+            selectedPerson = participants.find(p => p.name === name);
+            document.getElementById('nameSearch').value = name;
+            document.getElementById('suggestions').style.display = 'none';
+            showPersonInfo(selectedPerson);
+        }
+        
+        function showPersonInfo(person) {
+            const personInfo = document.getElementById('personInfo');
+            const personDetails = document.getElementById('personDetails');
+            
+            const isCheckedIn = checkedInParticipants.has(person.name);
+            const statusBadge = isCheckedIn ? '<span class="icon-check">✓</span> Already Checked In' : '<span class="icon-pending">○</span> Not Checked In';
+            const statusColor = isCheckedIn ? '#28a745' : '#ffc107';
+            
+            personDetails.innerHTML = `
+                <p><strong>Name:</strong> ${person.name}</p>
+                <p><strong>Campus Ministry:</strong> ${person.campus}</p>
+                <p><strong>Dorm:</strong> ${person.dorm}</p>
+                <p><strong>Table Assignment:</strong> ${person.table}</p>
+                <p><strong>Discussion Group:</strong> ${person.discussion}</p>
+                <p style="color: ${statusColor}; font-weight: bold;"><strong>Status:</strong> ${statusBadge}</p>
+            `;
+            
+            personInfo.style.display = 'block';
+            
+            // Disable check-in button if already checked in
+            const checkInBtn = personInfo.querySelector('button');
+            checkInBtn.disabled = isCheckedIn;
+            checkInBtn.textContent = isCheckedIn ? '✓ Already Checked In' : '✓ Yes, Check Me In';
+        }
+        
+        function confirmCheckIn() {
+            if (!selectedPerson) return;
+            
+            // Add to checked-in set
+            checkedInParticipants.add(selectedPerson.name);
+            
+            // Save to localStorage for persistence
+            localStorage.setItem('checkedInParticipants', JSON.stringify([...checkedInParticipants]));
+            
+            // Show success message
+            document.getElementById('personInfo').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'block';
+            
+            // Update stats
+            updateStats();
+            
+            // Clear form after 3 seconds
+            setTimeout(() => {
+                clearForm();
+            }, 3000);
+        }
+        
+        function clearSelection() {
+            document.getElementById('personInfo').style.display = 'none';
+            selectedPerson = null;
+        }
+        
+        function clearForm() {
+            document.getElementById('nameSearch').value = '';
+            document.getElementById('suggestions').style.display = 'none';
+            document.getElementById('personInfo').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'none';
+            selectedPerson = null;
+        }
+        
+        // Event listeners
+        document.getElementById('nameSearch').addEventListener('input', function(e) {
+            const searchText = e.target.value;
+            const matches = filterParticipants(searchText);
+            showSuggestions(matches);
+            
+            // Hide person info if search is cleared
+            if (!searchText) {
+                clearSelection();
+            }
+        });
+        
+        // Hide suggestions when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.search-container')) {
+                document.getElementById('suggestions').style.display = 'none';
+            }
+        });
+        
+        // Load checked-in participants from localStorage
+        function loadCheckedInData() {
+            const saved = localStorage.getItem('checkedInParticipants');
+            if (saved) {
+                checkedInParticipants = new Set(JSON.parse(saved));
+            }
+        }
+        
+        // Initialize the app
+        function init() {
+            loadCheckedInData();
+            loadParticipants();
+        }
+        
+        // Start the app when page loads
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>

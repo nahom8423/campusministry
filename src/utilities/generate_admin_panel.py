@@ -5,7 +5,7 @@ def create_admin_panel_with_data():
     """Create the admin panel HTML file with embedded participant data"""
     
     # Read the badge assignments CSV (this should have the most current data)
-    df = pd.read_csv('/Users/nahomnigatu/Downloads/campusministrybadges/input_data/badge_assignments.csv')
+    df = pd.read_csv('/Users/nahomnigatu/Downloads/campusministrybadges/data/csv/badge_assignments.csv')
     
     participants = []
     
@@ -37,8 +37,8 @@ def create_admin_panel_with_data():
     # Sort participants by name for easier searching
     participants.sort(key=lambda x: x['name'])
     
-    # Read the enhanced HTML template
-    with open('/Users/nahomnigatu/Downloads/campusministrybadges/docs/admin_enhanced.html', 'r', encoding='utf-8') as f:
+    # Read the main admin template
+    with open('/Users/nahomnigatu/Downloads/campusministrybadges/web/admin.html', 'r', encoding='utf-8') as f:
         html_content = f.read()
     
     # Convert participants to JavaScript format
