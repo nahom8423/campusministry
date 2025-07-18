@@ -1,0 +1,8 @@
+{
+  "rules": {
+    "checkins": {
+      ".read": true,
+      ".write": true
+    }
+  }
+}

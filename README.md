@@ -103,6 +103,57 @@ cd src/badge_generation
 python generate_badges.py
 ```
 
+## 🚀 Deploy with Firebase
+
+This system now uses Firebase Realtime Database for real-time check-in sync across all devices.
+
+### 1. Create Firebase Project
+1. Go to [Firebase Console](https://console.firebase.google.com/)
+2. Create a new project or select existing one
+3. Enable **Realtime Database** (not Firestore)
+4. Set database rules to the provided `database.rules.json`:
+   ```json
+   {
+     "rules": {
+       "checkins": {
+         ".read": true,
+         ".write": true
+       }
+     }
+   }
+   ```
+
+### 2. Get Firebase Configuration
+1. Go to Project Settings > General tab
+2. Scroll down to "Your apps" section
+3. Click "Add app" and select Web (</>) if not already created
+4. Copy the Firebase config object
+
+### 3. Update Configuration
+Replace the placeholder values in both `index.html` and `admin.html`:
+
+```javascript
+const firebaseConfig = {
+  apiKey: "your-api-key-here",
+  authDomain: "your-project.firebaseapp.com", 
+  databaseURL: "https://your-project-default-rtdb.firebaseio.com",
+  projectId: "your-project-id",
+  storageBucket: "your-project.appspot.com",
+  messagingSenderId: "123456789",
+  appId: "your-app-id"
+};
+```
+
+### 4. Deploy
+1. Commit and push your changes to GitHub
+2. GitHub Pages will automatically serve the updated files
+3. Firebase handles the real-time data synchronization
+
+### 5. Test Real-time Sync
+- Open check-in page on one device
+- Open admin panel on another device  
+- Check in a participant - it should appear instantly on the admin panel!
+
 ## 📞 Support
 
 For technical issues or questions about the badge system, contact the development team.

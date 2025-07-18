@@ -7,6 +7,10 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title>Campus Ministry Admin Panel</title>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <style>
         * {
             margin: 0;
@@ -789,6 +793,35 @@
             </div>
         </div>
 
+        <!-- Real-time Check-ins Table -->
+        <div class="participants-table">
+            <div class="table-header">
+                <h3>
+                    <svg class="icon icon-lg" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    Recent Check-ins
+                    <span class="table-counts">
+                        Live updates
+                    </span>
+                </h3>
+            </div>
+            <div class="table-container">
+                <table id="checkinsTable">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Campus</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Real-time check-ins will appear here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
         <!-- Participants Table -->
         <div class="participants-table">
             <div class="table-header">
@@ -838,7 +871,29 @@
     <script>
         // Configuration
         const ADMIN_PASSWORD = "campus2024"; // Change this to your desired password
-        const API_BASE_URL = "http://localhost:5000/api";
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "API_KEY",
+            authDomain: "PROJECT_ID.firebaseapp.com",
+            databaseURL: "https://PROJECT_ID-default-rtdb.firebaseio.com",
+            projectId: "PROJECT_ID",
+            storageBucket: "PROJECT_ID.appspot.com",
+            messagingSenderId: "SENDER_ID",
+            appId: "APP_ID"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Get today's date in YYYY-MM-DD format
+        function getTodayPath() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
         
         // Global variables
         let participants = [];
@@ -923,22 +978,60 @@
         }
         
         function loadCheckedInData() {
-            const saved = localStorage.getItem('checkedInParticipants');
-            if (saved) {
-                const checkedInData = JSON.parse(saved);
-                checkedInParticipants = new Set(checkedInData);
-                
-                // Update participants with check-in times
-                const savedTimes = localStorage.getItem('checkinTimes');
-                if (savedTimes) {
-                    const times = JSON.parse(savedTimes);
-                    participants.forEach(p => {
-                        if (checkedInParticipants.has(p.name)) {
-                            p.checkinTime = times[p.name] || new Date().toISOString();
-                        }
-                    });
+            const todayPath = getTodayPath();
+            
+            // Listen for new check-ins
+            database.ref(`checkins/${todayPath}`).on('child_added', (snapshot) => {
+                const checkinData = snapshot.val();
+                if (checkinData && checkinData.name) {
+                    checkedInParticipants.add(checkinData.name);
+                    
+                    // Update participant check-in time
+                    const participant = participants.find(p => p.name === checkinData.name);
+                    if (participant) {
+                        participant.checkinTime = new Date(checkinData.timestamp).toISOString();
+                    }
+                    
+                    updateStats();
+                    updateTable();
+                    
+                    // Add row to check-ins table
+                    addCheckinToTable(checkinData);
+                    
+                    console.log(`New check-in: ${checkinData.name}`);
                 }
+            });
+            
+            console.log(`Listening for check-ins on ${todayPath}`);
+        }
+        
+        function addCheckinToTable(checkinData) {
+            const checkinsTable = document.getElementById('checkinsTable');
+            if (!checkinsTable) return;
+            
+            const tbody = checkinsTable.querySelector('tbody');
+            if (!tbody) {
+                // Create table body if it doesn't exist
+                checkinsTable.innerHTML = `
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Campus</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                `;
             }
+            
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${checkinData.name}</td>
+                <td>${checkinData.campus}</td>
+                <td>${new Date(checkinData.timestamp).toLocaleString()}</td>
+            `;
+            
+            checkinsTable.querySelector('tbody').appendChild(row);
         }
         
         function setupEventListeners() {
@@ -1097,38 +1190,61 @@
             document.getElementById('filteredCount').textContent = filteredParticipants.length;
         }
         
-        function checkIn(name) {
-            checkedInParticipants.add(name);
+        async function checkIn(name) {
             const participant = participants.find(p => p.name === name);
-            if (participant) {
-                participant.checkinTime = new Date().toISOString();
+            if (!participant) return;
+            
+            try {
+                const todayPath = getTodayPath();
+                const checkinData = {
+                    name: name,
+                    campus: participant.campus,
+                    timestamp: Date.now()
+                };
+                
+                await database.ref(`checkins/${todayPath}`).push(checkinData);
+                console.log(`Successfully checked in ${name} via admin panel`);
+            } catch (error) {
+                console.error('Error checking in participant:', error);
             }
-            saveCheckedInData();
-            updateStats();
-            updateTable();
         }
         
-        function checkOut(name) {
-            checkedInParticipants.delete(name);
-            const participant = participants.find(p => p.name === name);
-            if (participant) {
-                participant.checkinTime = null;
+        async function checkOut(name) {
+            try {
+                const todayPath = getTodayPath();
+                
+                // Find and remove the check-in record
+                const snapshot = await database.ref(`checkins/${todayPath}`).once('value');
+                const checkins = snapshot.val();
+                
+                if (checkins) {
+                    Object.keys(checkins).forEach(key => {
+                        if (checkins[key].name === name) {
+                            database.ref(`checkins/${todayPath}/${key}`).remove();
+                        }
+                    });
+                }
+                
+                // Update local state
+                checkedInParticipants.delete(name);
+                const participant = participants.find(p => p.name === name);
+                if (participant) {
+                    participant.checkinTime = null;
+                }
+                
+                updateStats();
+                updateTable();
+                
+                console.log(`Successfully checked out ${name}`);
+            } catch (error) {
+                console.error('Error checking out participant:', error);
             }
-            saveCheckedInData();
-            updateStats();
-            updateTable();
         }
         
         function saveCheckedInData() {
-            localStorage.setItem('checkedInParticipants', JSON.stringify([...checkedInParticipants]));
-            
-            const times = {};
-            participants.forEach(p => {
-                if (p.checkinTime) {
-                    times[p.name] = p.checkinTime;
-                }
-            });
-            localStorage.setItem('checkinTimes', JSON.stringify(times));
+            // Firebase handles saving automatically through the listener
+            // This function is kept for compatibility but does nothing
+            console.log('Check-in data managed by Firebase');
         }
         
         function showPersonDetails(name) {
@@ -1793,14 +1909,6 @@
     "campus": "New Participant",
     "dorm": "304B",
     "table": "SAT T20 | SUN T11",
-    "discussion": "DE 22",
-    "role": "PARTICIPANT"
-  },
-  {
-    "name": "BETHELEHEM WOLDEGABRIEL",
-    "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": "N/A",
-    "table": "SAT T5 | SUN T21",
     "discussion": "DE 22",
     "role": "PARTICIPANT"
   },

@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Campus Ministry Check-In</title>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <style>
         * {
             margin: 0;
@@ -256,6 +260,30 @@
     </div>
 
     <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "API_KEY",
+            authDomain: "PROJECT_ID.firebaseapp.com",
+            databaseURL: "https://PROJECT_ID-default-rtdb.firebaseio.com",
+            projectId: "PROJECT_ID",
+            storageBucket: "PROJECT_ID.appspot.com",
+            messagingSenderId: "SENDER_ID",
+            appId: "APP_ID"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Get today's date in YYYY-MM-DD format
+        function getTodayPath() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
         // This will be populated with actual participant data
         let participants = [
   {
@@ -2990,42 +3018,22 @@
             checkInBtn.textContent = isCheckedIn ? '✓ Already Checked In' : '✓ Yes, Check Me In';
         }
         
-        // Save check-in to API and localStorage
-        async function saveCheckinToAPI(participantName) {
-            // If no API available (GitHub Pages), just save to localStorage
-            if (!API_BASE_URL) {
-                console.log('Running on GitHub Pages - saving to localStorage only');
-                localStorage.setItem('checkedInParticipants', JSON.stringify([...checkedInParticipants]));
-                return true;
-            }
-            
+        // Save check-in to Firebase
+        async function saveCheckinToFirebase(participantName) {
             try {
-                const response = await fetch(`${API_BASE_URL}/checkin`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ name: participantName })
-                });
+                const todayPath = getTodayPath();
+                const participant = participants.find(p => p.name === participantName);
+                const checkinData = {
+                    name: participantName,
+                    campus: participant ? participant.campus : 'Unknown',
+                    timestamp: Date.now()
+                };
                 
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log(`Successfully checked in ${participantName} to server`);
-                    
-                    // Also save to localStorage as backup
-                    localStorage.setItem('checkedInParticipants', JSON.stringify([...checkedInParticipants]));
-                    
-                    return true;
-                } else {
-                    console.error('Failed to save check-in to server');
-                    // Still save to localStorage
-                    localStorage.setItem('checkedInParticipants', JSON.stringify([...checkedInParticipants]));
-                    return false;
-                }
+                await database.ref(`checkins/${todayPath}`).push(checkinData);
+                console.log(`Successfully checked in ${participantName} to Firebase`);
+                return true;
             } catch (error) {
-                console.error('Error connecting to server:', error);
-                // Still save to localStorage
-                localStorage.setItem('checkedInParticipants', JSON.stringify([...checkedInParticipants]));
+                console.error('Error saving to Firebase:', error);
                 return false;
             }
         }
@@ -3036,8 +3044,8 @@
             // Add to checked-in set
             checkedInParticipants.add(selectedPerson.name);
             
-            // Save to API and localStorage
-            await saveCheckinToAPI(selectedPerson.name);
+            // Save to Firebase
+            await saveCheckinToFirebase(selectedPerson.name);
             
             // Show success message
             document.getElementById('personInfo').style.display = 'none';
@@ -3085,81 +3093,26 @@
             }
         });
         
-        // API Configuration - detect if running locally or on GitHub Pages
-        function getAPIBaseURL() {
-            const hostname = window.location.hostname;
+        // Load checked-in participants from Firebase
+        function loadCheckedInData() {
+            const todayPath = getTodayPath();
             
-            // If localhost, use localhost API
-            if (hostname === 'localhost') {
-                return 'http://localhost:5001/api';
-            }
-            
-            // If local network IP (10.x.x.x, 192.168.x.x, 172.16-31.x.x), use network API
-            if (hostname.match(/^10\./) || 
-                hostname.match(/^192\.168\./) || 
-                hostname.match(/^172\.(1[6-9]|2[0-9]|3[0-1])\./)) {
-                return `http://${hostname}:5001/api`;
-            }
-            
-            // Otherwise (GitHub Pages), no API available
-            return null;
-        }
-        
-        const API_BASE_URL = getAPIBaseURL();
-        console.log(`API_BASE_URL detected: ${API_BASE_URL || 'null (GitHub Pages mode)'}`);
-        
-        // Load checked-in participants from API or localStorage
-        async function loadCheckedInData() {
-            // If no API available (GitHub Pages), just load from localStorage
-            if (!API_BASE_URL) {
-                console.log('Running on GitHub Pages - using localStorage only');
-                loadFromLocalStorage();
-                return;
-            }
-            
-            try {
-                const response = await fetch(`${API_BASE_URL}/checkin/all`);
-                if (response.ok) {
-                    const data = await response.json();
-                    checkedInParticipants = new Set(data.checked_in_participants.map(p => p.name));
-                    console.log(`Loaded ${checkedInParticipants.size} checked-in participants from server`);
+            database.ref(`checkins/${todayPath}`).on('child_added', (snapshot) => {
+                const checkinData = snapshot.val();
+                if (checkinData && checkinData.name) {
+                    checkedInParticipants.add(checkinData.name);
                     updateStats();
-                } else {
-                    console.error('Failed to load check-in data from server');
-                    // Fallback to localStorage
-                    loadFromLocalStorage();
+                    console.log(`Loaded check-in for ${checkinData.name}`);
                 }
-            } catch (error) {
-                console.error('Error connecting to server:', error);
-                // Fallback to localStorage
-                loadFromLocalStorage();
-            }
-        }
-        
-        // Fallback to localStorage if server is unavailable
-        function loadFromLocalStorage() {
-            const saved = localStorage.getItem('checkedInParticipants');
-            if (saved) {
-                checkedInParticipants = new Set(JSON.parse(saved));
-                console.log(`Loaded ${checkedInParticipants.size} checked-in participants from localStorage`);
-                updateStats();
-            }
-        }
-        
-        // Periodic sync with server (every 10 seconds) - only if API available
-        function startPeriodicSync() {
-            if (API_BASE_URL) {
-                setInterval(async () => {
-                    await loadCheckedInData();
-                }, 10000); // Sync every 10 seconds
-            }
+            });
+            
+            console.log(`Listening for check-ins on ${todayPath}`);
         }
         
         // Initialize the app
-        async function init() {
-            await loadCheckedInData();
+        function init() {
+            loadCheckedInData();
             loadParticipants();
-            startPeriodicSync(); // Start periodic sync
         }
         
         // Start the app when page loads
