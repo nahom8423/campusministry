@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Login Test</title>
+</head>
+<body>
+    <h1>Admin Login Test</h1>
+    <p>Current admin password: <span id="password"></span></p>
+    <input type="password" id="testInput" placeholder="Test password">
+    <button onclick="testLogin()">Test Login</button>
+    <div id="result"></div>
+
+    <script>
+        const ADMIN_PASSWORD = "campus2024";
+        document.getElementById('password').textContent = ADMIN_PASSWORD;
+        
+        function testLogin() {
+            const inputPassword = document.getElementById('testInput').value;
+            const result = document.getElementById('result');
+            
+            console.log('Input password:', inputPassword);
+            console.log('Admin password:', ADMIN_PASSWORD);
+            console.log('Are they equal?', inputPassword === ADMIN_PASSWORD);
+            
+            if (inputPassword === ADMIN_PASSWORD) {
+                result.innerHTML = '<span style="color: green;">✅ Login successful!</span>';
+            } else {
+                result.innerHTML = '<span style="color: red;">❌ Login failed!</span>';
+            }
+        }
+    </script>
+</body>
+</html>

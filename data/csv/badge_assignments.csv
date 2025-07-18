@@ -328,6 +328,6 @@ slide,slot,full_name,role,campus,dorm,table_assignment,discussion_assignment
 0,0,Mike - Yimer,PARTICIPANT,"Atlanta, Georgia Campus Ministry",,SAT T15 | SUN T2,DE 35
 0,0,Mikyas - Beshah,PARTICIPANT,I don't have Campus Ministry,,SAT T23 | SUN T11,DE 35
 0,0,Aaron - Abebe,PARTICIPANT,I don't have Campus Ministry,,SAT T12 | SUN T18,DE 35
-83,0,Rakeb Bonger,COORDINATOR,NEW,N/A,,
-83,1,Ananya Fikru Debebe,COORDINATOR,NEW,N/A,,
-83,2,Tsega Tizazu,COORDINATOR,NEW,N/A,,
+83,0,Rakeb Bonger,COORDINATOR,NEW,,,
+83,1,Ananya Fikru Debebe,COORDINATOR,NEW,,,
+83,2,Tsega Tizazu,COORDINATOR,NEW,,,

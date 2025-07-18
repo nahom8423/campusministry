@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Campus Ministry Check-In</title>
+    <title>Campus Ministry Admin Panel</title>
     <style>
         * {
             margin: 0;
@@ -13,221 +13,1324 @@
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            background: #f5f7fa;
+            color: #333;
+        }
+        
+        .login-container {
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
         
-        .container {
+        .login-box {
             background: white;
+            padding: 40px;
             border-radius: 20px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            padding: 40px;
-            max-width: 500px;
+            max-width: 400px;
             width: 100%;
+        }
+        
+        .login-box h2 {
             text-align: center;
-        }
-        
-        .logo {
-            font-size: 2.5em;
-            color: #667eea;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-        
-        h1 {
+            margin-bottom: 30px;
             color: #333;
-            margin-bottom: 30px;
-            font-size: 1.8em;
         }
         
-        .search-container {
-            position: relative;
-            margin-bottom: 30px;
+        .icon {
+            width: 16px;
+            height: 16px;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 8px;
         }
         
-        input[type="text"] {
+        .icon-lg {
+            width: 20px;
+            height: 20px;
+        }
+        
+        .icon-xl {
+            width: 40px;
+            height: 40px;
+        }
+        
+        .login-box input {
             width: 100%;
-            padding: 15px 20px;
-            font-size: 1.1em;
-            border: 2px solid #e1e1e1;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 2px solid #e1e5e9;
             border-radius: 10px;
-            outline: none;
+            font-size: 16px;
             transition: border-color 0.3s;
         }
         
-        input[type="text"]:focus {
+        .login-box input:focus {
+            outline: none;
             border-color: #667eea;
         }
         
-        .suggestions {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: white;
-            border: 1px solid #e1e1e1;
-            border-top: none;
-            border-radius: 0 0 10px 10px;
-            max-height: 200px;
-            overflow-y: auto;
-            z-index: 1000;
-            display: none;
-        }
-        
-        .suggestion-item {
-            padding: 12px 20px;
-            cursor: pointer;
-            border-bottom: 1px solid #f0f0f0;
-            text-align: left;
-            transition: background-color 0.2s;
-        }
-        
-        .suggestion-item:hover {
-            background-color: #f8f9ff;
-        }
-        
-        .suggestion-item:last-child {
-            border-bottom: none;
-        }
-        
-        .person-info {
-            background: #f8f9ff;
-            border: 1px solid #e1e1e1;
+        .login-box button {
+            width: 100%;
+            padding: 15px;
+            background: #667eea;
+            color: white;
+            border: none;
             border-radius: 10px;
-            padding: 20px;
-            margin: 20px 0;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .login-box button:hover {
+            background: #5a6fd8;
+        }
+        
+        .login-error {
+            color: #dc3545;
+            text-align: center;
+            margin-top: 15px;
             display: none;
         }
         
-        .person-info h3 {
-            color: #667eea;
+        .admin-container {
+            display: none;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logout-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+        
+        .logout-btn:hover {
+            background: #c82333;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 32px;
+            font-weight: 700;
             margin-bottom: 10px;
-            font-size: 1.3em;
         }
         
-        .person-details {
-            text-align: left;
-            margin: 15px 0;
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 1px;
         }
         
-        .person-details p {
-            margin: 8px 0;
+        .stat-number.total {
+            color: #6c757d;
+        }
+        
+        .stat-number.checked-in {
+            color: #28a745;
+        }
+        
+        .stat-number.pending {
+            color: #ffc107;
+        }
+        
+        .stat-number.percentage {
+            color: #17a2b8;
+        }
+        
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .controls-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .controls-row:last-child {
+            margin-bottom: 0;
+        }
+        
+        .search-box {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 14px;
+            min-width: 200px;
+        }
+        
+        .search-box:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .filter-select {
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            min-width: 150px;
+        }
+        
+        .filter-select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5a6fd8;
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #218838;
+        }
+        
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+        
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .status-checked-in {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .role-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .coordinator-badge {
+            background: #e1f5fe;
+            color: #0277bd;
+            border: 1px solid #0277bd;
+        }
+        
+        .participant-badge {
+            background: #f3e5f5;
+            color: #7b1fa2;
+            border: 1px solid #7b1fa2;
+        }
+        
+        .action-btn {
+            padding: 8px 16px;
+            font-size: 13px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 0 4px;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            min-width: 80px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .check-in-btn {
+            background: #28a745;
+            color: white;
+        }
+        
+        .check-in-btn:hover {
+            background: #218838;
+        }
+        
+        .check-out-btn {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .check-out-btn:hover {
+            background: #c82333;
+        }
+        
+        .action-btn.btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .action-btn.btn-primary:hover {
+            background: #5a6fd8;
+        }
+        
+        .actions-cell {
+            text-align: center;
+            white-space: nowrap;
+            padding: 10px;
+        }
+        
+        /* Add New Participant Section */
+        .add-participant {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            border-left: 4px solid #28a745;
+        }
+        
+        .add-participant h3 {
+            color: #28a745;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group label {
+            margin-bottom: 5px;
+            font-weight: 600;
             color: #555;
         }
         
-        .person-details strong {
-            color: #333;
+        .form-group input,
+        .form-group select {
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
         }
         
-        button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            font-size: 1.1em;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            margin: 10px;
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #28a745;
         }
         
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
-        
-        button:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
         }
         
         .success-message {
             background: #d4edda;
             color: #155724;
-            border: 1px solid #c3e6cb;
-            border-radius: 10px;
-            padding: 20px;
-            margin: 20px 0;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
             display: none;
         }
         
         .error-message {
             background: #f8d7da;
             color: #721c24;
-            border: 1px solid #f5c6cb;
-            border-radius: 10px;
-            padding: 20px;
-            margin: 20px 0;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
             display: none;
         }
         
-        .stats {
-            background: #e3f2fd;
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 20px;
-            font-size: 0.9em;
-            color: #1565c0;
+        /* Mobile responsiveness for action buttons */
+        @media (max-width: 768px) {
+            .action-btn {
+                padding: 6px 12px;
+                font-size: 12px;
+                margin: 2px;
+                min-width: 70px;
+            }
+            
+            .actions-cell {
+                padding: 8px 4px;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
         }
         
-        @media (max-width: 600px) {
-            .container {
-                padding: 20px;
-                margin: 10px;
+        /* Improved table styling */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+        
+        th, td {
+            border: 1px solid #e1e5e9;
+            padding: 12px 8px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        th:hover {
+            background-color: #e9ecef;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        tr:hover {
+            background-color: #e3f2fd;
+        }
+        
+        .participants-table {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .table-header {
+            background: #f8f9fa;
+            padding: 20px;
+            border-bottom: 2px solid #e1e5e9;
+        }
+        
+        .table-header h3 {
+            color: #495057;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .table-counts {
+            font-size: 14px;
+            color: #6c757d;
+            font-weight: normal;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+        
+        .close:hover {
+            color: #000;
+        }
+        
+        .person-details {
+            margin-top: 20px;
+        }
+        
+        .person-details h3 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .detail-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 5px;
+        }
+        
+        .detail-value {
+            color: #333;
+            font-size: 16px;
+        }
+        
+        @media (max-width: 768px) {
+            .admin-container {
+                padding: 15px;
             }
             
-            .logo {
-                font-size: 2em;
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
             }
             
-            h1 {
-                font-size: 1.5em;
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+            
+            .controls-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-box,
+            .filter-select {
+                min-width: auto;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="logo">✝️</div>
-        <h1>Campus Ministry Check-In</h1>
-        
-        <div class="search-container">
-            <input type="text" id="nameSearch" placeholder="Start typing your name..." autocomplete="off">
-            <div class="suggestions" id="suggestions"></div>
+    <!-- Login Container -->
+    <div class="login-container" id="loginContainer">
+        <div class="login-box">
+            <h2>
+                <img src="assets/mk-logo-300.png" alt="MK Logo" class="icon icon-xl" style="border-radius: 50%; object-fit: cover;">
+                Campus Ministry Admin
+            </h2>
+            <input type="password" id="passwordInput" placeholder="Enter admin password" autocomplete="current-password">
+            <button onclick="login()">Login</button>
+            <div id="loginError" class="login-error">Incorrect password. Please try again.</div>
         </div>
-        
-        <div class="person-info" id="personInfo">
-            <h3>Please confirm this is you:</h3>
-            <div class="person-details" id="personDetails"></div>
-            <button onclick="confirmCheckIn()">✅ Yes, Check Me In</button>
-            <button onclick="clearSelection()">❌ This is not me</button>
+    </div>
+
+    <!-- Admin Container -->
+    <div class="admin-container" id="adminContainer">
+        <!-- Header -->
+        <div class="header">
+            <h1>
+                <img src="assets/mk-logo-300.png" alt="MK Logo" class="icon icon-xl" style="border-radius: 50%; object-fit: cover;">
+                Campus Ministry Admin Panel
+            </h1>
+            <button class="logout-btn" onclick="logout()">Logout</button>
         </div>
-        
-        <div class="success-message" id="successMessage">
-            <h3>✅ Check-in Successful!</h3>
-            <p>Welcome to Campus Ministry! Your table assignment is shown above.</p>
+
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number total" id="totalParticipants">-</div>
+                <div class="stat-label">Total Participants</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number checked-in" id="checkedInCount">-</div>
+                <div class="stat-label">Checked In</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number pending" id="pendingCount">-</div>
+                <div class="stat-label">Not Checked In</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number percentage" id="checkedInPercentage">-</div>
+                <div class="stat-label">Check-in Rate</div>
+            </div>
         </div>
-        
-        <div class="error-message" id="errorMessage">
-            <p>There was an error checking you in. Please try again or ask for assistance.</p>
+
+        <!-- Add New Participant Section -->
+        <div class="add-participant">
+            <h3>
+                <svg class="icon icon-lg" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"/>
+                </svg>
+                Add New Participant
+            </h3>
+            
+            <div class="success-message" id="successMessage"></div>
+            <div class="error-message" id="errorMessage"></div>
+            
+            <form id="addParticipantForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="fullName">Full Name *</label>
+                        <input type="text" id="fullName" name="fullName" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="campus">Campus Ministry *</label>
+                        <select id="campus" name="campus" required>
+                            <option value="">Select Campus Ministry</option>
+                            <option value="ATLANTA CAMPUS MINISTRY">Atlanta Campus Ministry</option>
+                            <option value="LOS ANGELES CAMPUS MINISTRY">Los Angeles Campus Ministry</option>
+                            <option value="SEATTLE CAMPUS MINISTRY">Seattle Campus Ministry</option>
+                            <option value="BOSTON CAMPUS MINISTRY">Boston Campus Ministry</option>
+                            <option value="DENVER CAMPUS MINISTRY">Denver Campus Ministry</option>
+                            <option value="MINNESOTA CAMPUS MINISTRY">Minnesota Campus Ministry</option>
+                            <option value="NASHVILLE CAMPUS MINISTRY">Nashville Campus Ministry</option>
+                            <option value="UNIVERSITY OF MARYLAND (UMD) CAMPUS MINISTRY">University of Maryland (UMD) Campus Ministry</option>
+                            <option value="GEORGE MASON UNIVERSITY CAMPUS MINISTRY">George Mason University Campus Ministry</option>
+                            <option value="GEORGE WASHINGTON UNIVERSITY CAMPUS MINISTRY">George Washington University Campus Ministry</option>
+                            <option value="VIRGINIA TECH CAMPUS MINISTRY">Virginia Tech Campus Ministry</option>
+                            <option value="NOVA CAMPUS MINISTRY">Nova Campus Ministry</option>
+                            <option value="VIRTUAL CAMPUS MINISTRY (VCM)">Virtual Campus Ministry (VCM)</option>
+                            <option value="NEW">New Participant</option>
+                            <option value="GRADUATED FROM CAMPUS MINISTRY">Graduated from Campus Ministry</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="dorm">Dorm/Room *</label>
+                        <input type="text" id="dorm" name="dorm" placeholder="e.g., 301A" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="role">Role *</label>
+                        <select id="role" name="role" required>
+                            <option value="">Select Role</option>
+                            <option value="PARTICIPANT">Participant</option>
+                            <option value="COORDINATOR">Coordinator</option>
+                            <option value="STAFF">Staff</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-primary" onclick="resetForm()">Clear Form</button>
+                    <button type="submit" class="btn btn-success">Add Participant</button>
+                </div>
+            </form>
         </div>
-        
-        <div class="stats" id="stats">
-            <p><strong>Total Registered:</strong> <span id="totalCount">-</span></p>
-            <p><strong>Checked In:</strong> <span id="checkedInCount">-</span></p>
+
+        <!-- Controls -->
+        <div class="controls">
+            <div class="controls-row">
+                <input type="text" class="search-box" id="searchInput" placeholder="Search by name, campus, dorm, or table...">
+                <select class="filter-select" id="statusFilter">
+                    <option value="all">All Participants</option>
+                    <option value="checked-in">Checked In</option>
+                    <option value="pending">Not Checked In</option>
+                </select>
+                <select class="filter-select" id="campusFilter">
+                    <option value="all">All Campuses</option>
+                </select>
+            </div>
+            <div class="controls-row">
+                <button class="btn btn-primary" onclick="refreshData()">
+                    <svg class="icon" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/>
+                    </svg>
+                    Refresh
+                </button>
+                <button class="btn btn-success" onclick="exportCheckedIn()">
+                    <svg class="icon" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                    </svg>
+                    Export Checked In
+                </button>
+                <button class="btn btn-warning" onclick="exportAll()">
+                    <svg class="icon" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 11-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                    </svg>
+                    Export All Data
+                </button>
+                <button class="btn btn-success" onclick="exportExcel()">
+                    <svg class="icon" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V8z" clip-rule="evenodd"/>
+                    </svg>
+                    Export Excel
+                </button>
+                <button class="btn btn-danger" onclick="clearAllCheckIns()">
+                    <svg class="icon" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" clip-rule="evenodd"/>
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                    </svg>
+                    Clear All Check-ins
+                </button>
+            </div>
+        </div>
+
+        <!-- Participants Table -->
+        <div class="participants-table">
+            <div class="table-header">
+                <h3>
+                    <svg class="icon icon-lg" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"/>
+                    </svg>
+                    Participants
+                    <span class="table-counts">
+                        Showing <span id="filteredCount">0</span> of <span id="totalCount">0</span>
+                    </span>
+                </h3>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th onclick="sortTable('name')">Name</th>
+                            <th onclick="sortTable('role')">Role</th>
+                            <th onclick="sortTable('campus')">Campus</th>
+                            <th onclick="sortTable('dorm')">Dorm</th>
+                            <th onclick="sortTable('table')">Table Assignment</th>
+                            <th onclick="sortTable('discussion')">Discussion</th>
+                            <th onclick="sortTable('status')">Status</th>
+                            <th onclick="sortTable('checkinTime')">Check-in Time</th>
+                            <th style="text-align: center;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="participantsTableBody">
+                        <!-- Participant rows will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Person Details Modal -->
+    <div id="personModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div id="personModalContent">
+                <!-- Person details will be populated here -->
+            </div>
         </div>
     </div>
 
     <script>
-        // This will be populated with actual participant data
-        let participants = [
-[
+        // Configuration
+        const ADMIN_PASSWORD = "campus2024"; // Change this to your desired password
+        const API_BASE_URL = "http://localhost:5000/api";
+        
+        // Global variables
+        let participants = [];
+        let checkedInParticipants = new Set();
+        let currentSort = { field: 'name', direction: 'asc' };
+        let initialSort = true;
+        let filteredParticipants = [];
+        
+        // Authentication
+        async function login() {
+            const password = document.getElementById('passwordInput').value;
+            console.log('Login attempt with password:', password);
+            console.log('Expected password:', ADMIN_PASSWORD);
+            console.log('Password match:', password === ADMIN_PASSWORD);
+            
+            if (password === ADMIN_PASSWORD) {
+                console.log('Login successful!');
+                document.getElementById('loginContainer').style.display = 'none';
+                document.getElementById('adminContainer').style.display = 'block';
+                document.getElementById('loginError').style.display = 'none';
+                try {
+                    await initializeAdmin();
+                } catch (error) {
+                    console.error('Error initializing admin:', error);
+                }
+            } else {
+                console.log('Login failed!');
+                document.getElementById('loginError').style.display = 'block';
+            }
+        }
+        
+        function logout() {
+            document.getElementById('loginContainer').style.display = 'flex';
+            document.getElementById('adminContainer').style.display = 'none';
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('loginError').style.display = 'none';
+        }
+        
+        document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                login();
+            }
+        });
+        
+        // Initialize admin panel
+        async function initializeAdmin() {
+            await loadParticipants();
+            loadCheckedInData();
+            setupEventListeners();
+            updateStats();
+            updateTable();
+            
+            // Auto-refresh every 30 seconds
+            setInterval(refreshData, 30000);
+        }
+        
+        // Load participants from API
+        async function loadParticipants() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/participants`);
+                if (response.ok) {
+                    participants = await response.json();
+                    participants.forEach((participant, index) => {
+                        participant.id = index;
+                    });
+                    populateCampusFilter();
+                } else {
+                    // Fallback to static data if API is not available
+                    participants = PARTICIPANT_DATA;
+                    participants.forEach((participant, index) => {
+                        participant.id = index;
+                    });
+                    populateCampusFilter();
+                }
+            } catch (error) {
+                console.log('API not available, using static data');
+                participants = PARTICIPANT_DATA;
+                participants.forEach((participant, index) => {
+                    participant.id = index;
+                });
+                populateCampusFilter();
+            }
+            
+            // Ensure participants array is populated
+            if (!participants || participants.length === 0) {
+                participants = PARTICIPANT_DATA;
+                participants.forEach((participant, index) => {
+                    participant.id = index;
+                });
+                populateCampusFilter();
+            }
+        }
+        
+        function loadCheckedInData() {
+            const saved = localStorage.getItem('checkedInParticipants');
+            if (saved) {
+                const checkedInData = JSON.parse(saved);
+                checkedInParticipants = new Set(checkedInData);
+                
+                // Update participants with check-in times
+                const savedTimes = localStorage.getItem('checkinTimes');
+                if (savedTimes) {
+                    const times = JSON.parse(savedTimes);
+                    participants.forEach(p => {
+                        if (checkedInParticipants.has(p.name)) {
+                            p.checkinTime = times[p.name] || new Date().toISOString();
+                        }
+                    });
+                }
+            }
+        }
+        
+        function setupEventListeners() {
+            document.getElementById('searchInput').addEventListener('input', updateTable);
+            document.getElementById('statusFilter').addEventListener('change', updateTable);
+            document.getElementById('campusFilter').addEventListener('change', updateTable);
+            
+            // Add participant form
+            document.getElementById('addParticipantForm').addEventListener('submit', addParticipant);
+        }
+        
+        function updateStats() {
+            const total = participants.length;
+            const checkedIn = checkedInParticipants.size;
+            const pending = total - checkedIn;
+            const percentage = total > 0 ? Math.round((checkedIn / total) * 100) : 0;
+            
+            document.getElementById('totalParticipants').textContent = total;
+            document.getElementById('checkedInCount').textContent = checkedIn;
+            document.getElementById('pendingCount').textContent = pending;
+            document.getElementById('checkedInPercentage').textContent = percentage + '%';
+        }
+        
+        function populateCampusFilter() {
+            const campuses = [...new Set(participants.map(p => p.campus))].sort();
+            const select = document.getElementById('campusFilter');
+            
+            // Clear existing options except "All Campuses"
+            select.innerHTML = '<option value="all">All Campuses</option>';
+            
+            campuses.forEach(campus => {
+                const option = document.createElement('option');
+                option.value = campus;
+                option.textContent = campus;
+                select.appendChild(option);
+            });
+        }
+        
+        function filterParticipants() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+            const campusFilter = document.getElementById('campusFilter').value;
+            
+            filteredParticipants = participants.filter(participant => {
+                // Text search - handle null/undefined values
+                const searchMatch = !searchTerm || 
+                    (participant.name && participant.name.toLowerCase().includes(searchTerm)) ||
+                    (participant.campus && participant.campus.toLowerCase().includes(searchTerm)) ||
+                    (participant.dorm && participant.dorm.toString().toLowerCase().includes(searchTerm)) ||
+                    (participant.table && participant.table.toLowerCase().includes(searchTerm)) ||
+                    (participant.discussion && participant.discussion.toLowerCase().includes(searchTerm));
+                
+                // Status filter
+                const isCheckedIn = checkedInParticipants.has(participant.name);
+                const statusMatch = statusFilter === 'all' ||
+                    (statusFilter === 'checked-in' && isCheckedIn) ||
+                    (statusFilter === 'pending' && !isCheckedIn);
+                
+                // Campus filter
+                const campusMatch = campusFilter === 'all' || participant.campus === campusFilter;
+                
+                return searchMatch && statusMatch && campusMatch;
+            });
+        }
+        
+        function sortTable(field, preventToggle = false) {
+            if (!preventToggle && currentSort.field === field && !initialSort) {
+                currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSort.field = field;
+                currentSort.direction = 'asc';
+                initialSort = false;
+            }
+            
+            filteredParticipants.sort((a, b) => {
+                let aValue, bValue;
+                
+                if (field === 'status') {
+                    aValue = checkedInParticipants.has(a.name) ? 'checked-in' : 'pending';
+                    bValue = checkedInParticipants.has(b.name) ? 'checked-in' : 'pending';
+                } else if (field === 'checkinTime') {
+                    aValue = a.checkinTime || '';
+                    bValue = b.checkinTime || '';
+                } else {
+                    aValue = a[field] || '';
+                    bValue = b[field] || '';
+                }
+                
+                if (typeof aValue === 'string' && typeof bValue === 'string') {
+                    aValue = aValue.toLowerCase();
+                    bValue = bValue.toLowerCase();
+                }
+                
+                if (aValue < bValue) return currentSort.direction === 'asc' ? -1 : 1;
+                if (aValue > bValue) return currentSort.direction === 'asc' ? 1 : -1;
+                return 0;
+            });
+            
+            renderTable();
+        }
+        
+        function updateTable() {
+            filterParticipants();
+            sortTable(currentSort.field, true); // Prevent toggle when refreshing
+            updateCounts();
+        }
+        
+        function renderTable() {
+            const tbody = document.getElementById('participantsTableBody');
+            tbody.innerHTML = '';
+            
+            filteredParticipants.forEach(participant => {
+                const isCheckedIn = checkedInParticipants.has(participant.name);
+                const row = document.createElement('tr');
+                
+                const checkinTimeStr = participant.checkinTime ? 
+                    new Date(participant.checkinTime).toLocaleString() : '-';
+                
+                const roleClass = participant.role === 'COORDINATOR' ? 'coordinator-badge' : 'participant-badge';
+                const roleDisplay = participant.role === 'COORDINATOR' ? 'Coordinator' : 'Participant';
+                
+                row.innerHTML = `
+                    <td>${participant.name}</td>
+                    <td>
+                        <span class="role-badge ${roleClass}">
+                            ${roleDisplay}
+                        </span>
+                    </td>
+                    <td>${participant.campus}</td>
+                    <td>${participant.dorm}</td>
+                    <td>${participant.table}</td>
+                    <td>${participant.discussion}</td>
+                    <td>
+                        <span class="status-badge ${isCheckedIn ? 'status-checked-in' : 'status-pending'}">
+                            ${isCheckedIn ? 'Checked In' : 'Pending'}
+                        </span>
+                    </td>
+                    <td>${checkinTimeStr}</td>
+                    <td class="actions-cell">
+                        <button class="action-btn ${isCheckedIn ? 'check-out-btn' : 'check-in-btn'}" 
+                                onclick="${isCheckedIn ? 'checkOut' : 'checkIn'}('${participant.name}')">
+                            ${isCheckedIn ? 'Check Out' : 'Check In'}
+                        </button>
+                        <button class="action-btn btn-primary" onclick="showPersonDetails('${participant.name}')">
+                            Details
+                        </button>
+                    </td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+        }
+        
+        function updateCounts() {
+            document.getElementById('totalCount').textContent = participants.length;
+            document.getElementById('filteredCount').textContent = filteredParticipants.length;
+        }
+        
+        function checkIn(name) {
+            checkedInParticipants.add(name);
+            const participant = participants.find(p => p.name === name);
+            if (participant) {
+                participant.checkinTime = new Date().toISOString();
+            }
+            saveCheckedInData();
+            updateStats();
+            updateTable();
+        }
+        
+        function checkOut(name) {
+            checkedInParticipants.delete(name);
+            const participant = participants.find(p => p.name === name);
+            if (participant) {
+                participant.checkinTime = null;
+            }
+            saveCheckedInData();
+            updateStats();
+            updateTable();
+        }
+        
+        function saveCheckedInData() {
+            localStorage.setItem('checkedInParticipants', JSON.stringify([...checkedInParticipants]));
+            
+            const times = {};
+            participants.forEach(p => {
+                if (p.checkinTime) {
+                    times[p.name] = p.checkinTime;
+                }
+            });
+            localStorage.setItem('checkinTimes', JSON.stringify(times));
+        }
+        
+        function showPersonDetails(name) {
+            const participant = participants.find(p => p.name === name);
+            if (!participant) return;
+            
+            const isCheckedIn = checkedInParticipants.has(name);
+            const checkinTimeStr = participant.checkinTime ? 
+                new Date(participant.checkinTime).toLocaleString() : 'Not checked in';
+            
+            const modalContent = document.getElementById('personModalContent');
+            modalContent.innerHTML = `
+                <div class="person-details">
+                    <h3>${participant.name}</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Campus Ministry</div>
+                            <div class="detail-value">${participant.campus}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Dorm/Room</div>
+                            <div class="detail-value">${participant.dorm}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Table Assignment</div>
+                            <div class="detail-value">${participant.table}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Discussion Group</div>
+                            <div class="detail-value">${participant.discussion}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Status</div>
+                            <div class="detail-value">
+                                <span class="status-badge ${isCheckedIn ? 'status-checked-in' : 'status-pending'}">
+                                    ${isCheckedIn ? 'Checked In' : 'Not Checked In'}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Check-in Time</div>
+                            <div class="detail-value">${checkinTimeStr}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('personModal').style.display = 'block';
+        }
+        
+        function closeModal() {
+            document.getElementById('personModal').style.display = 'none';
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('personModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+        
+        // Add new participant
+        async function addParticipant(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const participantData = {
+                full_name: formData.get('fullName'),
+                campus: formData.get('campus'),
+                dorm: formData.get('dorm'),
+                role: formData.get('role')
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/participants`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(participantData)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showMessage('success', `Successfully added ${result.participant.name}! Table: ${result.participant.table}, Discussion: ${result.participant.discussion}`);
+                    resetForm();
+                    await loadParticipants(); // Reload participants
+                    updateStats();
+                    updateTable();
+                } else {
+                    showMessage('error', result.error || 'Failed to add participant');
+                }
+            } catch (error) {
+                showMessage('error', 'Error connecting to server. Please ensure the admin server is running.');
+            }
+        }
+        
+        function resetForm() {
+            document.getElementById('addParticipantForm').reset();
+            hideMessages();
+        }
+        
+        function showMessage(type, message) {
+            hideMessages();
+            const messageDiv = document.getElementById(type === 'success' ? 'successMessage' : 'errorMessage');
+            messageDiv.textContent = message;
+            messageDiv.style.display = 'block';
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 5000);
+        }
+        
+        function hideMessages() {
+            document.getElementById('successMessage').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+        
+        async function refreshData() {
+            await loadParticipants();
+            loadCheckedInData();
+            updateStats();
+            updateTable();
+        }
+        
+        // Export functions
+        function exportCheckedIn() {
+            const checkedInData = participants.filter(p => checkedInParticipants.has(p.name));
+            exportToCSV(checkedInData, 'checked_in_participants.csv');
+        }
+        
+        function exportAll() {
+            const allData = participants.map(p => ({
+                ...p,
+                status: checkedInParticipants.has(p.name) ? 'Checked In' : 'Not Checked In',
+                checkin_time: p.checkinTime ? new Date(p.checkinTime).toLocaleString() : ''
+            }));
+            exportToCSV(allData, 'all_participants.csv');
+        }
+        
+        async function exportExcel() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/export/excel`);
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `participants_export_${new Date().toISOString().split('T')[0]}.xlsx`;
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                } else {
+                    alert('Failed to export Excel file');
+                }
+            } catch (error) {
+                alert('Error connecting to server for Excel export');
+            }
+        }
+        
+        function exportToCSV(data, filename) {
+            if (data.length === 0) {
+                alert('No data to export');
+                return;
+            }
+            
+            const headers = Object.keys(data[0]);
+            const csvContent = [
+                headers.join(','),
+                ...data.map(row => headers.map(header => `"${row[header] || ''}"`).join(','))
+            ].join('\n');
+            
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+        
+        function clearAllCheckIns() {
+            if (confirm('Are you sure you want to clear all check-ins? This cannot be undone.')) {
+                checkedInParticipants.clear();
+                participants.forEach(p => p.checkinTime = null);
+                saveCheckedInData();
+                updateStats();
+                updateTable();
+            }
+        }
+        
+        // Fallback data if API is not available
+        const PARTICIPANT_DATA = [
   {
     "name": "BETHLEHEM ADUGNA",
     "campus": "LOS ANGELES CAMPUS MINISTRY",
@@ -2879,160 +3982,12 @@
   {
     "name": "Tsega Tizazu",
     "campus": "NEW",
-    "dorm": NaN,
-    "table": NaN,
-    "discussion": NaN,
+    "dorm": "",
+    "table": "",
+    "discussion": "",
     "role": "COORDINATOR"
   }
-]
 ];
-        let checkedInParticipants = new Set();
-        let selectedPerson = null;
-        
-        // Load participant data (this would come from your CSV)
-        function loadParticipants() {
-            // This will be replaced with actual data from your CSV file
-            participants = PARTICIPANT_DATA; // Will be injected
-            updateStats();
-        }
-        
-        function updateStats() {
-            document.getElementById('totalCount').textContent = participants.length;
-            document.getElementById('checkedInCount').textContent = checkedInParticipants.size;
-        }
-        
-        function filterParticipants(searchText) {
-            if (!searchText || searchText.length < 2) {
-                return [];
-            }
-            
-            const text = searchText.toLowerCase();
-            return participants.filter(person => 
-                person.name.toLowerCase().includes(text)
-            ).slice(0, 10); // Limit to 10 suggestions
-        }
-        
-        function showSuggestions(matches) {
-            const suggestionsDiv = document.getElementById('suggestions');
-            
-            if (matches.length === 0) {
-                suggestionsDiv.style.display = 'none';
-                return;
-            }
-            
-            suggestionsDiv.innerHTML = matches.map(person => `
-                <div class="suggestion-item" onclick="selectPerson('${person.name}')">
-                    <strong>${person.name}</strong><br>
-                    <small>${person.campus} • ${person.dorm}</small>
-                </div>
-            `).join('');
-            
-            suggestionsDiv.style.display = 'block';
-        }
-        
-        function selectPerson(name) {
-            selectedPerson = participants.find(p => p.name === name);
-            document.getElementById('nameSearch').value = name;
-            document.getElementById('suggestions').style.display = 'none';
-            showPersonInfo(selectedPerson);
-        }
-        
-        function showPersonInfo(person) {
-            const personInfo = document.getElementById('personInfo');
-            const personDetails = document.getElementById('personDetails');
-            
-            const isCheckedIn = checkedInParticipants.has(person.name);
-            const statusBadge = isCheckedIn ? '✅ Already Checked In' : '⏳ Not Checked In';
-            const statusColor = isCheckedIn ? '#28a745' : '#ffc107';
-            
-            personDetails.innerHTML = `
-                <p><strong>Name:</strong> ${person.name}</p>
-                <p><strong>Campus Ministry:</strong> ${person.campus}</p>
-                <p><strong>Dorm:</strong> ${person.dorm}</p>
-                <p><strong>Table Assignment:</strong> ${person.table}</p>
-                <p><strong>Discussion Group:</strong> ${person.discussion}</p>
-                <p style="color: ${statusColor}; font-weight: bold;"><strong>Status:</strong> ${statusBadge}</p>
-            `;
-            
-            personInfo.style.display = 'block';
-            
-            // Disable check-in button if already checked in
-            const checkInBtn = personInfo.querySelector('button');
-            checkInBtn.disabled = isCheckedIn;
-            checkInBtn.textContent = isCheckedIn ? '✅ Already Checked In' : '✅ Yes, Check Me In';
-        }
-        
-        function confirmCheckIn() {
-            if (!selectedPerson) return;
-            
-            // Add to checked-in set
-            checkedInParticipants.add(selectedPerson.name);
-            
-            // Save to localStorage for persistence
-            localStorage.setItem('checkedInParticipants', JSON.stringify([...checkedInParticipants]));
-            
-            // Show success message
-            document.getElementById('personInfo').style.display = 'none';
-            document.getElementById('successMessage').style.display = 'block';
-            
-            // Update stats
-            updateStats();
-            
-            // Clear form after 3 seconds
-            setTimeout(() => {
-                clearForm();
-            }, 3000);
-        }
-        
-        function clearSelection() {
-            document.getElementById('personInfo').style.display = 'none';
-            selectedPerson = null;
-        }
-        
-        function clearForm() {
-            document.getElementById('nameSearch').value = '';
-            document.getElementById('suggestions').style.display = 'none';
-            document.getElementById('personInfo').style.display = 'none';
-            document.getElementById('successMessage').style.display = 'none';
-            document.getElementById('errorMessage').style.display = 'none';
-            selectedPerson = null;
-        }
-        
-        // Event listeners
-        document.getElementById('nameSearch').addEventListener('input', function(e) {
-            const searchText = e.target.value;
-            const matches = filterParticipants(searchText);
-            showSuggestions(matches);
-            
-            // Hide person info if search is cleared
-            if (!searchText) {
-                clearSelection();
-            }
-        });
-        
-        // Hide suggestions when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.search-container')) {
-                document.getElementById('suggestions').style.display = 'none';
-            }
-        });
-        
-        // Load checked-in participants from localStorage
-        function loadCheckedInData() {
-            const saved = localStorage.getItem('checkedInParticipants');
-            if (saved) {
-                checkedInParticipants = new Set(JSON.parse(saved));
-            }
-        }
-        
-        // Initialize the app
-        function init() {
-            loadCheckedInData();
-            loadParticipants();
-        }
-        
-        // Start the app when page loads
-        window.addEventListener('load', init);
     </script>
 </body>
 </html>

@@ -401,48 +401,73 @@ def process_main_excel_file(df):
     
     return df
 
-# Process first Excel file
-df1 = pd.read_csv(os.path.join(project_root, "data", "csv", "badge_assignments.csv"))
-print(f"First Excel file: {len(df1)} rows")
+# Process the main Excel file (contains all participants with correct assignments)
+excel_assignments_file = os.path.join(project_root, "input_data", "BADGE_ASSIGNMENTS_FINAL.xlsx")
 
-# Process names with &A and &E indicators in the main Excel file
+if os.path.exists(excel_assignments_file):
+    print(f"Using Excel assignments file: {excel_assignments_file}")
+    df1 = pd.read_excel(excel_assignments_file)
+    print(f"Excel assignments file: {len(df1)} rows")
+    
+    # The Excel file already has the correct format, just need to ensure proper column names
+    print("Columns in Excel file:", list(df1.columns))
+    
+else:
+    print(f"Excel assignments file not found: {excel_assignments_file}")
+    print("Falling back to CSV file...")
+    df1 = pd.read_csv(os.path.join(project_root, "data", "csv", "badge_assignments.csv"))
+    print(f"Main CSV file: {len(df1)} rows")
+    
+    # Convert CSV format to expected format
+    def convert_csv_to_expected_format(df):
+        """Convert CSV format to the format expected by the badge generation script"""
+        # Split full_name into first and last name
+        df['First Name '] = df['full_name'].str.split().str[0]
+        df['Last Name'] = df['full_name'].str.split().str[1:].str.join(' ')
+        
+        # Map campus to the expected column name
+        df['Which campus ministry are you a part of? In case, you are not part of the listed campus ministries, it\'s open to you as well, and please come and join us! '] = df['campus']
+        
+        # Map dorm to expected column name
+        df['DORM NUMBER'] = df['dorm']
+        
+        # Map table assignment to expected column name
+        df['TABLE #'] = df['table_assignment']
+        
+        # Map discussion assignment to expected column name
+        df['DISCUSSION #'] = df['discussion_assignment']
+        
+        # Set default language preference
+        df['What is your preferred language for sermons and/or engaging in group discussions?'] = 'Amharic'
+        
+        return df
+    
+    df1 = convert_csv_to_expected_format(df1)
+
+# Process names with &A and &E indicators in the main file
 df1 = process_main_excel_file(df1)
-print("Processed main Excel file for language indicators in names")
+print("Processed main file for language indicators in names")
 
-# Process second Excel file to get new people
-df2 = process_second_excel_file(excel_file_2)
-print(f"Second Excel file: {len(df2)} rows")
+# All participants are now in the CSV file, so we don't need to process additional files
+print(f"Total participants: {len(df1)}")
+# Handle both 'role' and 'Role' columns for coordinator count
+if 'Role' in df1.columns:
+    coordinator_count = len(df1[df1['Role'] == 'COORDINATOR'])
+elif 'role' in df1.columns:
+    coordinator_count = len(df1[df1['role'] == 'COORDINATOR'])
+else:
+    coordinator_count = 0
+    
+print(f"Total coordinators: {coordinator_count}")
+print(f"Total regular participants: {len(df1) - coordinator_count}")
 
-# Process third Excel file to get new people
-df3 = process_second_excel_file(excel_file_3)
-print(f"Third Excel file: {len(df3)} rows")
-
-# Add new people from additional files to the main Excel file
-additional_files = [df2, df3]
+# The main data is now df1
+df = df1
 df_combined = df1
 
-for i, df_additional in enumerate(additional_files, 2):
-    if len(df_additional) > 0:
-        print(f"Adding people from file {i}...")
-        df_combined = pd.concat([df_combined, df_additional], ignore_index=True)
+print(f"Final count: {len(df_combined)} participants")
 
-if len(df_combined) > len(df1):
-    print(f"Combined: {len(df_combined)} rows")
-    
-    # Remove duplicates based on first name and last name only
-    # This ensures no person appears twice regardless of ministry differences
-    original_count = len(df_combined)
-    df_combined = df_combined.drop_duplicates(subset=['First Name ', 'Last Name'], keep='first')
-    duplicates_removed = original_count - len(df_combined)
-    print(f"Removed {duplicates_removed} duplicates")
-    print(f"Final count after removing duplicates: {len(df_combined)} rows")
-    
-    # Save the updated Excel file with new people added
-    df_combined.to_excel(excel_file, index=False)
-    print(f"Updated {excel_file} with new people")
-else:
-    print("No new people to add from additional files")
-
+# The CSV file already contains all participants, so we use it as is
 # Assign tables and discussions to the combined DataFrame
 df = assign_tables_and_discussions(df_combined)
 
@@ -474,24 +499,24 @@ for index, row in df.iterrows():
         
         campus_location = campus_ministry_locations.get(campus_ministry, campus_ministry)
         
-        # Check if person is a coordinator based on role/title in campus ministry or name
-        role = 'PARTICIPANT'
-        
-        # Check for coordinator indicators in campus ministry field
-        coordinator_indicators = ['coordinator', 'leader', 'pastor', 'minister', 'director', 'head']
-        is_coordinator = any(indicator.lower() in campus_ministry.lower() for indicator in coordinator_indicators)
-        
-        # Also check names for coordinator indicators
-        first_name = str(row['First Name ']).strip().lower()
-        last_name = str(row['Last Name']).strip().lower()
-        is_coordinator = is_coordinator or any(indicator in first_name or indicator in last_name for indicator in coordinator_indicators)
-        
-        if is_coordinator:
-            role = 'COORDINATOR'
+        # Get role from CSV data
+        # Handle role column - check both 'role' (from CSV) and 'Role' (from Excel)
+        if 'Role' in row.index:
+            role = str(row['Role']).strip() if not pd.isna(row['Role']) else 'PARTICIPANT'
+        elif 'role' in row.index:
+            role = str(row['role']).strip() if not pd.isna(row['role']) else 'PARTICIPANT'
+        else:
+            role = 'PARTICIPANT'
         
         dorm = str(row['DORM NUMBER']).strip() if not pd.isna(row['DORM NUMBER']) and str(row['DORM NUMBER']).strip() != '' else 'N/A'
-        table = str(row['TABLE #']).strip() if not pd.isna(row['TABLE #']) else ''
-        discussion = str(row['DISCUSSION #']).strip() if not pd.isna(row['DISCUSSION #']) else ''
+        
+        # Only assign table/discussion to participants, not coordinators
+        if role == 'COORDINATOR':
+            table = ''
+            discussion = ''
+        else:
+            table = str(row['TABLE #']).strip() if not pd.isna(row['TABLE #']) else ''
+            discussion = str(row['DISCUSSION #']).strip() if not pd.isna(row['DISCUSSION #']) else ''
         
         valid_rows.append({
             'Full_Name': full_name,
@@ -557,26 +582,38 @@ for batch_idx in range(num_batches):
     
     new_slide = duplicate_slide(output_pres, template_slide)
 
-    # Use existing CSV assignments if available, otherwise generate new ones
-    csv_file = os.path.join(project_root, 'input_data', 'badge_assignments.csv')
+    # Use existing Excel assignments if available, otherwise generate new ones
+    excel_file = os.path.join(project_root, 'input_data', 'BADGE_ASSIGNMENTS_FINAL.xlsx')
     slide_table_assignments = {}
     
     try:
-        existing_csv = pd.read_csv(csv_file)
-        print(f"Using existing assignments from {csv_file}")
+        existing_excel = pd.read_excel(excel_file)
+        print(f"Using existing assignments from {excel_file}")
         
-        # Load assignments from CSV for this slide
+        # Load assignments from Excel for this slide
         for i, row_data in enumerate(batch_data):
             badge_num = i + 1
             
-            # Find matching person in CSV by name only (ignore slide/slot since order may change)
-            person_record = existing_csv[
-                existing_csv['full_name'] == row_data['Full_Name']
+            # Find matching person in Excel by name only (ignore slide/slot since order may change)
+            person_record = existing_excel[
+                (existing_excel['First Name '].astype(str).str.strip() + ' ' + 
+                 existing_excel['Last Name'].astype(str).str.strip()) == row_data['Full_Name']
             ]
             
             if not person_record.empty:
-                # Use assignment from CSV
-                table_assignment = person_record.iloc[0]['table_assignment']
+                # Use assignment from Excel
+                table_assignment = person_record.iloc[0]['TABLE #']
+                if pd.isna(table_assignment):
+                    table_assignment = ''
+                else:
+                    table_assignment = str(table_assignment).strip()
+                    
+                discussion_assignment = person_record.iloc[0]['DISCUSSION #']
+                if pd.isna(discussion_assignment):
+                    discussion_assignment = ''
+                else:
+                    discussion_assignment = str(discussion_assignment).strip()
+                
                 slide_table_assignments[badge_num] = table_assignment
                 print(f"  Preserved assignment for {row_data['Full_Name']}: {table_assignment}")
                 
@@ -589,20 +626,26 @@ for batch_idx in range(num_batches):
                     'campus': row_data['Campus'],
                     'dorm': row_data['Dorm'],
                     'table_assignment': table_assignment,
-                    'discussion_assignment': row_data['Discussion']
+                    'discussion_assignment': discussion_assignment
                 }
                 badge_records.append(badge_record)
             else:
                 # Generate new assignment if not found in CSV
-                import random
-                sat_table_num = random.randint(1, 35)
-                sun_table_num = random.randint(1, 35)
-                sat_table = f"T{sat_table_num}"
-                sun_table = f"T{sun_table_num}"
-                table_text = f"SAT {sat_table} | SUN {sun_table}"
-                
-                slide_table_assignments[badge_num] = table_text
-                print(f"  NEW randomized assignment for {row_data['Full_Name']}: {table_text}")
+                if row_data['Role'] == 'COORDINATOR':
+                    # Coordinators don't get table assignments
+                    slide_table_assignments[badge_num] = ''
+                    print(f"  Coordinator {row_data['Full_Name']}: No table assignment")
+                else:
+                    # Generate random assignment for participants
+                    import random
+                    sat_table_num = random.randint(1, 35)
+                    sun_table_num = random.randint(1, 35)
+                    sat_table = f"T{sat_table_num}"
+                    sun_table = f"T{sun_table_num}"
+                    table_text = f"SAT {sat_table} | SUN {sun_table}"
+                    
+                    slide_table_assignments[badge_num] = table_text
+                    print(f"  NEW randomized assignment for {row_data['Full_Name']}: {table_text}")
                 
                 # Record this person's assignments
                 badge_record = {
@@ -612,25 +655,30 @@ for batch_idx in range(num_batches):
                     'role': row_data['Role'],
                     'campus': row_data['Campus'],
                     'dorm': row_data['Dorm'],
-                    'table_assignment': table_text,
+                    'table_assignment': slide_table_assignments[badge_num],
                     'discussion_assignment': row_data['Discussion']
                 }
                 badge_records.append(badge_record)
                 
     except FileNotFoundError:
-        print(f"CSV file not found, generating new assignments...")
+        print(f"Excel file not found, generating new assignments...")
         
         # Generate new assignments
         for i, row_data in enumerate(batch_data):
             badge_num = i + 1
             
             # Generate unique table assignment for this person
-            import random
-            sat_table_num = random.randint(1, 35)
-            sun_table_num = random.randint(1, 35)
-            sat_table = f"T{sat_table_num}"
-            sun_table = f"T{sun_table_num}"
-            table_text = f"SAT {sat_table} | SUN {sun_table}"
+            if row_data['Role'] == 'COORDINATOR':
+                # Coordinators don't get table assignments
+                table_text = ''
+            else:
+                # Generate random assignment for participants
+                import random
+                sat_table_num = random.randint(1, 35)
+                sun_table_num = random.randint(1, 35)
+                sat_table = f"T{sat_table_num}"
+                sun_table = f"T{sun_table_num}"
+                table_text = f"SAT {sat_table} | SUN {sun_table}"
             
             # Store this person's unique table assignment
             slide_table_assignments[badge_num] = table_text
@@ -745,7 +793,7 @@ output_pres.save(output_file)
 print(f"Saved {num_batches} slides to {output_file}")
 
 # Use the existing CSV data if it exists, otherwise create new one
-csv_file = os.path.join(project_root, 'input_data', 'badge_assignments.csv')
+csv_file = os.path.join(project_root, 'data', 'csv', 'badge_assignments.csv')
 try:
     existing_csv = pd.read_csv(csv_file)
     print(f"\nUsing existing CSV file: {csv_file}")

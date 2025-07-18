@@ -47,7 +47,7 @@ def update_admin_html_with_current_data():
     
     end_line_idx = -1
     for i, line in enumerate(lines):
-        if line.strip() == '];':
+        if line.strip().startswith('];'):
             end_line_idx = i
             break
     
