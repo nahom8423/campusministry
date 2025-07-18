@@ -8,11 +8,11 @@ import os
 # Get the absolute path to the project root directory
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 
-excel_file = os.path.join(project_root, "input_data", "BADGE (CLEAN FILE).xlsx")
-excel_file_2 = os.path.join(project_root, "input_data", "General Assembly Dorm Assignment1.xlsx")
-excel_file_3 = os.path.join(project_root, "input_data", "General Assembly Dorm Assignment2.xlsx")
+excel_file = os.path.join(project_root, "data", "excel", "BADGE (CLEAN FILE).xlsx")
+excel_file_2 = os.path.join(project_root, "data", "excel", "General Assembly Dorm Assignment1.xlsx")
+excel_file_3 = os.path.join(project_root, "data", "excel", "General Assembly Dorm Assignment2.xlsx")
 template_file = os.path.join(project_root, "templates", "CAMPUSMINISTRYBADGE_PATCHED.pptx")
-output_file = os.path.join(project_root, "output", "filled_badges.pptx")
+output_file = os.path.join(project_root, "output", "badges", "filled_badges.pptx")
 
 campus_ministry_locations = {
     # Atlanta variations
