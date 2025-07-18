@@ -425,6 +425,12 @@ def landing_page():
         # Fallback to main check-in page
         return send_from_directory('/Users/nahomnigatu/Downloads/campusministrybadges/docs', 'index.html')
 
+# Serve the check-in page
+@app.route('/checkin')
+def checkin_page():
+    """Serve the main check-in page with search functionality"""
+    return send_from_directory('/Users/nahomnigatu/Downloads/campusministrybadges/docs', 'index.html')
+
 # Serve static files
 @app.route('/docs/<path:filename>')
 def serve_docs(filename):
