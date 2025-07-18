@@ -1,0 +1,30 @@
+
+CAMPUS MINISTRY CHECK-IN SYSTEM
+===============================
+
+SETUP INSTRUCTIONS:
+1. Host the 'checkin_final.html' file on a web server
+2. Update the URL in the QR code to point to your hosted file
+3. Print the QR code and place at check-in stations
+4. Ensure good Wi-Fi connectivity for participants
+
+HOW IT WORKS:
+- Participants scan QR code with their phone
+- They type their name and see autocomplete suggestions
+- They confirm their identity and check in
+- System shows their table and discussion assignments
+- Check-in status is saved on their device
+
+STAFF FEATURES:
+- Real-time check-in counter
+- Prevents duplicate check-ins
+- Works offline after initial load
+- Mobile-friendly design
+
+TROUBLESHOOTING:
+- If someone can't find their name, check spelling
+- Names are from the badge assignments CSV file
+- System works on any modern smartphone browser
+- For technical issues, refresh the page
+
+For questions, contact the tech team.

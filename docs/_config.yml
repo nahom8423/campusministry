@@ -1,0 +1,15 @@
+# GitHub Pages configuration
+theme: minima
+title: Campus Ministry Check-In System
+description: Official check-in system for campus ministry participants
+
+# Enable plugins
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+
+# Exclude files from processing
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
