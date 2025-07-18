@@ -11,7 +11,7 @@ CORS(app)
 
 # File paths
 BADGE_ASSIGNMENTS_CSV = '/Users/nahomnigatu/Downloads/campusministrybadges/input_data/badge_assignments.csv'
-BADGE_ASSIGNMENTS_XLSX = '/Users/nahomnigatu/Downloads/campusministrybadges/input_data/BADGE (CLEAN FILE).xlsx'
+BADGE_ASSIGNMENTS_XLSX = '/Users/nahomnigatu/Downloads/campusministrybadges/input_data/BADGE_ASSIGNMENTS_FINAL.xlsx'
 
 def get_next_table_assignment():
     """Get the next available table assignment"""
@@ -184,15 +184,18 @@ def add_participant():
             # Read existing Excel file
             xlsx_df = pd.read_excel(BADGE_ASSIGNMENTS_XLSX)
             
-            # Add new participant to Excel
+            # Add new participant to Excel (using correct column names for BADGE_ASSIGNMENTS_FINAL.xlsx)
             excel_new_participant = {
                 'First Name ': data['full_name'].split()[0] if data['full_name'].split() else data['full_name'],
                 'Last Name': ' '.join(data['full_name'].split()[1:]) if len(data['full_name'].split()) > 1 else '',
-                'DORM': data['dorm'].strip(),
+                'DORM NUMBER': data['dorm'].strip(),
                 'TABLE #': table_assignment,
                 'DISCUSSION #': discussion_assignment,
                 'What is your preferred language for sermons and/or engaging in group discussions?': 'English',
-                'Campus Ministry': data['campus'].strip()
+                'Which campus ministry are you a part of? In case, you are not part of the listed campus ministries, it\'s open to you as well, and please come and join us! ': data['campus'].strip(),
+                'State you residence in': 'United States',
+                'If your are a College Student, which year are you?': 'N/A',
+                'Gender': 'N/A'
             }
             
             xlsx_new_df = pd.concat([xlsx_df, pd.DataFrame([excel_new_participant])], ignore_index=True)
@@ -239,11 +242,14 @@ def export_excel():
             excel_row = {
                 'First Name ': first_name,
                 'Last Name': last_name,
-                'DORM': str(row['dorm']) if pd.notna(row['dorm']) else 'N/A',
+                'DORM NUMBER': str(row['dorm']) if pd.notna(row['dorm']) else 'N/A',
                 'TABLE #': str(row['table_assignment']) if pd.notna(row['table_assignment']) else 'TBD',
                 'DISCUSSION #': str(row['discussion_assignment']) if pd.notna(row['discussion_assignment']) else 'TBD',
                 'What is your preferred language for sermons and/or engaging in group discussions?': 'English',
-                'Campus Ministry': str(row['campus']) if pd.notna(row['campus']) else 'NEW'
+                'Which campus ministry are you a part of? In case, you are not part of the listed campus ministries, it\'s open to you as well, and please come and join us! ': str(row['campus']) if pd.notna(row['campus']) else 'NEW',
+                'State you residence in': 'United States',
+                'If your are a College Student, which year are you?': 'N/A',
+                'Gender': 'N/A'
             }
             excel_data.append(excel_row)
         

@@ -4,7 +4,7 @@ import json
 def create_admin_panel_with_data():
     """Create the admin panel HTML file with embedded participant data"""
     
-    # Read the badge assignments CSV
+    # Read the badge assignments CSV (this should have the most current data)
     df = pd.read_csv('/Users/nahomnigatu/Downloads/campusministrybadges/input_data/badge_assignments.csv')
     
     participants = []
