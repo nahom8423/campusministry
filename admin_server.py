@@ -12,6 +12,31 @@ CORS(app)
 # File paths
 BADGE_ASSIGNMENTS_CSV = '/Users/nahomnigatu/Downloads/campusministrybadges/data/csv/badge_assignments.csv'
 BADGE_ASSIGNMENTS_XLSX = '/Users/nahomnigatu/Downloads/campusministrybadges/data/excel/BADGE_ASSIGNMENTS_FINAL.xlsx'
+CHECKIN_DATA_JSON = '/Users/nahomnigatu/Downloads/campusministrybadges/data/checkin_data.json'
+
+def load_checkin_data():
+    """Load check-in data from JSON file"""
+    try:
+        if os.path.exists(CHECKIN_DATA_JSON):
+            with open(CHECKIN_DATA_JSON, 'r') as f:
+                return json.load(f)
+        return {}
+    except Exception as e:
+        print(f"Error loading check-in data: {e}")
+        return {}
+
+def save_checkin_data(data):
+    """Save check-in data to JSON file"""
+    try:
+        # Ensure directory exists
+        os.makedirs(os.path.dirname(CHECKIN_DATA_JSON), exist_ok=True)
+        
+        with open(CHECKIN_DATA_JSON, 'w') as f:
+            json.dump(data, f, indent=2)
+        return True
+    except Exception as e:
+        print(f"Error saving check-in data: {e}")
+        return False
 
 def get_next_table_assignment():
     """Get the next available table assignment"""
@@ -295,6 +320,100 @@ def get_stats():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+# Check-in API endpoints
+@app.route('/api/checkin', methods=['POST'])
+def checkin_participant():
+    """Check in a participant"""
+    try:
+        data = request.get_json()
+        
+        if 'name' not in data:
+            return jsonify({'error': 'Name is required'}), 400
+        
+        participant_name = data['name'].strip()
+        
+        # Load current check-in data
+        checkin_data = load_checkin_data()
+        
+        # Add timestamp for this check-in
+        checkin_data[participant_name] = {
+            'timestamp': datetime.now().isoformat(),
+            'ip_address': request.remote_addr
+        }
+        
+        # Save updated data
+        if save_checkin_data(checkin_data):
+            return jsonify({
+                'success': True,
+                'message': f'{participant_name} checked in successfully',
+                'timestamp': checkin_data[participant_name]['timestamp']
+            })
+        else:
+            return jsonify({'error': 'Failed to save check-in data'}), 500
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/checkin', methods=['GET'])
+def get_checkin_status():
+    """Get check-in status for a specific participant"""
+    try:
+        participant_name = request.args.get('name')
+        
+        if not participant_name:
+            return jsonify({'error': 'Name parameter is required'}), 400
+        
+        checkin_data = load_checkin_data()
+        
+        if participant_name in checkin_data:
+            return jsonify({
+                'checked_in': True,
+                'timestamp': checkin_data[participant_name]['timestamp']
+            })
+        else:
+            return jsonify({'checked_in': False})
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/checkin/all', methods=['GET'])
+def get_all_checkins():
+    """Get all checked-in participants"""
+    try:
+        checkin_data = load_checkin_data()
+        
+        # Convert to list format for frontend
+        checked_in_list = []
+        for name, info in checkin_data.items():
+            checked_in_list.append({
+                'name': name,
+                'timestamp': info['timestamp'],
+                'ip_address': info.get('ip_address', 'unknown')
+            })
+        
+        # Sort by timestamp (most recent first)
+        checked_in_list.sort(key=lambda x: x['timestamp'], reverse=True)
+        
+        return jsonify({
+            'checked_in_participants': checked_in_list,
+            'total_checked_in': len(checked_in_list)
+        })
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/checkin/count', methods=['GET'])
+def get_checkin_count():
+    """Get total check-in count"""
+    try:
+        checkin_data = load_checkin_data()
+        return jsonify({
+            'total_checked_in': len(checkin_data)
+        })
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 if __name__ == '__main__':
     print("Starting Admin Server...")
     print("Admin panel will be available at: http://localhost:5000")
@@ -303,5 +422,9 @@ if __name__ == '__main__':
     print("  POST /api/participants - Add new participant")
     print("  GET /api/export/excel - Export participants to Excel")
     print("  GET /api/stats - Get participant statistics")
+    print("  POST /api/checkin - Check in a participant")
+    print("  GET /api/checkin?name=NAME - Get check-in status for participant")
+    print("  GET /api/checkin/all - Get all checked-in participants")
+    print("  GET /api/checkin/count - Get total check-in count")
     
     app.run(debug=True, port=5000)

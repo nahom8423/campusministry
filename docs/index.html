@@ -3,9 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
     <title>Campus Ministry Check-In</title>
     <style>
         * {
@@ -5200,14 +5197,47 @@
             checkInBtn.textContent = isCheckedIn ? '✓ Already Checked In' : '✓ Yes, Check Me In';
         }
         
-        function confirmCheckIn() {
+        // Save check-in to API and localStorage
+        async function saveCheckinToAPI(participantName) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/checkin`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ name: participantName })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log(`Successfully checked in ${participantName} to server`);
+                    
+                    // Also save to localStorage as backup
+                    localStorage.setItem('checkedInParticipants', JSON.stringify([...checkedInParticipants]));
+                    
+                    return true;
+                } else {
+                    console.error('Failed to save check-in to server');
+                    // Still save to localStorage
+                    localStorage.setItem('checkedInParticipants', JSON.stringify([...checkedInParticipants]));
+                    return false;
+                }
+            } catch (error) {
+                console.error('Error connecting to server:', error);
+                // Still save to localStorage
+                localStorage.setItem('checkedInParticipants', JSON.stringify([...checkedInParticipants]));
+                return false;
+            }
+        }
+
+        async function confirmCheckIn() {
             if (!selectedPerson) return;
             
             // Add to checked-in set
             checkedInParticipants.add(selectedPerson.name);
             
-            // Save to localStorage for persistence
-            localStorage.setItem('checkedInParticipants', JSON.stringify([...checkedInParticipants]));
+            // Save to API and localStorage
+            await saveCheckinToAPI(selectedPerson.name);
             
             // Show success message
             document.getElementById('personInfo').style.display = 'none';
@@ -5255,18 +5285,52 @@
             }
         });
         
-        // Load checked-in participants from localStorage
-        function loadCheckedInData() {
-            const saved = localStorage.getItem('checkedInParticipants');
-            if (saved) {
-                checkedInParticipants = new Set(JSON.parse(saved));
+        // API Configuration
+        const API_BASE_URL = 'http://localhost:5000/api';
+        
+        // Load checked-in participants from API
+        async function loadCheckedInData() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/checkin/all`);
+                if (response.ok) {
+                    const data = await response.json();
+                    checkedInParticipants = new Set(data.checked_in_participants.map(p => p.name));
+                    console.log(`Loaded ${checkedInParticipants.size} checked-in participants from server`);
+                    updateStats();
+                } else {
+                    console.error('Failed to load check-in data from server');
+                    // Fallback to localStorage
+                    loadFromLocalStorage();
+                }
+            } catch (error) {
+                console.error('Error connecting to server:', error);
+                // Fallback to localStorage
+                loadFromLocalStorage();
             }
         }
         
+        // Fallback to localStorage if server is unavailable
+        function loadFromLocalStorage() {
+            const saved = localStorage.getItem('checkedInParticipants');
+            if (saved) {
+                checkedInParticipants = new Set(JSON.parse(saved));
+                console.log(`Loaded ${checkedInParticipants.size} checked-in participants from localStorage`);
+                updateStats();
+            }
+        }
+        
+        // Periodic sync with server (every 10 seconds)
+        function startPeriodicSync() {
+            setInterval(async () => {
+                await loadCheckedInData();
+            }, 10000); // Sync every 10 seconds
+        }
+        
         // Initialize the app
-        function init() {
-            loadCheckedInData();
+        async function init() {
+            await loadCheckedInData();
             loadParticipants();
+            startPeriodicSync(); // Start periodic sync
         }
         
         // Start the app when page loads
