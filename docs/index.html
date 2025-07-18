@@ -3086,7 +3086,27 @@
         });
         
         // API Configuration - detect if running locally or on GitHub Pages
-        const API_BASE_URL = window.location.hostname === 'localhost' ? 'http://localhost:5001/api' : null;
+        function getAPIBaseURL() {
+            const hostname = window.location.hostname;
+            
+            // If localhost, use localhost API
+            if (hostname === 'localhost') {
+                return 'http://localhost:5001/api';
+            }
+            
+            // If local network IP (10.x.x.x, 192.168.x.x, 172.16-31.x.x), use network API
+            if (hostname.match(/^10\./) || 
+                hostname.match(/^192\.168\./) || 
+                hostname.match(/^172\.(1[6-9]|2[0-9]|3[0-1])\./)) {
+                return `http://${hostname}:5001/api`;
+            }
+            
+            // Otherwise (GitHub Pages), no API available
+            return null;
+        }
+        
+        const API_BASE_URL = getAPIBaseURL();
+        console.log(`API_BASE_URL detected: ${API_BASE_URL || 'null (GitHub Pages mode)'}`);
         
         // Load checked-in participants from API or localStorage
         async function loadCheckedInData() {
