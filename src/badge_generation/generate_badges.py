@@ -402,7 +402,7 @@ def process_main_excel_file(df):
     return df
 
 # Process first Excel file
-df1 = pd.read_excel(excel_file)
+df1 = pd.read_csv(os.path.join(project_root, "data", "csv", "badge_assignments.csv"))
 print(f"First Excel file: {len(df1)} rows")
 
 # Process names with &A and &E indicators in the main Excel file
