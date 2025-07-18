@@ -176,6 +176,37 @@
             color: #1565c0;
         }
         
+        /* Clean icon styles */
+        .icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        
+        .icon-check {
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        .icon-cross {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        
+        .icon-pending {
+            color: #ffc107;
+            font-weight: bold;
+        }
+        
+        .logo-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px auto;
+            display: block;
+        }
+        
         @media (max-width: 600px) {
             .container {
                 padding: 20px;
@@ -194,7 +225,7 @@
 </head>
 <body>
     <div class="container">
-        <div class="logo">✝️</div>
+        <img src="assets/mk-logo-300.png" alt="MK Logo" class="logo-icon">
         <h1>Campus Ministry Check-In</h1>
         
         <div class="search-container">
@@ -205,12 +236,12 @@
         <div class="person-info" id="personInfo">
             <h3>Please confirm this is you:</h3>
             <div class="person-details" id="personDetails"></div>
-            <button onclick="confirmCheckIn()">✅ Yes, Check Me In</button>
-            <button onclick="clearSelection()">❌ This is not me</button>
+            <button onclick="confirmCheckIn()"><span class="icon-check">✓</span> Yes, Check Me In</button>
+            <button onclick="clearSelection()"><span class="icon-cross">✗</span> This is not me</button>
         </div>
         
         <div class="success-message" id="successMessage">
-            <h3>✅ Check-in Successful!</h3>
+            <h3><span class="icon-check">✓</span> Check-in Successful!</h3>
             <p>Welcome to Campus Ministry! Your table assignment is shown above.</p>
         </div>
         
@@ -2489,7 +2520,7 @@
             const personDetails = document.getElementById('personDetails');
             
             const isCheckedIn = checkedInParticipants.has(person.name);
-            const statusBadge = isCheckedIn ? '✅ Already Checked In' : '⏳ Not Checked In';
+            const statusBadge = isCheckedIn ? '<span class="icon-check">✓</span> Already Checked In' : '<span class="icon-pending">○</span> Not Checked In';
             const statusColor = isCheckedIn ? '#28a745' : '#ffc107';
             
             personDetails.innerHTML = `
@@ -2506,7 +2537,7 @@
             // Disable check-in button if already checked in
             const checkInBtn = personInfo.querySelector('button');
             checkInBtn.disabled = isCheckedIn;
-            checkInBtn.textContent = isCheckedIn ? '✅ Already Checked In' : '✅ Yes, Check Me In';
+            checkInBtn.textContent = isCheckedIn ? '✓ Already Checked In' : '✓ Yes, Check Me In';
         }
         
         function confirmCheckIn() {
