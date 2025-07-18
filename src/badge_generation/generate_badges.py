@@ -121,18 +121,31 @@ campus_ministry_locations = {
 def extract_language_preference(first_name):
     """
     Extract language preference from first name field
-    Examples: 'Solyana E' -> 'English', 'Ruth -A' -> 'Amharic', 'Miriam E&A' -> 'English' (default)
+    Examples: 
+    - 'Solyana E' -> 'English'
+    - 'Ruth -A' -> 'Amharic' 
+    - 'NAHOM&A' -> 'Amharic'
+    - 'SARA&E' -> 'English'
+    - 'Miriam E&A' -> 'English' (E takes precedence)
     """
     if pd.isna(first_name) or str(first_name).strip() == '':
         return 'English'
     
-    name_str = str(first_name).strip()
+    name_str = str(first_name).strip().upper()
     
-    # Check for Amharic indicators
-    if ' -A' in name_str or '- A' in name_str or '-A' in name_str:
+    # Check for Amharic indicators (in order of priority)
+    if '&A' in name_str and '&E' not in name_str:
+        return 'Amharic'
+    elif ' -A' in name_str or '- A' in name_str or '-A' in name_str:
         return 'Amharic'
     
-    # Everything else defaults to English (including E, E&A, New, etc.)
+    # Check for English indicators
+    if '&E' in name_str:
+        return 'English'
+    elif ' E' in name_str or name_str.endswith('E'):
+        return 'English'
+    
+    # Everything else defaults to English (including New, etc.)
     return 'English'
 
 def process_second_excel_file(file_path):
@@ -161,7 +174,7 @@ def process_second_excel_file(file_path):
         # Clean the first name (remove "1" and language indicators)
         clean_first_name = first_name_raw[1:]  # Remove the "1" prefix
         # Remove language indicators
-        for indicator in [' -A', '- A', '-A', ' E', ' E&A', 'E&A', ' -E', '- E', '-E', ' -New', '- New', '-New', ' New', 'New']:
+        for indicator in ['&A', '&E', ' -A', '- A', '-A', ' E', ' E&A', 'E&A', ' -E', '- E', '-E', ' -New', '- New', '-New', ' New', 'New']:
             clean_first_name = clean_first_name.replace(indicator, '')
         clean_first_name = clean_first_name.strip()
         
@@ -345,9 +358,42 @@ def assign_tables_and_discussions(df):
     
     return df
 
+def process_main_excel_file(df):
+    """
+    Process the main Excel file to handle names with &A and &E language indicators
+    Clean names and update language preferences if needed
+    """
+    for index, row in df.iterrows():
+        first_name_raw = str(row['First Name ']).strip() if not pd.isna(row['First Name ']) else ''
+        
+        if first_name_raw and ('&A' in first_name_raw or '&E' in first_name_raw):
+            # Extract language preference from name
+            language_pref = extract_language_preference(first_name_raw)
+            
+            # Clean the first name (remove language indicators)
+            clean_first_name = first_name_raw
+            for indicator in ['&A', '&E']:
+                clean_first_name = clean_first_name.replace(indicator, '')
+            clean_first_name = clean_first_name.strip()
+            
+            # Update the DataFrame
+            df.loc[index, 'First Name '] = clean_first_name
+            
+            # Update language preference if the current one is empty or if we detected from name
+            current_lang_pref = row['What is your preferred language for sermons and/or engaging in group discussions?']
+            if pd.isna(current_lang_pref) or str(current_lang_pref).strip() == '':
+                df.loc[index, 'What is your preferred language for sermons and/or engaging in group discussions?'] = language_pref
+                print(f"Updated language preference for {clean_first_name}: {language_pref}")
+    
+    return df
+
 # Process first Excel file
 df1 = pd.read_excel(excel_file)
 print(f"First Excel file: {len(df1)} rows")
+
+# Process names with &A and &E indicators in the main Excel file
+df1 = process_main_excel_file(df1)
+print("Processed main Excel file for language indicators in names")
 
 # Process second Excel file to get new people
 df2 = process_second_excel_file(excel_file_2)
@@ -382,6 +428,9 @@ if len(df_combined) > len(df1):
     print(f"Updated {excel_file} with new people")
 else:
     print("No new people to add from additional files")
+
+# Process main Excel file to handle &A and &E language indicators
+df1 = process_main_excel_file(df1)
 
 # Assign tables and discussions to the combined DataFrame
 df = assign_tables_and_discussions(df_combined)
