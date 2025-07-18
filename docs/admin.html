@@ -847,12 +847,22 @@
         // Authentication
         async function login() {
             const password = document.getElementById('passwordInput').value;
+            console.log('Login attempt with password:', password);
+            console.log('Expected password:', ADMIN_PASSWORD);
+            console.log('Password match:', password === ADMIN_PASSWORD);
+            
             if (password === ADMIN_PASSWORD) {
+                console.log('Login successful!');
                 document.getElementById('loginContainer').style.display = 'none';
                 document.getElementById('adminContainer').style.display = 'block';
                 document.getElementById('loginError').style.display = 'none';
-                await initializeAdmin();
+                try {
+                    await initializeAdmin();
+                } catch (error) {
+                    console.error('Error initializing admin:', error);
+                }
             } else {
+                console.log('Login failed!');
                 document.getElementById('loginError').style.display = 'block';
             }
         }
@@ -980,13 +990,13 @@
             const campusFilter = document.getElementById('campusFilter').value;
             
             filteredParticipants = participants.filter(participant => {
-                // Text search
+                // Text search - handle null/undefined values
                 const searchMatch = !searchTerm || 
-                    participant.name.toLowerCase().includes(searchTerm) ||
-                    participant.campus.toLowerCase().includes(searchTerm) ||
-                    participant.dorm.toLowerCase().includes(searchTerm) ||
-                    participant.table.toLowerCase().includes(searchTerm) ||
-                    participant.discussion.toLowerCase().includes(searchTerm);
+                    (participant.name && participant.name.toLowerCase().includes(searchTerm)) ||
+                    (participant.campus && participant.campus.toLowerCase().includes(searchTerm)) ||
+                    (participant.dorm && participant.dorm.toString().toLowerCase().includes(searchTerm)) ||
+                    (participant.table && participant.table.toLowerCase().includes(searchTerm)) ||
+                    (participant.discussion && participant.discussion.toLowerCase().includes(searchTerm));
                 
                 // Status filter
                 const isCheckedIn = checkedInParticipants.has(participant.name);
@@ -1365,16 +1375,16 @@
     "name": "BEMNET HAILU",
     "campus": "ATLANTA CAMPUS MINISTRY",
     "dorm": "303A",
-    "table": NaN,
-    "discussion": NaN,
+    "table": "",
+    "discussion": "",
     "role": "COORDINATOR"
   },
   {
     "name": "MEKLIT ABERA",
     "campus": "ATLANTA CAMPUS MINISTRY",
     "dorm": "303B",
-    "table": NaN,
-    "discussion": NaN,
+    "table": "",
+    "discussion": "",
     "role": "COORDINATOR"
   },
   {
@@ -1813,8 +1823,8 @@
     "name": "HIERAN (ARSEMA) ANDEBERHAN",
     "campus": "NEW",
     "dorm": "408B",
-    "table": NaN,
-    "discussion": NaN,
+    "table": "",
+    "discussion": "",
     "role": "COORDINATOR"
   },
   {
@@ -1869,8 +1879,8 @@
     "name": "YEABSERA DERESSA",
     "campus": "ATLANTA CAMPUS MINISTRY",
     "dorm": "411A",
-    "table": NaN,
-    "discussion": NaN,
+    "table": "",
+    "discussion": "",
     "role": "COORDINATOR"
   },
   {
@@ -1925,8 +1935,8 @@
     "name": "NAHOM TESHOME",
     "campus": "NEW",
     "dorm": "501B",
-    "table": NaN,
-    "discussion": NaN,
+    "table": "",
+    "discussion": "",
     "role": "COORDINATOR"
   },
   {
@@ -1981,8 +1991,8 @@
     "name": "BAROK HAILE",
     "campus": "ATLANTA CAMPUS MINISTRY",
     "dorm": "503A",
-    "table": NaN,
-    "discussion": NaN,
+    "table": "",
+    "discussion": "",
     "role": "COORDINATOR"
   },
   {
@@ -2236,15 +2246,15 @@
   {
     "name": "RAHEL ABEBE",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
-    "table": NaN,
-    "discussion": NaN,
+    "dorm": "",
+    "table": "",
+    "discussion": "",
     "role": "COORDINATOR"
   },
   {
     "name": "ISAAC ABRAHAM",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T31 | SUN T19",
     "discussion": "DE 22",
     "role": "PARTICIPANT"
@@ -2252,7 +2262,7 @@
   {
     "name": "DAGMAWIT ADAMU",
     "campus": "GRADUATED FROM CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T16 | SUN T6",
     "discussion": "DA 4",
     "role": "PARTICIPANT"
@@ -2260,7 +2270,7 @@
   {
     "name": "KIDIST ADAMU",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T14 | SUN T13",
     "discussion": "DE 11",
     "role": "PARTICIPANT"
@@ -2268,7 +2278,7 @@
   {
     "name": "MASTEWAL ADANE",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T31 | SUN T6",
     "discussion": "DE 18",
     "role": "PARTICIPANT"
@@ -2276,7 +2286,7 @@
   {
     "name": "LIDIYA AKLILU",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T18 | SUN T31",
     "discussion": "DE 5",
     "role": "PARTICIPANT"
@@ -2284,7 +2294,7 @@
   {
     "name": "MENGESHA ALEBACHEW",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T33 | SUN T13",
     "discussion": "DA 5",
     "role": "PARTICIPANT"
@@ -2292,7 +2302,7 @@
   {
     "name": "ABEMELIK ALELEGN",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T24 | SUN T25",
     "discussion": "DA 8",
     "role": "PARTICIPANT"
@@ -2300,7 +2310,7 @@
   {
     "name": "YOSEF WORKU ALEMAYEHU",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T10 | SUN T20",
     "discussion": "DA 8",
     "role": "PARTICIPANT"
@@ -2308,7 +2318,7 @@
   {
     "name": "HERMELA ALEMAYEHU",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T19 | SUN T33",
     "discussion": "DA 6",
     "role": "PARTICIPANT"
@@ -2316,7 +2326,7 @@
   {
     "name": "ALLA ALKATIM",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T33 | SUN T12",
     "discussion": "DE 15",
     "role": "PARTICIPANT"
@@ -2324,7 +2334,7 @@
   {
     "name": "LUBNA ALKATIM",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T13 | SUN T12",
     "discussion": "DE 15",
     "role": "PARTICIPANT"
@@ -2332,7 +2342,7 @@
   {
     "name": "EDEN AMSALU",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T28 | SUN T19",
     "discussion": "DE 11",
     "role": "PARTICIPANT"
@@ -2340,7 +2350,7 @@
   {
     "name": "MEKDES ANILEY",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T8 | SUN T23",
     "discussion": "DE 15",
     "role": "PARTICIPANT"
@@ -2348,7 +2358,7 @@
   {
     "name": "KALEABE ARGAW",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T20 | SUN T12",
     "discussion": "DE 12",
     "role": "PARTICIPANT"
@@ -2356,7 +2366,7 @@
   {
     "name": "NOHA ASEFA",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T3 | SUN T11",
     "discussion": "DE 22",
     "role": "PARTICIPANT"
@@ -2364,7 +2374,7 @@
   {
     "name": "NAZRAWI ASEFIA",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T26 | SUN T11",
     "discussion": "DE 12",
     "role": "PARTICIPANT"
@@ -2372,7 +2382,7 @@
   {
     "name": "HANNA ASFAW",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T17 | SUN T11",
     "discussion": "DE 21",
     "role": "PARTICIPANT"
@@ -2380,7 +2390,7 @@
   {
     "name": "BETELIHEM ASHEBO",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T24 | SUN T31",
     "discussion": "DA 9",
     "role": "PARTICIPANT"
@@ -2388,15 +2398,15 @@
   {
     "name": "NIERT (MENEN) ATENAFU",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
-    "table": NaN,
-    "discussion": NaN,
+    "dorm": "",
+    "table": "",
+    "discussion": "",
     "role": "COORDINATOR"
   },
   {
     "name": "MARY AYECHEH",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T32 | SUN T34",
     "discussion": "DE 14",
     "role": "PARTICIPANT"
@@ -2404,7 +2414,7 @@
   {
     "name": "BISRAT BAHIRU",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T25 | SUN T3",
     "discussion": "DA 9",
     "role": "PARTICIPANT"
@@ -2412,7 +2422,7 @@
   {
     "name": "BEREKET BAHIRU",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T6 | SUN T27",
     "discussion": "DA 6",
     "role": "PARTICIPANT"
@@ -2420,7 +2430,7 @@
   {
     "name": "MENBEREMARIAM BEKELE",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T24 | SUN T33",
     "discussion": "DE 22",
     "role": "PARTICIPANT"
@@ -2428,7 +2438,7 @@
   {
     "name": "MARIAMAWIT BEKELE",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T27 | SUN T10",
     "discussion": "DE 18",
     "role": "PARTICIPANT"
@@ -2436,7 +2446,7 @@
   {
     "name": "BROOK DANIEL BEKELE",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T30 | SUN T18",
     "discussion": "DE 9",
     "role": "PARTICIPANT"
@@ -2444,7 +2454,7 @@
   {
     "name": "TEKU BELAY",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T25 | SUN T8",
     "discussion": "DE 17",
     "role": "PARTICIPANT"
@@ -2452,7 +2462,7 @@
   {
     "name": "ELIAS BERIE",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T2 | SUN T24",
     "discussion": "DA 7",
     "role": "PARTICIPANT"
@@ -2460,7 +2470,7 @@
   {
     "name": "BIRDIE BERIE",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T15 | SUN T35",
     "discussion": "DE 21",
     "role": "PARTICIPANT"
@@ -2468,7 +2478,7 @@
   {
     "name": "DAGMAWIT BESHAH",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T30 | SUN T8",
     "discussion": "DA 3",
     "role": "PARTICIPANT"
@@ -2476,7 +2486,7 @@
   {
     "name": "LYDIA BINYAM",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T16 | SUN T17",
     "discussion": "DE 23",
     "role": "PARTICIPANT"
@@ -2484,7 +2494,7 @@
   {
     "name": "NAHOMI BINYAM",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T10 | SUN T8",
     "discussion": "DE 14",
     "role": "PARTICIPANT"
@@ -2492,7 +2502,7 @@
   {
     "name": "AMY BIRKNEH",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T18 | SUN T26",
     "discussion": "DE 23",
     "role": "PARTICIPANT"
@@ -2500,7 +2510,7 @@
   {
     "name": "MERON CHERECHO",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T20 | SUN T15",
     "discussion": "DE 14",
     "role": "PARTICIPANT"
@@ -2508,7 +2518,7 @@
   {
     "name": "BEAMLAK DAGIM",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T25 | SUN T18",
     "discussion": "DE 18",
     "role": "PARTICIPANT"
@@ -2516,7 +2526,7 @@
   {
     "name": "SAMUAL DAGNACHEW",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T12 | SUN T11",
     "discussion": "DE 19",
     "role": "PARTICIPANT"
@@ -2524,7 +2534,7 @@
   {
     "name": "MAHILET DAMETE",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T17 | SUN T9",
     "discussion": "DE 11",
     "role": "PARTICIPANT"
@@ -2532,7 +2542,7 @@
   {
     "name": "BEMENAT DANIEL",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T7 | SUN T26",
     "discussion": "DE 18",
     "role": "PARTICIPANT"
@@ -2540,15 +2550,15 @@
   {
     "name": "KIDUS DANIEL",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
-    "table": NaN,
-    "discussion": NaN,
+    "dorm": "",
+    "table": "",
+    "discussion": "",
     "role": "COORDINATOR"
   },
   {
     "name": "LIYA DAWIT",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T32 | SUN T21",
     "discussion": "DE 18",
     "role": "PARTICIPANT"
@@ -2556,7 +2566,7 @@
   {
     "name": "ABIGAIL DEBEBE",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T8 | SUN T3",
     "discussion": "DE 4",
     "role": "PARTICIPANT"
@@ -2564,7 +2574,7 @@
   {
     "name": "MISRAK DEMISSIE",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T17 | SUN T23",
     "discussion": "DE 13",
     "role": "PARTICIPANT"
@@ -2572,7 +2582,7 @@
   {
     "name": "MENA DOCE",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T1 | SUN T1",
     "discussion": "DE 10",
     "role": "PARTICIPANT"
@@ -2580,7 +2590,7 @@
   {
     "name": "MARIA EDRIS",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T7 | SUN T1",
     "discussion": "DE 17",
     "role": "PARTICIPANT"
@@ -2588,7 +2598,7 @@
   {
     "name": "AGNATHIOS ERGETEKAL",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T26 | SUN T34",
     "discussion": "DE 14",
     "role": "PARTICIPANT"
@@ -2596,7 +2606,7 @@
   {
     "name": "ABIGAIL EWNETU",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T11 | SUN T29",
     "discussion": "DA 9",
     "role": "PARTICIPANT"
@@ -2604,7 +2614,7 @@
   {
     "name": "HELDANA GEBRE",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T15 | SUN T28",
     "discussion": "DE 14",
     "role": "PARTICIPANT"
@@ -2612,7 +2622,7 @@
   {
     "name": "KALEAB GEBRE",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T3 | SUN T28",
     "discussion": "DE 19",
     "role": "PARTICIPANT"
@@ -2620,7 +2630,7 @@
   {
     "name": "YEDI GEBREHANA",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T21 | SUN T23",
     "discussion": "DE 19",
     "role": "PARTICIPANT"
@@ -2628,7 +2638,7 @@
   {
     "name": "ALEMU GEBRU",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T19 | SUN T18",
     "discussion": "DA 6",
     "role": "PARTICIPANT"
@@ -2636,7 +2646,7 @@
   {
     "name": "RUTH GENANW",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T28 | SUN T7",
     "discussion": "DA 2",
     "role": "PARTICIPANT"
@@ -2644,7 +2654,7 @@
   {
     "name": "HILINA GENANW",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T21 | SUN T24",
     "discussion": "DA 4",
     "role": "PARTICIPANT"
@@ -2652,7 +2662,7 @@
   {
     "name": "SELAM HAILE",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T8 | SUN T24",
     "discussion": "DE 22",
     "role": "PARTICIPANT"
@@ -2660,7 +2670,7 @@
   {
     "name": "SALEM HAILEMARIAM",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T30 | SUN T9",
     "discussion": "DA 2",
     "role": "PARTICIPANT"
@@ -2668,7 +2678,7 @@
   {
     "name": "JAMAL JAMES",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T20 | SUN T26",
     "discussion": "DE 13",
     "role": "PARTICIPANT"
@@ -2676,7 +2686,7 @@
   {
     "name": "NOAH KAHSAY",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T34 | SUN T2",
     "discussion": "DE 12",
     "role": "PARTICIPANT"
@@ -2684,7 +2694,7 @@
   {
     "name": "YAFET KEBEDE",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T22 | SUN T4",
     "discussion": "DE 14",
     "role": "PARTICIPANT"
@@ -2692,7 +2702,7 @@
   {
     "name": "ABEMELAKE KEBEDE",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T31 | SUN T30",
     "discussion": "DE 13",
     "role": "PARTICIPANT"
@@ -2700,7 +2710,7 @@
   {
     "name": "HILENA KEBEDE",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T25 | SUN T18",
     "discussion": "DE 19",
     "role": "PARTICIPANT"
@@ -2708,7 +2718,7 @@
   {
     "name": "LAMROT KEBEDE",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T18 | SUN T28",
     "discussion": "DA 5",
     "role": "PARTICIPANT"
@@ -2716,7 +2726,7 @@
   {
     "name": "ALAFE KETSELA",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T22 | SUN T16",
     "discussion": "DE 14",
     "role": "PARTICIPANT"
@@ -2724,7 +2734,7 @@
   {
     "name": "HELINA KETSELA",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T15 | SUN T8",
     "discussion": "DE 12",
     "role": "PARTICIPANT"
@@ -2732,7 +2742,7 @@
   {
     "name": "ZELALEM KING",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T20 | SUN T22",
     "discussion": "DE 13",
     "role": "PARTICIPANT"
@@ -2740,7 +2750,7 @@
   {
     "name": "YEABSIRA LEGESSE",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T29 | SUN T27",
     "discussion": "DE 13",
     "role": "PARTICIPANT"
@@ -2748,7 +2758,7 @@
   {
     "name": "FANUEL MAMMO",
     "campus": "GRADUATED FROM CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T7 | SUN T9",
     "discussion": "DA 3",
     "role": "PARTICIPANT"
@@ -2756,7 +2766,7 @@
   {
     "name": "SHAM MEHARI",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T23 | SUN T14",
     "discussion": "DE 8",
     "role": "PARTICIPANT"
@@ -2764,7 +2774,7 @@
   {
     "name": "DEBORA MEKONNEN",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T13 | SUN T34",
     "discussion": "DE 16",
     "role": "PARTICIPANT"
@@ -2772,7 +2782,7 @@
   {
     "name": "HASET MEKONNEN",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T8 | SUN T34",
     "discussion": "DE 8",
     "role": "PARTICIPANT"
@@ -2780,7 +2790,7 @@
   {
     "name": "BIRUK MEKONNEN",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T34 | SUN T1",
     "discussion": "DA 8",
     "role": "PARTICIPANT"
@@ -2788,7 +2798,7 @@
   {
     "name": "HERMELLA MELKAMU",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T18 | SUN T19",
     "discussion": "DE 21",
     "role": "PARTICIPANT"
@@ -2796,7 +2806,7 @@
   {
     "name": "GELILA MENGESHA",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T16 | SUN T17",
     "discussion": "DE 11",
     "role": "PARTICIPANT"
@@ -2804,7 +2814,7 @@
   {
     "name": "BAMLAK MENGESHA",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T6 | SUN T5",
     "discussion": "DE 5",
     "role": "PARTICIPANT"
@@ -2812,7 +2822,7 @@
   {
     "name": "RUHAMA MENGESHA",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T18 | SUN T1",
     "discussion": "DE 20",
     "role": "PARTICIPANT"
@@ -2820,7 +2830,7 @@
   {
     "name": "BRIHAN MENKIR",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T28 | SUN T10",
     "discussion": "DE 13",
     "role": "PARTICIPANT"
@@ -2828,7 +2838,7 @@
   {
     "name": "SAHELESELASSE MENKIR",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T19 | SUN T8",
     "discussion": "DE 16",
     "role": "PARTICIPANT"
@@ -2836,7 +2846,7 @@
   {
     "name": "ESROM MESGENA",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T30 | SUN T25",
     "discussion": "DA 9",
     "role": "PARTICIPANT"
@@ -2844,15 +2854,15 @@
   {
     "name": "BEZAWIT MEZRETAB",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
-    "table": NaN,
-    "discussion": NaN,
+    "dorm": "",
+    "table": "",
+    "discussion": "",
     "role": "COORDINATOR"
   },
   {
     "name": "YABSERA MOLLA",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T5 | SUN T23",
     "discussion": "DE 19",
     "role": "PARTICIPANT"
@@ -2860,7 +2870,7 @@
   {
     "name": "RUTH NURE",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T21 | SUN T1",
     "discussion": "DE 17",
     "role": "PARTICIPANT"
@@ -2868,7 +2878,7 @@
   {
     "name": "KALKIDAN REFERA",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T30 | SUN T19",
     "discussion": "DE 21",
     "role": "PARTICIPANT"
@@ -2876,7 +2886,7 @@
   {
     "name": "SENA SEGED",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T34 | SUN T1",
     "discussion": "DE 23",
     "role": "PARTICIPANT"
@@ -2884,7 +2894,7 @@
   {
     "name": "ABEL SEYEFU",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T5 | SUN T23",
     "discussion": "DE 16",
     "role": "PARTICIPANT"
@@ -2892,7 +2902,7 @@
   {
     "name": "REDIET SHAMA",
     "campus": "LOS ANGELES CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T1 | SUN T28",
     "discussion": "DE 9",
     "role": "PARTICIPANT"
@@ -2900,7 +2910,7 @@
   {
     "name": "SION SHEFERAW",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T32 | SUN T24",
     "discussion": "DE 20",
     "role": "PARTICIPANT"
@@ -2908,7 +2918,7 @@
   {
     "name": "LYDIA SHEFERAW",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T11 | SUN T6",
     "discussion": "DE 20",
     "role": "PARTICIPANT"
@@ -2916,7 +2926,7 @@
   {
     "name": "DESSALEGN SHIFRAW",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T31 | SUN T33",
     "discussion": "DE 21",
     "role": "PARTICIPANT"
@@ -2924,7 +2934,7 @@
   {
     "name": "HERMELA SILESHI",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T24 | SUN T28",
     "discussion": "DE 7",
     "role": "PARTICIPANT"
@@ -2932,7 +2942,7 @@
   {
     "name": "BEZAWIT SIME",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T11 | SUN T8",
     "discussion": "DE 16",
     "role": "PARTICIPANT"
@@ -2940,7 +2950,7 @@
   {
     "name": "EFRATA SIME",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T15 | SUN T31",
     "discussion": "DE 2",
     "role": "PARTICIPANT"
@@ -2948,7 +2958,7 @@
   {
     "name": "JOSEPH SINGOY",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T7 | SUN T13",
     "discussion": "DE 22",
     "role": "PARTICIPANT"
@@ -2956,7 +2966,7 @@
   {
     "name": "ETSUB SOLOMON",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T24 | SUN T35",
     "discussion": "DE 11",
     "role": "PARTICIPANT"
@@ -2964,7 +2974,7 @@
   {
     "name": "SELAM SOLOMON",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T11 | SUN T9",
     "discussion": "DE 15",
     "role": "PARTICIPANT"
@@ -2972,7 +2982,7 @@
   {
     "name": "ETSEGENET SOLOMON",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T15 | SUN T9",
     "discussion": "DE 17",
     "role": "PARTICIPANT"
@@ -2980,7 +2990,7 @@
   {
     "name": "NESEHA TADESSE",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T28 | SUN T14",
     "discussion": "DE 13",
     "role": "PARTICIPANT"
@@ -2988,7 +2998,7 @@
   {
     "name": "MIKIAS TADESSE",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T24 | SUN T15",
     "discussion": "DE 22",
     "role": "PARTICIPANT"
@@ -2996,7 +3006,7 @@
   {
     "name": "ANANIYA TADESSE",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T2 | SUN T12",
     "discussion": "DE 11",
     "role": "PARTICIPANT"
@@ -3004,7 +3014,7 @@
   {
     "name": "NAHUM TADESSR",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T26 | SUN T4",
     "discussion": "DE 21",
     "role": "PARTICIPANT"
@@ -3012,7 +3022,7 @@
   {
     "name": "EYOB TAFESSE",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T23 | SUN T17",
     "discussion": "DE 16",
     "role": "PARTICIPANT"
@@ -3020,7 +3030,7 @@
   {
     "name": "YAFET TARIKU",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T9 | SUN T9",
     "discussion": "DE 20",
     "role": "PARTICIPANT"
@@ -3028,7 +3038,7 @@
   {
     "name": "MEKLIT TARIKU",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T14 | SUN T34",
     "discussion": "DE 12",
     "role": "PARTICIPANT"
@@ -3036,7 +3046,7 @@
   {
     "name": "ABENEZER TEKLETSADIK",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T8 | SUN T31",
     "discussion": "DE 18",
     "role": "PARTICIPANT"
@@ -3044,7 +3054,7 @@
   {
     "name": "MELAT TESFAYE",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T29 | SUN T28",
     "discussion": "DE 7",
     "role": "PARTICIPANT"
@@ -3052,7 +3062,7 @@
   {
     "name": "BEZA TEWODROS",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T18 | SUN T11",
     "discussion": "DE 21",
     "role": "PARTICIPANT"
@@ -3060,7 +3070,7 @@
   {
     "name": "NATHAN TEWODROS",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T21 | SUN T3",
     "discussion": "DE 10",
     "role": "PARTICIPANT"
@@ -3068,7 +3078,7 @@
   {
     "name": "YOHANES TEZERA",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T13 | SUN T20",
     "discussion": "DE 22",
     "role": "PARTICIPANT"
@@ -3076,7 +3086,7 @@
   {
     "name": "LUCAS TSEGAYE",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T4 | SUN T21",
     "discussion": "DA 7",
     "role": "PARTICIPANT"
@@ -3084,7 +3094,7 @@
   {
     "name": "BEZAYIT URGESSA",
     "campus": "VIRTUAL CAMPUS MINISTRY (VCM)",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T25 | SUN T11",
     "discussion": "DE 3",
     "role": "PARTICIPANT"
@@ -3092,7 +3102,7 @@
   {
     "name": "TIGIST WAKE",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T4 | SUN T34",
     "discussion": "DE 16",
     "role": "PARTICIPANT"
@@ -3100,7 +3110,7 @@
   {
     "name": "ELIJAH WATKINS",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T1 | SUN T17",
     "discussion": "DE 23",
     "role": "PARTICIPANT"
@@ -3108,7 +3118,7 @@
   {
     "name": "BETHELEHEM WOLDEGABRIEL",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T5 | SUN T21",
     "discussion": "DE 22",
     "role": "PARTICIPANT"
@@ -3116,7 +3126,7 @@
   {
     "name": "EZRA WORKENEH",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T5 | SUN T21",
     "discussion": "DA 8",
     "role": "PARTICIPANT"
@@ -3124,7 +3134,7 @@
   {
     "name": "NOEL YEMANE",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T26 | SUN T26",
     "discussion": "DE 20",
     "role": "PARTICIPANT"
@@ -3132,7 +3142,7 @@
   {
     "name": "TSEYON YEZIHALEM",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T30 | SUN T20",
     "discussion": "DE 11",
     "role": "PARTICIPANT"
@@ -3140,7 +3150,7 @@
   {
     "name": "ALAZAR YONAS",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T21 | SUN T17",
     "discussion": "DE 23",
     "role": "PARTICIPANT"
@@ -3148,7 +3158,7 @@
   {
     "name": "SARON YOSEF",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T30 | SUN T26",
     "discussion": "DE 13",
     "role": "PARTICIPANT"
@@ -3156,7 +3166,7 @@
   {
     "name": "VICTOR YUSUF",
     "campus": "VIRTUAL CAMPUS MINISTRY (VCM)",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T19 | SUN T19",
     "discussion": "DE 6",
     "role": "PARTICIPANT"
@@ -3164,7 +3174,7 @@
   {
     "name": "ABIGAIL ZERIHUN",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T8 | SUN T17",
     "discussion": "DE 16",
     "role": "PARTICIPANT"
@@ -3172,7 +3182,7 @@
   {
     "name": "TSION ZEWDIE",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T34 | SUN T23",
     "discussion": "DE 21",
     "role": "PARTICIPANT"
@@ -3180,7 +3190,7 @@
   {
     "name": "WONDIMU A",
     "campus": "UNIVERSITY OF MARYLAND (UMD) CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T29 | SUN T5",
     "discussion": "DE 10",
     "role": "PARTICIPANT"
@@ -3188,7 +3198,7 @@
   {
     "name": "ANCHINALUSH ABIYE",
     "campus": "NOVA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T24 | SUN T5",
     "discussion": "DA 2",
     "role": "PARTICIPANT"
@@ -3196,7 +3206,7 @@
   {
     "name": "BEAMLAK ADMASU",
     "campus": "VIRTUAL CAMPUS MINISTRY (VCM)",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T27 | SUN T11",
     "discussion": "DE 9",
     "role": "PARTICIPANT"
@@ -3204,7 +3214,7 @@
   {
     "name": "YOSEPH AKIEL",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T13 | SUN T11",
     "discussion": "DE 18",
     "role": "PARTICIPANT"
@@ -3212,7 +3222,7 @@
   {
     "name": "YAKOB AKIEL",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T7 | SUN T31",
     "discussion": "DE 1",
     "role": "PARTICIPANT"
@@ -3220,7 +3230,7 @@
   {
     "name": "ROBEL AKLILU",
     "campus": "UNIVERSITY OF MARYLAND (UMD) CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T27 | SUN T14",
     "discussion": "DE 9",
     "role": "PARTICIPANT"
@@ -3228,7 +3238,7 @@
   {
     "name": "AARON ALEMAYEHU",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T25 | SUN T6",
     "discussion": "DE 9",
     "role": "PARTICIPANT"
@@ -3236,7 +3246,7 @@
   {
     "name": "LEUL ALEMAYOH",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T26 | SUN T13",
     "discussion": "DE 6",
     "role": "PARTICIPANT"
@@ -3244,7 +3254,7 @@
   {
     "name": "ENDAYLALU ALESEW",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T29 | SUN T32",
     "discussion": "DA 8",
     "role": "PARTICIPANT"
@@ -3252,7 +3262,7 @@
   {
     "name": "SELAMAWIT ASMARE",
     "campus": "UNIVERSITY OF MARYLAND (UMD) CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T15 | SUN T16",
     "discussion": "DA 3",
     "role": "PARTICIPANT"
@@ -3260,7 +3270,7 @@
   {
     "name": "EDEN ASSEFA",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T30 | SUN T35",
     "discussion": "DA 8",
     "role": "PARTICIPANT"
@@ -3268,7 +3278,7 @@
   {
     "name": "BETHELHEM BAHIRU",
     "campus": "UNIVERSITY OF MARYLAND (UMD) CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T3 | SUN T15",
     "discussion": "DE 10",
     "role": "PARTICIPANT"
@@ -3276,7 +3286,7 @@
   {
     "name": "BINYAM BELACHEW",
     "campus": "VIRTUAL CAMPUS MINISTRY (VCM)",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T8 | SUN T9",
     "discussion": "DA 3",
     "role": "PARTICIPANT"
@@ -3284,7 +3294,7 @@
   {
     "name": "YEABSIRA BEREKET BELAYHUN",
     "campus": "LOS ANGELES CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T16 | SUN T18",
     "discussion": "DA 4",
     "role": "PARTICIPANT"
@@ -3292,7 +3302,7 @@
   {
     "name": "MIKYAS BESHAH",
     "campus": "UNIVERSITY OF MARYLAND (UMD) CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T14 | SUN T5",
     "discussion": "DE 7",
     "role": "PARTICIPANT"
@@ -3300,7 +3310,7 @@
   {
     "name": "LOZA DAWIT",
     "campus": "DENVER CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T28 | SUN T15",
     "discussion": "DE 4",
     "role": "PARTICIPANT"
@@ -3308,7 +3318,7 @@
   {
     "name": "MAHEDRE DAWIT",
     "campus": "GEORGE WASHINGTON UNIVERSITY CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T7 | SUN T4",
     "discussion": "DE 2",
     "role": "PARTICIPANT"
@@ -3316,7 +3326,7 @@
   {
     "name": "NUHAMIN DEMEKE",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T15 | SUN T9",
     "discussion": "DE 21",
     "role": "PARTICIPANT"
@@ -3324,7 +3334,7 @@
   {
     "name": "NATHENAEL DEMEWOZ",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T21 | SUN T4",
     "discussion": "DA 7",
     "role": "PARTICIPANT"
@@ -3332,7 +3342,7 @@
   {
     "name": "HERAN DEMISSIE",
     "campus": "VIRTUAL CAMPUS MINISTRY (VCM)",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T1 | SUN T34",
     "discussion": "DE 10",
     "role": "PARTICIPANT"
@@ -3340,7 +3350,7 @@
   {
     "name": "AARON DESSIE",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T12 | SUN T15",
     "discussion": "DE 8",
     "role": "PARTICIPANT"
@@ -3348,7 +3358,7 @@
   {
     "name": "AFRATA ESHETU",
     "campus": "VIRTUAL CAMPUS MINISTRY (VCM)",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T5 | SUN T19",
     "discussion": "DE 5",
     "role": "PARTICIPANT"
@@ -3356,7 +3366,7 @@
   {
     "name": "YEABSIRA FIKRE",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T20 | SUN T22",
     "discussion": "DE 10",
     "role": "PARTICIPANT"
@@ -3364,7 +3374,7 @@
   {
     "name": "RUTH FISSEHA",
     "campus": "DENVER CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T22 | SUN T2",
     "discussion": "DE 5",
     "role": "PARTICIPANT"
@@ -3372,7 +3382,7 @@
   {
     "name": "MELAT GEBREYUS",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T34 | SUN T2",
     "discussion": "DE 20",
     "role": "PARTICIPANT"
@@ -3380,7 +3390,7 @@
   {
     "name": "LEUL HAGOS",
     "campus": "VIRTUAL CAMPUS MINISTRY (VCM)",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T14 | SUN T29",
     "discussion": "DA 3",
     "role": "PARTICIPANT"
@@ -3388,7 +3398,7 @@
   {
     "name": "MARIAMAWIT HAILU",
     "campus": "GRADUATED FROM CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T26 | SUN T9",
     "discussion": "DE 2",
     "role": "PARTICIPANT"
@@ -3396,7 +3406,7 @@
   {
     "name": "ESTIFANOS HAILU",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T1 | SUN T12",
     "discussion": "DE 15",
     "role": "PARTICIPANT"
@@ -3404,7 +3414,7 @@
   {
     "name": "SESAYT KEBEDOM",
     "campus": "SAN JOSE CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T34 | SUN T17",
     "discussion": "DE 2",
     "role": "PARTICIPANT"
@@ -3412,7 +3422,7 @@
   {
     "name": "LIJADIS LAYEW",
     "campus": "GEORGE WASHINGTON UNIVERSITY CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T26 | SUN T18",
     "discussion": "DE 5",
     "role": "PARTICIPANT"
@@ -3420,7 +3430,7 @@
   {
     "name": "BEMNET MAMO",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T12 | SUN T25",
     "discussion": "DE 12",
     "role": "PARTICIPANT"
@@ -3428,7 +3438,7 @@
   {
     "name": "ISABEL MERID",
     "campus": "MINNESOTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T24 | SUN T21",
     "discussion": "DE 1",
     "role": "PARTICIPANT"
@@ -3436,7 +3446,7 @@
   {
     "name": "LEUL MESFIN",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T8 | SUN T8",
     "discussion": "DE 11",
     "role": "PARTICIPANT"
@@ -3444,7 +3454,7 @@
   {
     "name": "HIWOT MESFIN",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T8 | SUN T1",
     "discussion": "DA 1",
     "role": "PARTICIPANT"
@@ -3452,7 +3462,7 @@
   {
     "name": "HEWAN MOTI",
     "campus": "LOS ANGELES CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T15 | SUN T25",
     "discussion": "DE 8",
     "role": "PARTICIPANT"
@@ -3460,7 +3470,7 @@
   {
     "name": "AMANUEL MULUGETA",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T18 | SUN T5",
     "discussion": "DE 15",
     "role": "PARTICIPANT"
@@ -3468,7 +3478,7 @@
   {
     "name": "MERON MULUGETA",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T21 | SUN T19",
     "discussion": "DE 15",
     "role": "PARTICIPANT"
@@ -3476,7 +3486,7 @@
   {
     "name": "LEUL NEGASH",
     "campus": "GEORGE MASON UNIVERSITY CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T35 | SUN T27",
     "discussion": "DE 4",
     "role": "PARTICIPANT"
@@ -3484,7 +3494,7 @@
   {
     "name": "LEUL NEGUSE",
     "campus": "VIRTUAL CAMPUS MINISTRY (VCM)",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T30 | SUN T9",
     "discussion": "DA 2",
     "role": "PARTICIPANT"
@@ -3492,7 +3502,7 @@
   {
     "name": "YEABSIRA NIDA",
     "campus": "GEORGE MASON UNIVERSITY CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T32 | SUN T28",
     "discussion": "DA 2",
     "role": "PARTICIPANT"
@@ -3500,7 +3510,7 @@
   {
     "name": "LIYA SHIBRU",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T4 | SUN T26",
     "discussion": "DA 7",
     "role": "PARTICIPANT"
@@ -3508,7 +3518,7 @@
   {
     "name": "BEMNET SILESHI",
     "campus": "GRADUATED FROM CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T23 | SUN T32",
     "discussion": "DE 7",
     "role": "PARTICIPANT"
@@ -3516,7 +3526,7 @@
   {
     "name": "SARA SOLOMON",
     "campus": "GEORGE WASHINGTON UNIVERSITY CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T1 | SUN T35",
     "discussion": "DE 6",
     "role": "PARTICIPANT"
@@ -3524,7 +3534,7 @@
   {
     "name": "DANAT TADASE",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T11 | SUN T34",
     "discussion": "DA 8",
     "role": "PARTICIPANT"
@@ -3532,7 +3542,7 @@
   {
     "name": "BETESELAME TEGEGNE",
     "campus": "UNIVERSITY OF MARYLAND (UMD) CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T28 | SUN T12",
     "discussion": "DE 9",
     "role": "PARTICIPANT"
@@ -3540,7 +3550,7 @@
   {
     "name": "ZERIHUN TEKA",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T22 | SUN T10",
     "discussion": "DA 6",
     "role": "PARTICIPANT"
@@ -3548,7 +3558,7 @@
   {
     "name": "NATENAL TEKLETSON",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T29 | SUN T5",
     "discussion": "DE 1",
     "role": "PARTICIPANT"
@@ -3556,7 +3566,7 @@
   {
     "name": "ELSHADAI TESFAYE",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T27 | SUN T5",
     "discussion": "DE 14",
     "role": "PARTICIPANT"
@@ -3564,7 +3574,7 @@
   {
     "name": "KASSA TIZALE",
     "campus": "UNIVERSITY OF MARYLAND (UMD) CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T1 | SUN T11",
     "discussion": "DA 4",
     "role": "PARTICIPANT"
@@ -3572,7 +3582,7 @@
   {
     "name": "ROBEL WOLDEGYORGIS",
     "campus": "VIRTUAL CAMPUS MINISTRY (VCM)",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T19 | SUN T22",
     "discussion": "DA 5",
     "role": "PARTICIPANT"
@@ -3580,7 +3590,7 @@
   {
     "name": "LOZA WONDIMENEH",
     "campus": "GEORGE MASON UNIVERSITY CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T9 | SUN T13",
     "discussion": "DA 3",
     "role": "PARTICIPANT"
@@ -3588,7 +3598,7 @@
   {
     "name": "ABRAHAM WUDINEH",
     "campus": "LOS ANGELES CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T25 | SUN T8",
     "discussion": "DE 1",
     "role": "PARTICIPANT"
@@ -3596,7 +3606,7 @@
   {
     "name": "GELILA YEDEMIE",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T21 | SUN T16",
     "discussion": "DA 8",
     "role": "PARTICIPANT"
@@ -3604,7 +3614,7 @@
   {
     "name": "MIKE YIMER",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T33 | SUN T14",
     "discussion": "DE 15",
     "role": "PARTICIPANT"
@@ -3612,7 +3622,7 @@
   {
     "name": "RUTH YIMER",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T25 | SUN T27",
     "discussion": "DA 2",
     "role": "PARTICIPANT"
@@ -3620,7 +3630,7 @@
   {
     "name": "TSION YOHANNES",
     "campus": "GRADUATED FROM CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T9 | SUN T15",
     "discussion": "DA 2",
     "role": "PARTICIPANT"
@@ -3628,7 +3638,7 @@
   {
     "name": "SADOR YOHANNES",
     "campus": "ATLANTA CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T18 | SUN T6",
     "discussion": "DA 6",
     "role": "PARTICIPANT"
@@ -3636,7 +3646,7 @@
   {
     "name": "DINAH ZELALEM",
     "campus": "NEW",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T16 | SUN T24",
     "discussion": "DE 17",
     "role": "PARTICIPANT"
@@ -3644,7 +3654,7 @@
   {
     "name": "DAGMAWIT ZELEKE",
     "campus": "GRADUATED FROM CAMPUS MINISTRY",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T13 | SUN T10",
     "discussion": "DA 4",
     "role": "PARTICIPANT"
@@ -3661,8 +3671,8 @@
     "name": "WUTSIFTE A DERBAW",
     "campus": "SEATTLE CAMPUS MINISTRY",
     "dorm": "305D",
-    "table": NaN,
-    "discussion": NaN,
+    "table": "",
+    "discussion": "",
     "role": "COORDINATOR"
   },
   {
@@ -3709,8 +3719,8 @@
     "name": "DN DR. BINYAM BELACHEW",
     "campus": "VIRTUAL CAMPUS MINISTRY (VCM)",
     "dorm": "513D",
-    "table": NaN,
-    "discussion": NaN,
+    "table": "",
+    "discussion": "",
     "role": "COORDINATOR"
   },
   {
@@ -3749,8 +3759,8 @@
     "name": "DN. KALABE DERESSA",
     "campus": "ATLANTA CAMPUS MINISTRY",
     "dorm": "511B",
-    "table": NaN,
-    "discussion": NaN,
+    "table": "",
+    "discussion": "",
     "role": "COORDINATOR"
   },
   {
@@ -3836,55 +3846,55 @@
   {
     "name": "Shemeles Worku",
     "campus": "VCM Coordinator",
-    "dorm": NaN,
-    "table": NaN,
-    "discussion": NaN,
+    "dorm": "",
+    "table": "",
+    "discussion": "",
     "role": "COORDINATOR"
   },
   {
     "name": "Zelalem Hailu",
     "campus": "Media",
-    "dorm": NaN,
-    "table": NaN,
-    "discussion": NaN,
+    "dorm": "",
+    "table": "",
+    "discussion": "",
     "role": "COORDINATOR"
   },
   {
     "name": "Dr. Frehiwot Wehib",
     "campus": "Head of US - MKCM",
-    "dorm": NaN,
-    "table": NaN,
-    "discussion": NaN,
+    "dorm": "",
+    "table": "",
+    "discussion": "",
     "role": "COORDINATOR"
   },
   {
     "name": "Misrak Fantaye",
     "campus": "Atlanta Coordinator",
-    "dorm": NaN,
-    "table": NaN,
-    "discussion": NaN,
+    "dorm": "",
+    "table": "",
+    "discussion": "",
     "role": "COORDINATOR"
   },
   {
     "name": "Dn Dr. Binyam - Belachew",
     "campus": "VCM Coordinator",
-    "dorm": NaN,
-    "table": NaN,
-    "discussion": NaN,
+    "dorm": "",
+    "table": "",
+    "discussion": "",
     "role": "COORDINATOR"
   },
   {
     "name": "Dn. Kalabe - Deressa",
     "campus": "Atlanta Coordinator",
-    "dorm": NaN,
-    "table": NaN,
-    "discussion": NaN,
+    "dorm": "",
+    "table": "",
+    "discussion": "",
     "role": "COORDINATOR"
   },
   {
     "name": "Mulugeta Meron",
     "campus": "I don't have Campus Ministry",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T22 | SUN T10",
     "discussion": "DE 32",
     "role": "PARTICIPANT"
@@ -3892,7 +3902,7 @@
   {
     "name": "Adamu Abel",
     "campus": "I don't have Campus Ministry",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T13 | SUN T10",
     "discussion": "DE 33",
     "role": "PARTICIPANT"
@@ -3900,7 +3910,7 @@
   {
     "name": "Meron - Mulugeta",
     "campus": "I don't have Campus Ministry",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T26 | SUN T1",
     "discussion": "DE 34",
     "role": "PARTICIPANT"
@@ -3908,7 +3918,7 @@
   {
     "name": "Yeabsira - Fikre",
     "campus": "I don't have Campus Ministry",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T5 | SUN T24",
     "discussion": "DE 35",
     "role": "PARTICIPANT"
@@ -3916,7 +3926,7 @@
   {
     "name": "Lijadis - Layew",
     "campus": "George Washington University Campus Ministry ",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T22 | SUN T10",
     "discussion": "DE 35",
     "role": "PARTICIPANT"
@@ -3924,7 +3934,7 @@
   {
     "name": "Abraham- Mammo",
     "campus": "Los Angelos Campus Ministry",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T24 | SUN T11",
     "discussion": "DE 35",
     "role": "PARTICIPANT"
@@ -3932,7 +3942,7 @@
   {
     "name": "Mike - Yimer",
     "campus": "Atlanta, Georgia Campus Ministry",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T15 | SUN T2",
     "discussion": "DE 35",
     "role": "PARTICIPANT"
@@ -3940,7 +3950,7 @@
   {
     "name": "Mikyas - Beshah",
     "campus": "I don't have Campus Ministry",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T23 | SUN T11",
     "discussion": "DE 35",
     "role": "PARTICIPANT"
@@ -3948,7 +3958,7 @@
   {
     "name": "Aaron - Abebe",
     "campus": "I don't have Campus Ministry",
-    "dorm": NaN,
+    "dorm": "",
     "table": "SAT T12 | SUN T18",
     "discussion": "DE 35",
     "role": "PARTICIPANT"
@@ -3956,27 +3966,28 @@
   {
     "name": "Rakeb Bonger",
     "campus": "NEW",
-    "dorm": NaN,
-    "table": NaN,
-    "discussion": NaN,
+    "dorm": "",
+    "table": "",
+    "discussion": "",
     "role": "COORDINATOR"
   },
   {
     "name": "Ananya Fikru Debebe",
     "campus": "NEW",
-    "dorm": NaN,
-    "table": NaN,
-    "discussion": NaN,
+    "dorm": "",
+    "table": "",
+    "discussion": "",
     "role": "COORDINATOR"
   },
   {
     "name": "Tsega Tizazu",
     "campus": "NEW",
-    "dorm": NaN,
-    "table": NaN,
-    "discussion": NaN,
+    "dorm": "",
+    "table": "",
+    "discussion": "",
     "role": "COORDINATOR"
   }
-];    </script>
+];
+    </script>
 </body>
 </html>
