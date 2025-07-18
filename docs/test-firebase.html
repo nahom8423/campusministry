@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        button:hover {
+            background: #5a6fd8;
+        }
+        #output {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Firebase Connection Test</h1>
+    <p>This page tests the Firebase connection and allows you to add test check-ins.</p>
+    
+    <button onclick="testConnection()">Test Firebase Connection</button>
+    <button onclick="addTestCheckin()">Add Test Check-in</button>
+    <button onclick="clearOutput()">Clear Output</button>
+    
+    <div id="output">Click a button to test Firebase...</div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, push, onChildAdded, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { firebaseConfig } from "./scripts/env.js";
+
+        let app, db;
+        const output = document.getElementById('output');
+
+        function log(message) {
+            output.textContent += new Date().toLocaleTimeString() + ': ' + message + '\n';
+        }
+
+        try {
+            app = initializeApp(firebaseConfig);
+            db = getDatabase(app);
+            log("✅ Firebase initialized successfully");
+        } catch (error) {
+            log("❌ Firebase initialization failed: " + error.message);
+        }
+
+        window.testConnection = async function() {
+            log("🔄 Testing Firebase connection...");
+            
+            try {
+                const todayPath = new Date().toISOString().slice(0,10);
+                const checkinsRef = ref(db, `checkins/${todayPath}`);
+                
+                const snapshot = await get(checkinsRef);
+                if (snapshot.exists()) {
+                    const count = Object.keys(snapshot.val()).length;
+                    log(`✅ Connection successful! Found ${count} check-ins for today (${todayPath})`);
+                } else {
+                    log(`✅ Connection successful! No check-ins found for today (${todayPath})`);
+                }
+            } catch (error) {
+                log("❌ Connection test failed: " + error.message);
+            }
+        };
+
+        window.addTestCheckin = async function() {
+            log("🔄 Adding test check-in...");
+            
+            try {
+                const todayPath = new Date().toISOString().slice(0,10);
+                const checkinsRef = ref(db, `checkins/${todayPath}`);
+                
+                const testData = {
+                    name: "TEST USER " + Math.floor(Math.random() * 1000),
+                    campus: "Test Campus",
+                    ts: Date.now()
+                };
+                
+                await push(checkinsRef, testData);
+                log(`✅ Test check-in added successfully: ${testData.name}`);
+            } catch (error) {
+                log("❌ Failed to add test check-in: " + error.message);
+            }
+        };
+
+        window.clearOutput = function() {
+            output.textContent = "Output cleared.\n";
+        };
+    </script>
+</body>
+</html>

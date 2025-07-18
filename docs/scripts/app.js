@@ -2,13 +2,39 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 import { firebaseConfig } from "./env.js";
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const todayPath = new Date().toISOString().slice(0,10);          // 2025-07-18
-const checkinsRef = path => ref(db, `checkins/${path}`);
+// Utility function to get today's date in consistent format
+function getTodayPath() {
+  return new Date().toISOString().slice(0,10);
+}
+
+// Initialize Firebase
+let app, db, checkinsRef;
+
+try {
+  app = initializeApp(firebaseConfig);
+  db = getDatabase(app);
+  checkinsRef = path => ref(db, `checkins/${path || getTodayPath()}`);
+  console.log("Firebase initialized successfully for date:", getTodayPath());
+} catch (error) {
+  console.error("Firebase initialization error:", error);
+}
 
 function saveCheckin(name, campus) {
-  push(checkinsRef(todayPath), { name, campus, ts: Date.now() });
+  if (!db || !checkinsRef) {
+    console.error("Firebase not initialized properly");
+    return Promise.reject("Firebase not initialized");
+  }
+  
+  return push(checkinsRef(getTodayPath()), { 
+    name, 
+    campus, 
+    ts: Date.now() 
+  }).then(() => {
+    console.log("Check-in saved successfully:", name);
+  }).catch(error => {
+    console.error("Error saving check-in:", error);
+    throw error;
+  });
 }
 
 // ========== index.html code ==========
@@ -92,20 +118,34 @@ if (document.body.id === "checkinPage") {
   window.confirmCheckIn = async function() {
     if (!selectedPerson) return;
     
-    checkedInParticipants.add(selectedPerson.name);
-    
-    // Save to Firebase
-    saveCheckin(selectedPerson.name, selectedPerson.campus);
-    
-    // Show success message
-    document.getElementById('personInfo').style.display = 'none';
-    document.getElementById('successMessage').style.display = 'block';
-    
-    updateStats();
-    
-    setTimeout(() => {
-      clearForm();
-    }, 3000);
+    try {
+      checkedInParticipants.add(selectedPerson.name);
+      
+      // Save to Firebase
+      await saveCheckin(selectedPerson.name, selectedPerson.campus);
+      
+      // Show success message
+      document.getElementById('personInfo').style.display = 'none';
+      document.getElementById('successMessage').style.display = 'block';
+      
+      updateStats();
+      
+      setTimeout(() => {
+        clearForm();
+      }, 3000);
+    } catch (error) {
+      console.error("Error during check-in:", error);
+      
+      // Remove from checked in set if save failed
+      checkedInParticipants.delete(selectedPerson.name);
+      
+      // Show error message
+      document.getElementById('errorMessage').style.display = 'block';
+      
+      setTimeout(() => {
+        document.getElementById('errorMessage').style.display = 'none';
+      }, 5000);
+    }
   }
 
   window.clearSelection = function() {
@@ -140,11 +180,15 @@ if (document.body.id === "checkinPage") {
   });
 
   // Load existing check-ins
-  onChildAdded(checkinsRef(todayPath), snap => {
-    const { name } = snap.val();
-    checkedInParticipants.add(name);
-    updateStats();
-  });
+  if (db && checkinsRef) {
+    onChildAdded(checkinsRef(getTodayPath()), snap => {
+      const { name } = snap.val();
+      checkedInParticipants.add(name);
+      updateStats();
+    }, error => {
+      console.error("Error loading check-ins:", error);
+    });
+  }
 
   // Initialize
   loadParticipants();
@@ -152,12 +196,40 @@ if (document.body.id === "checkinPage") {
 
 // ========== admin.html code ==========
 if (document.body.id === "adminPage") {
-  onChildAdded(checkinsRef(todayPath), snap => {
-    const checkinData = snap.val();
+  let isInitialLoad = true;
+  let initialCheckinsCount = 0;
+  
+  if (db && checkinsRef) {    
+    onChildAdded(checkinsRef(getTodayPath()), snap => {
+      const checkinData = snap.val();
+      
+      if (isInitialLoad) {
+        // Count existing check-ins during initial load
+        initialCheckinsCount++;
+      }
+      
+      // Call the global function defined in admin.html
+      if (window.addCheckinToTable) {
+        window.addCheckinToTable(checkinData, isInitialLoad);
+      }
+    }, error => {
+      console.error("Error loading admin check-ins:", error);
+      if (window.showAdminError) {
+        window.showAdminError("Failed to load check-ins: " + error.message);
+      }
+    });
     
-    // Call the global function defined in admin.html
-    if (window.addCheckinToTable) {
-      window.addCheckinToTable(checkinData);
+    // After a short delay, mark initial load as complete and update stats
+    setTimeout(() => {
+      isInitialLoad = false;
+      if (window.initializeAdminStats) {
+        window.initializeAdminStats(initialCheckinsCount);
+      }
+    }, 1000);
+  } else {
+    console.error("Firebase not initialized for admin panel");
+    if (window.showAdminError) {
+      window.showAdminError("Firebase connection failed");
     }
-  });
+  }
 }

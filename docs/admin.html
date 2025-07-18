@@ -222,6 +222,13 @@
             <h1>📊 Campus Ministry Admin Panel</h1>
             <button class="logout-btn" onclick="logout()">Logout</button>
         </div>
+        
+        <!-- Error/Status Messages -->
+        <div id="adminMessages" style="margin-bottom: 20px; display: none;">
+            <div style="background: #f8d7da; color: #721c24; padding: 10px; border-radius: 5px; margin-bottom: 10px;">
+                <strong>Error:</strong> <span id="errorText"></span>
+            </div>
+        </div>
 
         <div class="stats-grid">
             <div class="stat-card">
@@ -245,6 +252,9 @@
         <div class="table-container">
             <div class="table-header">
                 ✅ Real-time Check-ins (Live Updates)
+                <span id="connectionStatus" style="float: right; font-size: 0.8em;">
+                    🟡 Connecting...
+                </span>
             </div>
             <table id="checkinsTable">
                 <thead>
@@ -257,6 +267,11 @@
                 </thead>
                 <tbody>
                     <!-- Real-time check-ins will appear here -->
+                    <tr id="loadingRow">
+                        <td colspan="4" style="text-align: center; padding: 30px; color: #666;">
+                            🔄 Loading check-ins...
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -301,11 +316,19 @@
         }
         
         // Global function to be called by Firebase app.js
-        window.addCheckinToTable = function(checkinData) {
+        window.addCheckinToTable = function(checkinData, isInitialLoad = false) {
             const tbody = document.querySelector('#checkinsTable tbody');
             const row = document.createElement('tr');
             
-            totalCheckedIn++;
+            // Remove empty state message if it exists
+            const emptyMessage = tbody.querySelector('td[colspan="4"]');
+            if (emptyMessage && !emptyMessage.parentElement.id === 'loadingRow') {
+                emptyMessage.parentElement.remove();
+            }
+            
+            if (!isInitialLoad) {
+                totalCheckedIn++;
+            }
             
             row.innerHTML = `
                 <td><strong>${checkinData.name}</strong></td>
@@ -317,14 +340,75 @@
             // Add to top of table
             tbody.insertBefore(row, tbody.firstChild);
             
-            // Update stats
+            // Update stats only if it's not initial load
+            if (!isInitialLoad) {
+                updateStats();
+                
+                // Add a little animation for new check-ins
+                row.style.backgroundColor = '#d4edda';
+                setTimeout(() => {
+                    row.style.backgroundColor = '';
+                }, 2000);
+            }
+        };
+        
+        // Initialize admin stats with existing check-ins count
+        window.initializeAdminStats = function(existingCount) {
+            totalCheckedIn = existingCount;
             updateStats();
+            console.log("Admin stats initialized with", existingCount, "existing check-ins");
             
-            // Add a little animation
-            row.style.backgroundColor = '#d4edda';
+            // Update connection status
+            const statusElement = document.getElementById('connectionStatus');
+            if (statusElement) {
+                statusElement.innerHTML = '🟢 Connected';
+            }
+            
+            // Remove loading row
+            const loadingRow = document.getElementById('loadingRow');
+            if (loadingRow) {
+                loadingRow.remove();
+            }
+            
+            // If no check-ins, show empty state
+            if (existingCount === 0) {
+                const tbody = document.querySelector('#checkinsTable tbody');
+                const emptyRow = document.createElement('tr');
+                emptyRow.innerHTML = `
+                    <td colspan="4" style="text-align: center; padding: 30px; color: #666;">
+                        📋 No check-ins yet. They will appear here in real-time!
+                    </td>
+                `;
+                tbody.appendChild(emptyRow);
+            }
+        };
+        
+        // Function to show admin errors
+        window.showAdminError = function(error) {
+            const errorDiv = document.getElementById('adminMessages');
+            const errorText = document.getElementById('errorText');
+            errorText.textContent = error;
+            errorDiv.style.display = 'block';
+            
+            // Update connection status
+            const statusElement = document.getElementById('connectionStatus');
+            if (statusElement) {
+                statusElement.innerHTML = '🔴 Error';
+            }
+            
+            // Remove loading row and show error
+            const loadingRow = document.getElementById('loadingRow');
+            if (loadingRow) {
+                loadingRow.innerHTML = `
+                    <td colspan="4" style="text-align: center; padding: 30px; color: #dc3545;">
+                        ❌ Failed to connect to database
+                    </td>
+                `;
+            }
+            
             setTimeout(() => {
-                row.style.backgroundColor = '';
-            }, 2000);
+                errorDiv.style.display = 'none';
+            }, 5000);
         };
         
         // Make functions global
