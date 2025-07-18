@@ -152,12 +152,12 @@ if (document.body.id === "checkinPage") {
 
 // ========== admin.html code ==========
 if (document.body.id === "adminPage") {
-  const tbody = document.querySelector("#checkinsTable tbody");
-  
   onChildAdded(checkinsRef(todayPath), snap => {
-    const { name, campus, ts } = snap.val();
-    const tr = document.createElement("tr");
-    tr.innerHTML = `<td>${name}</td><td>${campus}</td><td>${new Date(ts).toLocaleTimeString()}</td>`;
-    tbody.appendChild(tr);
+    const checkinData = snap.val();
+    
+    // Call the global function defined in admin.html
+    if (window.addCheckinToTable) {
+      window.addCheckinToTable(checkinData);
+    }
   });
 }
