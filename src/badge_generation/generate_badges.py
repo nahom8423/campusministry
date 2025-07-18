@@ -3,12 +3,16 @@ from pptx import Presentation
 from pptx.dml.color import RGBColor
 import copy
 import math
+import os
 
-excel_file = "../../input_data/BADGE (CLEAN FILE).xlsx"
-excel_file_2 = "../../input_data/General Assembly Dorm Assignment1.xlsx"
-excel_file_3 = "../../input_data/General Assembly Dorm Assignment2.xlsx"
-template_file = "../../templates/CAMPUSMINISTRYBADGE_PATCHED.pptx"
-output_file = "../../output/filled_badges.pptx"
+# Get the absolute path to the project root directory
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+
+excel_file = os.path.join(project_root, "input_data", "BADGE (CLEAN FILE).xlsx")
+excel_file_2 = os.path.join(project_root, "input_data", "General Assembly Dorm Assignment1.xlsx")
+excel_file_3 = os.path.join(project_root, "input_data", "General Assembly Dorm Assignment2.xlsx")
+template_file = os.path.join(project_root, "templates", "CAMPUSMINISTRYBADGE_PATCHED.pptx")
+output_file = os.path.join(project_root, "output", "filled_badges.pptx")
 
 campus_ministry_locations = {
     # Atlanta variations
@@ -547,7 +551,7 @@ for batch_idx in range(num_batches):
     new_slide = duplicate_slide(output_pres, template_slide)
 
     # Use existing CSV assignments if available, otherwise generate new ones
-    csv_file = '../../input_data/badge_assignments.csv'
+    csv_file = os.path.join(project_root, 'input_data', 'badge_assignments.csv')
     slide_table_assignments = {}
     
     try:
@@ -734,7 +738,7 @@ output_pres.save(output_file)
 print(f"Saved {num_batches} slides to {output_file}")
 
 # Use the existing CSV data if it exists, otherwise create new one
-csv_file = '../../input_data/badge_assignments.csv'
+csv_file = os.path.join(project_root, 'input_data', 'badge_assignments.csv')
 try:
     existing_csv = pd.read_csv(csv_file)
     print(f"\nUsing existing CSV file: {csv_file}")
@@ -762,7 +766,7 @@ try:
     
     # Create DataFrame and save to new Excel file
     new_df = pd.DataFrame(new_excel_data)
-    new_excel_filename = '../../input_data/BADGE_ASSIGNMENTS_FINAL.xlsx'
+    new_excel_filename = os.path.join(project_root, 'input_data', 'BADGE_ASSIGNMENTS_FINAL.xlsx')
     new_df.to_excel(new_excel_filename, index=False)
     print(f"Created new Excel file: {new_excel_filename}")
     
@@ -792,17 +796,17 @@ except FileNotFoundError:
     
     # Create DataFrame and save to new Excel file
     new_df = pd.DataFrame(new_excel_data)
-    new_excel_filename = '../../input_data/BADGE_ASSIGNMENTS_FINAL.xlsx'
+    new_excel_filename = os.path.join(project_root, 'input_data', 'BADGE_ASSIGNMENTS_FINAL.xlsx')
     new_df.to_excel(new_excel_filename, index=False)
     print(f"Created new Excel file: {new_excel_filename}")
     
     # Also save badge assignments to CSV for reference
     badge_assignments_df = pd.DataFrame(badge_records)
-    badge_assignments_df.to_csv('../../input_data/badge_assignments.csv', index=False)
-    print(f"Saved badge assignments to ../../input_data/badge_assignments.csv")
+    badge_assignments_df.to_csv(os.path.join(project_root, 'input_data', 'badge_assignments.csv'), index=False)
+    print(f"Saved badge assignments to {os.path.join(project_root, 'input_data', 'badge_assignments.csv')}")
 
 print(f"\nBadge generation complete!")
 print(f"Files created:")
 print(f"  - {output_file} (PowerPoint with badges)")
 print(f"  - {new_excel_filename} (Excel matching badge order)")
-print(f"  - ../../input_data/badge_assignments.csv (CSV for reference)")
+print(f"  - {os.path.join(project_root, 'input_data', 'badge_assignments.csv')} (CSV for reference)")
