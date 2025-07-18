@@ -847,8 +847,7 @@
         // Authentication
         async function login() {
             const password = document.getElementById('passwordInput').value;
-            console.log('Login attempt with password:', password);
-            console.log('Expected password:', ADMIN_PASSWORD);
+            console.log('Login attempt received');
             console.log('Password match:', password === ADMIN_PASSWORD);
             
             if (password === ADMIN_PASSWORD) {
