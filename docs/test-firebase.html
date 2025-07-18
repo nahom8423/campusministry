@@ -36,8 +36,21 @@
     <h1>🔧 Firebase Connection Test</h1>
     <p>This page tests the Firebase connection and allows you to add test check-ins.</p>
     
+    <div style="background: #fff3cd; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #ffc107;">
+        <strong>⚠️ Important:</strong> If you see database connection errors, make sure to:
+        <ol>
+            <li>Go to <a href="https://console.firebase.google.com/" target="_blank">Firebase Console</a></li>
+            <li>Select your project: <strong>campusministry-d8400</strong></li>
+            <li>Navigate to <strong>Realtime Database</strong> in the left sidebar</li>
+            <li>Click <strong>"Create Database"</strong> if it doesn't exist</li>
+            <li>Choose your region (e.g., <strong>us-central1</strong>)</li>
+            <li>Start in <strong>test mode</strong> for now</li>
+        </ol>
+    </div>
+    
     <button onclick="testConnection()">Test Firebase Connection</button>
     <button onclick="addTestCheckin()">Add Test Check-in</button>
+    <button onclick="checkDatabaseURL()">Check Database URL</button>
     <button onclick="clearOutput()">Clear Output</button>
     
     <div id="output">Click a button to test Firebase...</div>
@@ -98,6 +111,27 @@
                 log(`✅ Test check-in added successfully: ${testData.name}`);
             } catch (error) {
                 log("❌ Failed to add test check-in: " + error.message);
+            }
+        };
+
+        window.checkDatabaseURL = async function() {
+            log("🔍 Checking database URL configuration...");
+            log("Current database URL: " + firebaseConfig.databaseURL);
+            
+            try {
+                // Test if the URL is reachable
+                const response = await fetch(firebaseConfig.databaseURL + "/.json");
+                if (response.ok) {
+                    log("✅ Database URL is reachable");
+                    const data = await response.text();
+                    log("Response: " + (data || "Empty database"));
+                } else {
+                    log("❌ Database URL returned error: " + response.status + " " + response.statusText);
+                    log("💡 Try creating the database in Firebase Console first");
+                }
+            } catch (error) {
+                log("❌ Database URL test failed: " + error.message);
+                log("💡 This might mean the database doesn't exist yet");
             }
         };
 

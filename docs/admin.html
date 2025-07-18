@@ -225,8 +225,19 @@
         
         <!-- Error/Status Messages -->
         <div id="adminMessages" style="margin-bottom: 20px; display: none;">
-            <div style="background: #f8d7da; color: #721c24; padding: 10px; border-radius: 5px; margin-bottom: 10px;">
-                <strong>Error:</strong> <span id="errorText"></span>
+            <div style="background: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px; margin-bottom: 10px;">
+                <strong>⚠️ Database Connection Error:</strong> <span id="errorText"></span>
+                <br><br>
+                <strong>Quick Fix:</strong>
+                <ol style="margin: 10px 0; padding-left: 20px;">
+                    <li>Go to <a href="https://console.firebase.google.com/" target="_blank" style="color: #721c24;">Firebase Console</a></li>
+                    <li>Select project: <strong>campusministry-d8400</strong></li>
+                    <li>Create <strong>Realtime Database</strong> if it doesn't exist</li>
+                    <li>Set security rules to allow read/write</li>
+                </ol>
+                <a href="test-firebase.html" target="_blank" style="color: #721c24; text-decoration: underline;">
+                    → Open Test Page for Detailed Instructions
+                </a>
             </div>
         </div>
 

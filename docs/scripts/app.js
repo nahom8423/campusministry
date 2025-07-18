@@ -12,11 +12,25 @@ let app, db, checkinsRef;
 
 try {
   app = initializeApp(firebaseConfig);
-  db = getDatabase(app);
-  checkinsRef = path => ref(db, `checkins/${path || getTodayPath()}`);
-  console.log("Firebase initialized successfully for date:", getTodayPath());
+  console.log("Firebase app initialized successfully");
+  
+  // Try to initialize database with better error handling
+  try {
+    db = getDatabase(app);
+    console.log("Firebase database initialized successfully");
+    checkinsRef = path => ref(db, `checkins/${path || getTodayPath()}`);
+    console.log("Firebase initialized successfully for date:", getTodayPath());
+  } catch (dbError) {
+    console.error("Firebase Database initialization error:", dbError);
+    console.error("Make sure Firebase Realtime Database is enabled in your Firebase console");
+    
+    // Show user-friendly error
+    if (typeof window !== 'undefined' && window.showAdminError) {
+      window.showAdminError("Database connection failed. Please check Firebase configuration.");
+    }
+  }
 } catch (error) {
-  console.error("Firebase initialization error:", error);
+  console.error("Firebase app initialization error:", error);
 }
 
 function saveCheckin(name, campus) {
