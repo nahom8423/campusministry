@@ -5,7 +5,7 @@ def create_admin_panel_with_data():
     """Create the admin panel HTML file with embedded participant data"""
     
     # Read the badge assignments CSV
-    df = pd.read_csv('../../input_data/badge_assignments.csv')
+    df = pd.read_csv('/Users/nahomnigatu/Downloads/campusministrybadges/input_data/badge_assignments.csv')
     
     participants = []
     
@@ -38,7 +38,7 @@ def create_admin_panel_with_data():
     participants.sort(key=lambda x: x['name'])
     
     # Read the HTML template
-    with open('../../docs/admin.html', 'r', encoding='utf-8') as f:
+    with open('/Users/nahomnigatu/Downloads/campusministrybadges/docs/admin.html', 'r', encoding='utf-8') as f:
         html_content = f.read()
     
     # Convert participants to JavaScript format
@@ -48,10 +48,10 @@ def create_admin_panel_with_data():
     html_content = html_content.replace('const PARTICIPANT_DATA = [];', f'const PARTICIPANT_DATA = {js_data};')
     
     # Write the final HTML file
-    with open('../../output/admin_panel_final.html', 'w', encoding='utf-8') as f:
+    with open('/Users/nahomnigatu/Downloads/campusministrybadges/output/admin_panel_final.html', 'w', encoding='utf-8') as f:
         f.write(html_content)
     
-    print(f"✅ Created ../../output/admin_panel_final.html with {len(participants)} participants")
+    print(f"✅ Created /Users/nahomnigatu/Downloads/campusministrybadges/output/admin_panel_final.html with {len(participants)} participants")
     print(f"\n📊 Admin Panel Features:")
     print(f"   - Password protected (default: campus2024)")
     print(f"   - Real-time statistics dashboard")

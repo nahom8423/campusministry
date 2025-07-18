@@ -6,7 +6,7 @@ def generate_checkin_data():
     """Generate participant data for the check-in system from the CSV file"""
     
     # Read the badge assignments CSV
-    df = pd.read_csv('../../input_data/badge_assignments.csv')
+    df = pd.read_csv('/Users/nahomnigatu/Downloads/campusministrybadges/input_data/badge_assignments.csv')
     
     participants = []
     
@@ -49,7 +49,7 @@ def create_checkin_page_with_data():
     participants = generate_checkin_data()
     
     # Read the HTML template
-    with open('../../docs/index.html', 'r', encoding='utf-8') as f:
+    with open('/Users/nahomnigatu/Downloads/campusministrybadges/docs/index.html', 'r', encoding='utf-8') as f:
         html_content = f.read()
     
     # Convert participants to JavaScript format
@@ -59,10 +59,10 @@ def create_checkin_page_with_data():
     html_content = html_content.replace('PARTICIPANT_DATA; // Will be injected', js_data + ';')
     
     # Write the final HTML file
-    with open('../../output/checkin_final.html', 'w', encoding='utf-8') as f:
+    with open('/Users/nahomnigatu/Downloads/campusministrybadges/output/checkin_final.html', 'w', encoding='utf-8') as f:
         f.write(html_content)
     
-    print(f"Created ../../output/checkin_final.html with {len(participants)} participants")
+    print(f"Created /Users/nahomnigatu/Downloads/campusministrybadges/output/checkin_final.html with {len(participants)} participants")
     print("\nFirst 5 participants:")
     for i, p in enumerate(participants[:5]):
         print(f"{i+1}. {p['name']} - {p['campus']} - {p['table']}")

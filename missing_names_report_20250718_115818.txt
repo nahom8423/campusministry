@@ -1,0 +1,17 @@
+CAMPUS MINISTRY MISSING NAMES REPORT
+==================================================
+Generated: 2025-07-18 11:58:18
+
+SUMMARY:
+  • Total unique names in master list: 306
+  • Total missing names found: 0
+  • Files analyzed: 6
+
+
+ALL FILES ANALYZED:
+  • input_data/BADGE (CLEAN FILE).xlsx: 0 names
+  • input_data/BADGE_ASSIGNMENTS_FINAL.xlsx: 0 names
+  • input_data/General Assembly Dorm Assignment.xlsx: 0 names
+  • input_data/General Assembly Dorm Assignment1.xlsx: 0 names
+  • input_data/General Assembly Dorm Assignment2.xlsx: 0 names
+  • input_data/East-registration .xlsx: 0 names

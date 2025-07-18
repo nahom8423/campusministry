@@ -1,0 +1,1761 @@
+CAMPUS MINISTRY MISSING NAMES REPORT
+==================================================
+Generated: 2025-07-18 11:58:31
+
+SUMMARY:
+  • Total unique names in master list: 306
+  • Total missing names found: 289
+  • Files analyzed: 6
+
+MISSING NAMES DETAILS:
+------------------------------
+
+From General Assembly Dorm Assignment.xlsx:
+  • nan nan
+    Campus: nan
+    Clean name: NN NN
+    First: nan
+    Last: nan
+
+  • Hermela Eshete
+    Campus: Virtual campus Ministry(VCM)
+    Clean name: HRMLSHT
+    First: Hermela
+    Last: Eshete
+
+  • Bemnet Haile
+    Campus: nan
+    Clean name: BMNT HIL
+    First: Bemnet
+    Last: Haile
+
+  • Meron Belayneh
+    Campus: Seattle Campus Ministry
+    Clean name: MRON BLYNH
+    First: Meron
+    Last: Belayneh
+
+  • Soliyana Kifle
+    Campus: I don't have Campus Ministry
+    Clean name: SOLIYN KIFL
+    First: Soliyana
+    Last: Kifle
+
+  • Rozsa Teklu
+    Campus: I don't have Campus Ministry
+    Clean name: ROZS TKLU
+    First: Rozsa
+    Last: Teklu
+
+  • Hannah Zeru
+    Campus: Graduate *
+    Clean name: HNNH ZRU
+    First: Hannah
+    Last: Zeru
+
+  • Rakeb nan
+    Campus: nan
+    Clean name: RKB NN
+    First: Rakeb
+    Last: nan
+
+  • Mulugeta-New Meron
+    Campus: I don't have Campus Ministry
+    Clean name: MULUGT-NW MRON
+    First: Mulugeta-New
+    Last: Meron
+
+  • Joseph (Minase) Asfaw
+    Campus: Denver Campus Ministry
+    Clean name: JOSPH (MINS)SFW
+    First: Joseph (Minase)
+    Last: Asfaw
+
+  • Barok* Haile
+    Campus: nan
+    Clean name: BROK* HIL
+    First: Barok*
+    Last: Haile
+
+  • Adamu-New Abel
+    Campus: I don't have Campus Ministry
+    Clean name: DMU-NWBL
+    First: Adamu-New
+    Last: Abel
+
+  • Eleazar Elias Ashebir
+    Campus: Los Angelos Campus Ministry
+    Clean name: LZRLISSHBIR
+    First: Eleazar Elias
+    Last: Ashebir
+
+  • Wonimagegn Azemach
+    Campus: I don't have Campus Ministry
+    Clean name: WONIMGGNZMCH
+    First: Wonimagegn
+    Last: Azemach
+
+  • Yonatan* Achamyeleh
+    Campus: Los Angelos Campus Ministry
+    Clean name: YONTN*CHMYLH
+    First: Yonatan*
+    Last: Achamyeleh
+
+  • Freab* Abebe
+    Campus: Seattle Campus Ministry
+    Clean name: FRB*BB
+    First: Freab*
+    Last: Abebe
+
+  • Alazare Kassahun
+    Campus: I don't have Campus Ministry
+    Clean name: LZR KSSHUN
+    First: Alazare
+    Last: Kassahun
+
+  • Shemeles Worku
+    Campus: VCM Coordinator
+    Clean name: SHMLS WORKU
+    First: Shemeles
+    Last: Worku
+
+  • Zelalem Hailu
+    Campus: Media
+    Clean name: ZLLM HILU
+    First: Zelalem
+    Last: Hailu
+
+  • Dr. Frehiwot Wehib
+    Campus: Head of US - MKCM
+    Clean name: DR. FRHIWOT WHIB
+    First: Dr. Frehiwot
+    Last: Wehib
+
+  • Misrak Fantaye
+    Campus: Atlanta Coordinator
+    Clean name: MISRK FNTY
+    First: Misrak
+    Last: Fantaye
+
+
+From General Assembly Dorm Assignment1.xlsx:
+  • 1Sara-New Solomon
+    Campus: George Washington University Campus Ministry 
+    Clean name: SR-NW SOLOMON
+    First: 1Sara-New
+    Last: Solomon
+
+  • Hermela Eshete
+    Campus: Virtual campus Ministry(VCM)
+    Clean name: HRMLSHT
+    First: Hermela
+    Last: Eshete
+
+  • Bemnet Haile
+    Campus: nan
+    Clean name: BMNT HIL
+    First: Bemnet
+    Last: Haile
+
+  • Meron Belayneh
+    Campus: Seattle Campus Ministry
+    Clean name: MRON BLYNH
+    First: Meron
+    Last: Belayneh
+
+  • Soliyana Kifle
+    Campus: I don't have Campus Ministry
+    Clean name: SOLIYN KIFL
+    First: Soliyana
+    Last: Kifle
+
+  • nan nan
+    Campus: nan
+    Clean name: NN NN
+    First: nan
+    Last: nan
+
+  • Rozsa Teklu
+    Campus: I don't have Campus Ministry
+    Clean name: ROZS TKLU
+    First: Rozsa
+    Last: Teklu
+
+  • Hannah Zeru
+    Campus: Graduate *
+    Clean name: HNNH ZRU
+    First: Hannah
+    Last: Zeru
+
+  • Rakeb nan
+    Campus: nan
+    Clean name: RKB NN
+    First: Rakeb
+    Last: nan
+
+  • 1Meron - New Mulugeta
+    Campus: I don't have Campus Ministry
+    Clean name: MRON - NW MULUGT
+    First: 1Meron - New
+    Last: Mulugeta
+
+  • Joseph (Minase) Asfaw
+    Campus: Denver Campus Ministry
+    Clean name: JOSPH (MINS)SFW
+    First: Joseph (Minase)
+    Last: Asfaw
+
+  • Barok* Haile
+    Campus: nan
+    Clean name: BROK* HIL
+    First: Barok*
+    Last: Haile
+
+  • 1Abel -New Adamu
+    Campus: I don't have Campus Ministry
+    Clean name: BL -NWDMU
+    First: 1Abel -New
+    Last: Adamu
+
+  • Eleazar Elias Ashebir
+    Campus: Los Angelos Campus Ministry
+    Clean name: LZRLISSHBIR
+    First: Eleazar Elias
+    Last: Ashebir
+
+  • Wonimagegn Azemach
+    Campus: I don't have Campus Ministry
+    Clean name: WONIMGGNZMCH
+    First: Wonimagegn
+    Last: Azemach
+
+  • Yonatan* Achamyeleh
+    Campus: Los Angelos Campus Ministry
+    Clean name: YONTN*CHMYLH
+    First: Yonatan*
+    Last: Achamyeleh
+
+  • Freab* Abebe
+    Campus: Seattle Campus Ministry
+    Clean name: FRB*BB
+    First: Freab*
+    Last: Abebe
+
+  • Alazare Kassahun
+    Campus: I don't have Campus Ministry
+    Clean name: LZR KSSHUN
+    First: Alazare
+    Last: Kassahun
+
+  • Shemeles Worku
+    Campus: VCM Coordinator
+    Clean name: SHMLS WORKU
+    First: Shemeles
+    Last: Worku
+
+  • Zelalem Hailu
+    Campus: Media
+    Clean name: ZLLM HILU
+    First: Zelalem
+    Last: Hailu
+
+  • 1Dn Dr. Binyam - New Belachew
+    Campus: VCM Coordinator
+    Clean name: DN DR. BINYM - NW BLCHW
+    First: 1Dn Dr. Binyam - New
+    Last: Belachew
+
+  • 1Yeabsira - New Fikre
+    Campus: I don't have Campus Ministry
+    Clean name: YBSIR - NW FIKR
+    First: 1Yeabsira - New
+    Last: Fikre
+
+  • 1Lijadis - New Layew
+    Campus: George Washington University Campus Ministry 
+    Clean name: LIJDIS - NW LYW
+    First: 1Lijadis - New
+    Last: Layew
+
+  • 1Abraham- New Mammo
+    Campus: Los Angelos Campus Ministry
+    Clean name: BRHM- NW MMMO
+    First: 1Abraham- New
+    Last: Mammo
+
+  • 1Mike - New Yimer
+    Campus: Atlanta, Georgia Campus Ministry
+    Clean name: MIK - NW YIMR
+    First: 1Mike - New
+    Last: Yimer
+
+  • Dr. Frehiwot Wehib
+    Campus: Head of US - MKCM
+    Clean name: DR. FRHIWOT WHIB
+    First: Dr. Frehiwot
+    Last: Wehib
+
+  • Misrak Fantaye
+    Campus: Atlanta Coordinator
+    Clean name: MISRK FNTY
+    First: Misrak
+    Last: Fantaye
+
+
+From General Assembly Dorm Assignment2.xlsx:
+  • 1Sara-New Solomon
+    Campus: George Washington University Campus Ministry 
+    Clean name: SR-NW SOLOMON
+    First: 1Sara-New
+    Last: Solomon
+
+  • Hermela Eshete
+    Campus: Virtual campus Ministry(VCM)
+    Clean name: HRMLSHT
+    First: Hermela
+    Last: Eshete
+
+  • Bemnet Haile
+    Campus: Atlanta Campus Ministry
+    Clean name: BMNT HIL
+    First: Bemnet
+    Last: Haile
+
+  • Meron Belayneh
+    Campus: Seattle Campus Ministry
+    Clean name: MRON BLYNH
+    First: Meron
+    Last: Belayneh
+
+  • nan nan
+    Campus: nan
+    Clean name: NN NN
+    First: nan
+    Last: nan
+
+  • Soliyana Kifle
+    Campus: I don't have Campus Ministry
+    Clean name: SOLIYN KIFL
+    First: Soliyana
+    Last: Kifle
+
+  • Rozsa Teklu
+    Campus: I don't have Campus Ministry
+    Clean name: ROZS TKLU
+    First: Rozsa
+    Last: Teklu
+
+  • Hannah Zeru
+    Campus: Graduate *
+    Clean name: HNNH ZRU
+    First: Hannah
+    Last: Zeru
+
+  • 1Samrawit -New Kelkay
+    Campus: Graduate
+    Clean name: SMRWIT -NW KLKY
+    First: 1Samrawit -New
+    Last: Kelkay
+
+  • Rakeb Bonger
+    Campus: Atlanta Campus Ministry
+    Clean name: RKB BONGR
+    First: Rakeb
+    Last: Bonger
+
+  • Yohannes Tsion
+    Campus: Graduate
+    Clean name: YOHNNS TSION
+    First: Yohannes
+    Last: Tsion
+
+  • 1Meron - New Mulugeta
+    Campus: I don't have Campus Ministry
+    Clean name: MRON - NW MULUGT
+    First: 1Meron - New
+    Last: Mulugeta
+
+  • 1Anabel -New Tesfaye
+    Campus: nan
+    Clean name: NBL -NW TSFY
+    First: 1Anabel -New
+    Last: Tesfaye
+
+  • Joseph (Minase) Asfaw
+    Campus: Denver Campus Ministry
+    Clean name: JOSPH (MINS)SFW
+    First: Joseph (Minase)
+    Last: Asfaw
+
+  • Barok* Haile
+    Campus: Atlanta Campus Ministry
+    Clean name: BROK* HIL
+    First: Barok*
+    Last: Haile
+
+  • 1Abel -New Adamu
+    Campus: I don't have Campus Ministry
+    Clean name: BL -NWDMU
+    First: 1Abel -New
+    Last: Adamu
+
+  • Eleazar Elias Ashebir
+    Campus: Los Angelos Campus Ministry
+    Clean name: LZRLISSHBIR
+    First: Eleazar Elias
+    Last: Ashebir
+
+  • Wonimagegn Azemach
+    Campus: I don't have Campus Ministry
+    Clean name: WONIMGGNZMCH
+    First: Wonimagegn
+    Last: Azemach
+
+  • 1Dn. Kalabe - New Deressa
+    Campus: Atlanta Coordinator
+    Clean name: DN. KLB - NW DRSS
+    First: 1Dn. Kalabe - New
+    Last: Deressa
+
+  • Yonatan* Achamyeleh
+    Campus: Los Angelos Campus Ministry
+    Clean name: YONTN*CHMYLH
+    First: Yonatan*
+    Last: Achamyeleh
+
+  • Freab* Abebe
+    Campus: Seattle Campus Ministry
+    Clean name: FRB*BB
+    First: Freab*
+    Last: Abebe
+
+  • Alazare Kassahun
+    Campus: I don't have Campus Ministry
+    Clean name: LZR KSSHUN
+    First: Alazare
+    Last: Kassahun
+
+  • Shemeles Worku
+    Campus: VCM Coordinator
+    Clean name: SHMLS WORKU
+    First: Shemeles
+    Last: Worku
+
+  • Zelalem Hailu
+    Campus: Media
+    Clean name: ZLLM HILU
+    First: Zelalem
+    Last: Hailu
+
+  • 1Dn Dr. Binyam - New Belachew
+    Campus: VCM Coordinator
+    Clean name: DN DR. BINYM - NW BLCHW
+    First: 1Dn Dr. Binyam - New
+    Last: Belachew
+
+  • 1Yeabsira - New Fikre
+    Campus: I don't have Campus Ministry
+    Clean name: YBSIR - NW FIKR
+    First: 1Yeabsira - New
+    Last: Fikre
+
+  • 1Lijadis - New Layew
+    Campus: George Washington University Campus Ministry 
+    Clean name: LIJDIS - NW LYW
+    First: 1Lijadis - New
+    Last: Layew
+
+  • 1Abraham- New Mammo
+    Campus: Los Angelos Campus Ministry
+    Clean name: BRHM- NW MMMO
+    First: 1Abraham- New
+    Last: Mammo
+
+  • 1Mike - New Yimer
+    Campus: Atlanta, Georgia Campus Ministry
+    Clean name: MIK - NW YIMR
+    First: 1Mike - New
+    Last: Yimer
+
+  • Dr. Frehiwot Wehib
+    Campus: Head of US - MKCM
+    Clean name: DR. FRHIWOT WHIB
+    First: Dr. Frehiwot
+    Last: Wehib
+
+  • Misrak Fantaye
+    Campus: Atlanta Coordinator
+    Clean name: MISRK FNTY
+    First: Misrak
+    Last: Fantaye
+
+  • 1Mikyas - New Beshah
+    Campus: I don't have Campus Ministry
+    Clean name: MIKYS - NW BSHH
+    First: 1Mikyas - New
+    Last: Beshah
+
+  • 1Aaron - New Abebe
+    Campus: I don't have Campus Ministry
+    Clean name: RON - NWBB
+    First: 1Aaron - New
+    Last: Abebe
+
+  • 1Matthew -New Birru
+    Campus: I don't have Campus Ministry
+    Clean name: MTTHW -NW BIRRU
+    First: 1Matthew -New
+    Last: Birru
+
+  • 1Beamlak -New Admas
+    Campus: Virtual Campus Ministry
+    Clean name: BMLK -NWDMS
+    First: 1Beamlak -New
+    Last: Admas
+
+
+From East-registration .xlsx:
+  • Saba Bekele
+    Campus: Unknown
+    Clean name: SB BKL
+    First: Saba
+    Last: Bekele
+
+  • Abeba Workneh
+    Campus: Unknown
+    Clean name: BB WORKNH
+    First: Abeba
+    Last: Workneh
+
+  • Roman Tessema
+    Campus: Unknown
+    Clean name: ROMN TSSM
+    First: Roman
+    Last: Tessema
+
+  • Abateneh Alemu
+    Campus: Unknown
+    Clean name: BTNHLMU
+    First: Abateneh
+    Last: Alemu
+
+  • Yemarshet Gebreyohannes
+    Campus: Unknown
+    Clean name: YMRSHT GBRYOHNNS
+    First: Yemarshet
+    Last: Gebreyohannes
+
+  • Mahlet Fekade
+    Campus: Unknown
+    Clean name: MHLT FKD
+    First: Mahlet
+    Last: Fekade
+
+  • Dn Daniel Wakene
+    Campus: Unknown
+    Clean name: DN DNIL WKN
+    First: Dn
+    Last: Daniel Wakene
+
+  • Etsegenet Tefera
+    Campus: Unknown
+    Clean name: TSGNT TFR
+    First: Etsegenet
+    Last: Tefera
+
+  • Tigist Aregay
+    Campus: Unknown
+    Clean name: TIGISTRGY
+    First: Tigist
+    Last: Aregay
+
+  • Alemayehu Huluka
+    Campus: Unknown
+    Clean name: LMYHU HULUK
+    First: Alemayehu
+    Last: Huluka
+
+  • Yohannes Ayalew
+    Campus: Unknown
+    Clean name: YOHNNSYLW
+    First: Yohannes
+    Last: Ayalew
+
+  • Tewodros Zenna
+    Campus: Unknown
+    Clean name: TWODROS ZNN
+    First: Tewodros
+    Last: Zenna
+
+  • Fassica Damtew
+    Campus: Unknown
+    Clean name: FSSIC DMTW
+    First: Fassica
+    Last: Damtew
+
+  • Genet Teklu
+    Campus: Unknown
+    Clean name: GNT TKLU
+    First: Genet
+    Last: Teklu
+
+  • Tigist Eshete
+    Campus: Unknown
+    Clean name: TIGISTSHT
+    First: Tigist
+    Last: Eshete
+
+  • Eden Firew
+    Campus: Unknown
+    Clean name: DN FIRW
+    First: Eden
+    Last: Firew
+
+  • Mesfin W. Tesfaye -dc Finance
+    Campus: Unknown
+    Clean name: MSFIN W. TSFY -DC FINNC
+    First: Mesfin
+    Last: W. Tesfaye -dc Finance
+
+  • Menbere Haile
+    Campus: Unknown
+    Clean name: MNBR HIL
+    First: Menbere
+    Last: Haile
+
+  • Temechu Girma Zewdie
+    Campus: Unknown
+    Clean name: TMCHU GIRM ZWDI
+    First: Temechu
+    Last: Girma Zewdie
+
+  • Engedawork Alemayehu
+    Campus: Unknown
+    Clean name: NGDWORKLMYHU
+    First: Engedawork
+    Last: Alemayehu
+
+  • Hailemichael Negash
+    Campus: Unknown
+    Clean name: HILMICHL NGSH
+    First: Hailemichael
+    Last: Negash
+
+  • Wude Getahun
+    Campus: Unknown
+    Clean name: WUD GTHUN
+    First: Wude
+    Last: Getahun
+
+  • Berhanu Merga
+    Campus: Unknown
+    Clean name: BRHNU MRG
+    First: Berhanu
+    Last: Merga
+
+  • Debrish Menberu Atseme
+    Campus: Unknown
+    Clean name: DBRISH MNBRUTSM
+    First: Debrish
+    Last: Menberu Atseme
+
+  • Aynalem Degu
+    Campus: Unknown
+    Clean name: YNLM DGU
+    First: Aynalem
+    Last: Degu
+
+  • Baye Teshomer
+    Campus: Unknown
+    Clean name: BY TSHOMR
+    First: Baye
+    Last: Teshomer
+
+  • Taye Solomon
+    Campus: Unknown
+    Clean name: TY SOLOMON
+    First: Taye
+    Last: Solomon
+
+  • Dn Mulugeta Hailemariam
+    Campus: Unknown
+    Clean name: DN MULUGT HILMRIM
+    First: Dn
+    Last: Mulugeta Hailemariam
+
+  • Betlehem Mulugeta
+    Campus: Unknown
+    Clean name: BTLHM MULUGT
+    First: Betlehem
+    Last: Mulugeta
+
+  • Meseret Abate
+    Campus: Unknown
+    Clean name: MSRTBT
+    First: Meseret
+    Last: Abate
+
+  • Zemedkun Abebe
+    Campus: Unknown
+    Clean name: ZMDKUNBB
+    First: Zemedkun
+    Last: Abebe
+
+  • Yirgalem Asore
+    Campus: Unknown
+    Clean name: YIRGLMSOR
+    First: Yirgalem
+    Last: Asore
+
+  • Nigest Kebede
+    Campus: Unknown
+    Clean name: NIGST KBD
+    First: Nigest
+    Last: Kebede
+
+  • Tekleab Teka Teklehaimanot
+    Campus: Unknown
+    Clean name: TKLB TK TKLHIMNOT
+    First: Tekleab
+    Last: Teka Teklehaimanot
+
+  • Beza Yeshitla
+    Campus: Unknown
+    Clean name: BZ YSHITL
+    First: Beza
+    Last: Yeshitla
+
+  • Meseret Melka
+    Campus: Unknown
+    Clean name: MSRT MLK
+    First: Meseret
+    Last: Melka
+
+  • Mengistu Kassie
+    Campus: Unknown
+    Clean name: MNGISTU KSSI
+    First: Mengistu
+    Last: Kassie
+
+  • Meseret Getachew Belay
+    Campus: Unknown
+    Clean name: MSRT GTCHW BLY
+    First: Meseret
+    Last: Getachew Belay
+
+  • Joseph
+    Campus: Unknown
+    Clean name: JOSPH
+    First: Joseph
+    Last: 
+
+  • Wubale Woldie
+    Campus: Unknown
+    Clean name: WUBL WOLDI
+    First: Wubale
+    Last: Woldie
+
+  • Mesfin Tesfaye
+    Campus: Unknown
+    Clean name: MSFIN TSFY
+    First: Mesfin
+    Last: Tesfaye
+
+  • Alemayehu Dadi
+    Campus: Unknown
+    Clean name: LMYHU DDI
+    First: Alemayehu
+    Last: Dadi
+
+  • Firdawek Ayele
+    Campus: Unknown
+    Clean name: FIRDWKYL
+    First: Firdawek
+    Last: Ayele
+
+  • Tigist Tefera Woldemichael
+    Campus: Unknown
+    Clean name: TIGIST TFR WOLDMICHL
+    First: Tigist
+    Last: Tefera Woldemichael
+
+  • Belay Amare Haile
+    Campus: Unknown
+    Clean name: BLYMR HIL
+    First: Belay
+    Last: Amare Haile
+
+  • Birhan Feleke Yimer
+    Campus: Unknown
+    Clean name: BIRHN FLK YIMR
+    First: Birhan
+    Last: Feleke Yimer
+
+  • Miheret Deribe
+    Campus: Unknown
+    Clean name: MIHRT DRIB
+    First: Miheret
+    Last: Deribe
+
+  • Endeshaw Demilew
+    Campus: Unknown
+    Clean name: NDSHW DMILW
+    First: Endeshaw
+    Last: Demilew
+
+  • Yohannes Biazen
+    Campus: Unknown
+    Clean name: YOHNNS BIZN
+    First: Yohannes
+    Last: Biazen
+
+  • Azeb Demese
+    Campus: Unknown
+    Clean name: ZB DMS
+    First: Azeb
+    Last: Demese
+
+  • Elleni Tessema
+    Campus: Unknown
+    Clean name: LLNI TSSM
+    First: Elleni
+    Last: Tessema
+
+  • Firesaw K. Belayneh
+    Campus: Unknown
+    Clean name: FIRSW K. BLYNH
+    First: Firesaw
+    Last: K. Belayneh
+
+  • Sergut Gebremariam
+    Campus: Unknown
+    Clean name: SRGUT GBRMRIM
+    First: Sergut
+    Last: Gebremariam
+
+  • Zemenay Truneh
+    Campus: Unknown
+    Clean name: ZMNY TRUNH
+    First: Zemenay
+    Last: Truneh
+
+  • Yared Kebede Hassene
+    Campus: Unknown
+    Clean name: YRD KBD HSSN
+    First: Yared
+    Last: Kebede Hassene
+
+  • Wudie Getahun
+    Campus: Unknown
+    Clean name: WUDI GTHUN
+    First: Wudie
+    Last: Getahun
+
+  • Zemedkun Eshete
+    Campus: Unknown
+    Clean name: ZMDKUNSHT
+    First: Zemedkun
+    Last: Eshete
+
+  • ወርቅዬ ወ/ጊዮርጊስ
+    Campus: Unknown
+    Clean name: ወርቅዬ ወ/ጊዮርጊስ
+    First: ወርቅዬ
+    Last: ወ/ጊዮርጊስ
+
+  • Wondimnew Biks
+    Campus: Unknown
+    Clean name: WONDIMNW BIKS
+    First: Wondimnew
+    Last: Biks
+
+  • Takele Belay
+    Campus: Unknown
+    Clean name: TKL BLY
+    First: Takele
+    Last: Belay
+
+  • Banteamlak Bayih
+    Campus: Unknown
+    Clean name: BNTMLK BYIH
+    First: Banteamlak
+    Last: Bayih
+
+  • Gebru Mulugeta Weldearegay
+    Campus: Unknown
+    Clean name: GBRU MULUGT WLDRGY
+    First: Gebru
+    Last: Mulugeta Weldearegay
+
+  • Mintwab Kiflie
+    Campus: Unknown
+    Clean name: MINTWB KIFLI
+    First: Mintwab
+    Last: Kiflie
+
+  • Mintwab Jifar
+    Campus: Unknown
+    Clean name: MINTWB JIFR
+    First: Mintwab
+    Last: Jifar
+
+  • Belayneh Desta, Dr.
+    Campus: Unknown
+    Clean name: BLYNH DST, DR.
+    First: Belayneh
+    Last: Desta, Dr.
+
+  • Fisseha Eshetu
+    Campus: Unknown
+    Clean name: FISSHSHTU
+    First: Fisseha
+    Last: Eshetu
+
+  • Helmneh Sineshaw (dr)
+    Campus: Unknown
+    Clean name: HLMNH SINSHW (DR)
+    First: Helmneh
+    Last: Sineshaw (dr)
+
+  • Mekdes Ayele
+    Campus: Unknown
+    Clean name: MKDSYL
+    First: Mekdes
+    Last: Ayele
+
+  • Demelash Alambo
+    Campus: Unknown
+    Clean name: DMLSHLMBO
+    First: Demelash
+    Last: Alambo
+
+  • feven
+    Campus: Unknown
+    Clean name: FVN
+    First: feven
+    Last: 
+
+  • Addis Kidane
+    Campus: Unknown
+    Clean name: DDIS KIDN
+    First: Addis
+    Last: Kidane
+
+  • Almaz Ergetie
+    Campus: Unknown
+    Clean name: LMZRGTI
+    First: Almaz
+    Last: Ergetie
+
+  • Roza Asfaw
+    Campus: Unknown
+    Clean name: ROZSFW
+    First: Roza
+    Last: Asfaw
+
+  • Meseret Bekele
+    Campus: Unknown
+    Clean name: MSRT BKL
+    First: Meseret
+    Last: Bekele
+
+  • Mihret Bishaw
+    Campus: Unknown
+    Clean name: MIHRT BISHW
+    First: Mihret
+    Last: Bishaw
+
+  • Tsega G Anbessie
+    Campus: Unknown
+    Clean name: TSG GNBSSI
+    First: Tsega
+    Last: G Anbessie
+
+  • Professor Behailu Mammo
+    Campus: Unknown
+    Clean name: PROFSSOR BHILU MMMO
+    First: Professor
+    Last: Behailu Mammo
+
+  • Mulugeta M Yitbarek
+    Campus: Unknown
+    Clean name: MULUGT M YITBRK
+    First: Mulugeta
+    Last: M Yitbarek
+
+  • Getaneh M  Gessese
+    Campus: Unknown
+    Clean name: GTNH M GSSS
+    First: Getaneh
+    Last: M Gessese
+
+  • Adane sima
+    Campus: Unknown
+    Clean name: DN SIM
+    First: Adane
+    Last: sima
+
+  • Ayalew Tassew( Dr)
+    Campus: Unknown
+    Clean name: YLW TSSW( DR)
+    First: Ayalew
+    Last: Tassew( Dr)
+
+  • Tariku
+    Campus: Unknown
+    Clean name: TRIKU
+    First: Tariku
+    Last: 
+
+  • ኃይለ ኢየሱስ ክፍሌ
+    Campus: Unknown
+    Clean name: ኃይለ ኢየሱስ ክፍሌ
+    First: ኃይለ
+    Last: ኢየሱስ ክፍሌ
+
+  • Wubalech
+    Campus: Unknown
+    Clean name: WUBLCH
+    First: Wubalech
+    Last: 
+
+  • Abebayehu Tsegaye
+    Campus: Unknown
+    Clean name: BBYHU TSGY
+    First: Abebayehu
+    Last: Tsegaye
+
+  • Alemtsehay Seyoum Feleke
+    Campus: Unknown
+    Clean name: LMTSHY SYOUM FLK
+    First: Alemtsehay
+    Last: Seyoum Feleke
+
+  • Tenaye Birega Alemayehu
+    Campus: Unknown
+    Clean name: TNY BIRGLMYHU
+    First: Tenaye
+    Last: Birega Alemayehu
+
+  • Yohannes B Gibresilasea
+    Campus: Unknown
+    Clean name: YOHNNS B GIBRSILS
+    First: Yohannes
+    Last: B Gibresilasea
+
+  • Gezahegne Yirefu
+    Campus: Unknown
+    Clean name: GZHGN YIRFU
+    First: Gezahegne
+    Last: Yirefu
+
+  • Dn. Dr. Solomon Asres
+    Campus: Unknown
+    Clean name: DN. DR. SOLOMONSRS
+    First: Dn.
+    Last: Dr. Solomon Asres
+
+  • Hiwot Mekonnen Regassa
+    Campus: Unknown
+    Clean name: HIWOT MKONNN RGSS
+    First: Hiwot
+    Last: Mekonnen Regassa
+
+  • Hanna Shebre
+    Campus: Unknown
+    Clean name: HNN SHBR
+    First: Hanna
+    Last: Shebre
+
+  • Dr Getnet Haile
+    Campus: Unknown
+    Clean name: DR GTNT HIL
+    First: Dr
+    Last: Getnet Haile
+
+  • kinde Mekuria
+    Campus: Unknown
+    Clean name: KIND MKURI
+    First: kinde
+    Last: Mekuria
+
+  • Kidist Nigussie
+    Campus: Unknown
+    Clean name: KIDIST NIGUSSI
+    First: Kidist
+    Last: Nigussie
+
+  • Mickias Iyassu
+    Campus: Unknown
+    Clean name: MICKIS IYSSU
+    First: Mickias
+    Last: Iyassu
+
+  • Metshet Demena
+    Campus: Unknown
+    Clean name: MTSHT DMN
+    First: Metshet
+    Last: Demena
+
+  • Dr. Daniel Bekele Mersha
+    Campus: Unknown
+    Clean name: DR. DNIL BKL MRSH
+    First: Dr.
+    Last: Daniel Bekele Mersha
+
+  • Mr. Abebe Seifu
+    Campus: Unknown
+    Clean name: MR.BB SIFU
+    First: Mr.
+    Last: Abebe Seifu
+
+  • Matiwos Degefa
+    Campus: Unknown
+    Clean name: MTIWOS DGF
+    First: Matiwos
+    Last: Degefa
+
+  • Fekade Asmamaw
+    Campus: Unknown
+    Clean name: FKDSMMW
+    First: Fekade
+    Last: Asmamaw
+
+  • Zena Ayele
+    Campus: Unknown
+    Clean name: ZNYL
+    First: Zena
+    Last: Ayele
+
+  • Misgina Belachew Girma
+    Campus: Unknown
+    Clean name: MISGIN BLCHW GIRM
+    First: Misgina
+    Last: Belachew Girma
+
+  • Dn. Wessagnu Zewdie Woldehawariat
+    Campus: Unknown
+    Clean name: DN. WSSGNU ZWDI WOLDHWRIT
+    First: Dn.
+    Last: Wessagnu Zewdie Woldehawariat
+
+  • Dawit Sima
+    Campus: Unknown
+    Clean name: DWIT SIM
+    First: Dawit
+    Last: Sima
+
+  • Getahun Adugna
+    Campus: Unknown
+    Clean name: GTHUNDUGN
+    First: Getahun
+    Last: Adugna
+
+  • Wube
+    Campus: Unknown
+    Clean name: WUB
+    First: Wube
+    Last: 
+
+  • Hiwot Ayalneh Belew
+    Campus: Unknown
+    Clean name: HIWOTYLNH BLW
+    First: Hiwot
+    Last: Ayalneh Belew
+
+  • Dawit Tesfay Kahsay
+    Campus: Unknown
+    Clean name: DWIT TSFY KHSY
+    First: Dawit
+    Last: Tesfay Kahsay
+
+  • AElizebatAbdissa
+    Campus: Unknown
+    Clean name: LIZBTBDISS
+    First: AElizebatAbdissa
+    Last: 
+
+  • Elias Wubeshet( ቄሰ ገበዝ)
+    Campus: Unknown
+    Clean name: LIS WUBSHT( ቄሰ ገበዝ)
+    First: Elias
+    Last: Wubeshet( ቄሰ ገበዝ)
+
+  • Talaku Eskinder Bekele
+    Campus: Unknown
+    Clean name: TLKUSKINDR BKL
+    First: Talaku
+    Last: Eskinder Bekele
+
+  • Sisay Ayalew
+    Campus: Unknown
+    Clean name: SISYYLW
+    First: Sisay
+    Last: Ayalew
+
+  • Genet Gebremedhin
+    Campus: Unknown
+    Clean name: GNT GBRMDHIN
+    First: Genet
+    Last: Gebremedhin
+
+  • Negedework Negash
+    Campus: Unknown
+    Clean name: NGDWORK NGSH
+    First: Negedework
+    Last: Negash
+
+  • Teshome Desalegn
+    Campus: Unknown
+    Clean name: TSHOM DSLGN
+    First: Teshome
+    Last: Desalegn
+
+  • ዳንኤል መንግስቴ
+    Campus: Unknown
+    Clean name: ዳንኤል መንግስቴ
+    First: ዳንኤል
+    Last: መንግስቴ
+
+  • Kesis Tewodros Zewde
+    Campus: Unknown
+    Clean name: KSIS TWODROS ZWD
+    First: Kesis
+    Last: Tewodros Zewde
+
+  • Mahder Mamo
+    Campus: Unknown
+    Clean name: MHDR MMO
+    First: Mahder
+    Last: Mamo
+
+  • Daniel
+    Campus: Unknown
+    Clean name: DNIL
+    First: Daniel
+    Last: 
+
+  • Alemtsehay Gezahgn
+    Campus: Unknown
+    Clean name: LMTSHY GZHGN
+    First: Alemtsehay
+    Last: Gezahgn
+
+  • Haymanot Minalu
+    Campus: Unknown
+    Clean name: HYMNOT MINLU
+    First: Haymanot
+    Last: Minalu
+
+  • Muluemebet  Ayalew
+    Campus: Unknown
+    Clean name: MULUMBT YLW
+    First: Muluemebet
+    Last: Ayalew
+
+  • Nunu Asfaw
+    Campus: Unknown
+    Clean name: NUNUSFW
+    First: Nunu
+    Last: Asfaw
+
+  • Dn Teshome Getaw
+    Campus: Unknown
+    Clean name: DN TSHOM GTW
+    First: Dn
+    Last: Teshome Getaw
+
+  • Mesay Kebede Abebaw
+    Campus: Unknown
+    Clean name: MSY KBDBBW
+    First: Mesay
+    Last: Kebede Abebaw
+
+  • Samrawit Kebede
+    Campus: Unknown
+    Clean name: SMRWIT KBD
+    First: Samrawit
+    Last: Kebede
+
+  • Misrak negeri
+    Campus: Unknown
+    Clean name: MISRK NGRI
+    First: Misrak
+    Last: negeri
+
+  • Ehtshet Dessie Teshome
+    Campus: Unknown
+    Clean name: HTSHT DSSI TSHOM
+    First: Ehtshet
+    Last: Dessie Teshome
+
+  • Birtukan Nigussie Bilew
+    Campus: Unknown
+    Clean name: BIRTUKN NIGUSSI BILW
+    First: Birtukan
+    Last: Nigussie Bilew
+
+  • Sisay Denboba
+    Campus: Unknown
+    Clean name: SISY DNBOB
+    First: Sisay
+    Last: Denboba
+
+  • Menbere Zerga
+    Campus: Unknown
+    Clean name: MNBR ZRG
+    First: Menbere
+    Last: Zerga
+
+  • Solomon Yifru
+    Campus: Unknown
+    Clean name: SOLOMON YIFRU
+    First: Solomon
+    Last: Yifru
+
+  • Dr. Hailu Belay
+    Campus: Unknown
+    Clean name: DR. HILU BLY
+    First: Dr.
+    Last: Hailu Belay
+
+  • Dr. Tigist Shiferaw
+    Campus: Unknown
+    Clean name: DR. TIGIST SHIFRW
+    First: Dr.
+    Last: Tigist Shiferaw
+
+  • Abraham Bayeh
+    Campus: Unknown
+    Clean name: BRHM BYH
+    First: Abraham
+    Last: Bayeh
+
+  • Endale Mulugeta Truweha
+    Campus: Unknown
+    Clean name: NDL MULUGT TRUWH
+    First: Endale
+    Last: Mulugeta Truweha
+
+  • Dawit B
+    Campus: Unknown
+    Clean name: DWIT B
+    First: Dawit
+    Last: B
+
+  • Rahel Gitma
+    Campus: Unknown
+    Clean name: RHL GITM
+    First: Rahel
+    Last: Gitma
+
+  • Tigist Guebreyes
+    Campus: Unknown
+    Clean name: TIGIST GUBRYS
+    First: Tigist
+    Last: Guebreyes
+
+  • Dn Dagmawi Mamo
+    Campus: Unknown
+    Clean name: DN DGMWI MMO
+    First: Dn
+    Last: Dagmawi Mamo
+
+  • Teseme Robi
+    Campus: Unknown
+    Clean name: TSM ROBI
+    First: Teseme
+    Last: Robi
+
+  • Techale Gebrewold
+    Campus: Unknown
+    Clean name: TCHL GBRWOLD
+    First: Techale
+    Last: Gebrewold
+
+  • Senaiet Ayelel
+    Campus: Unknown
+    Clean name: SNITYLL
+    First: Senaiet
+    Last: Ayelel
+
+  • Etsegenet Workneh
+    Campus: Unknown
+    Clean name: TSGNT WORKNH
+    First: Etsegenet
+    Last: Workneh
+
+  • Daniel Gobeze
+    Campus: Unknown
+    Clean name: DNIL GOBZ
+    First: Daniel
+    Last: Gobeze
+
+  • Kelem
+    Campus: Unknown
+    Clean name: KLM
+    First: Kelem
+    Last: 
+
+  • Meseret Temuari
+    Campus: Unknown
+    Clean name: MSRT TMURI
+    First: Meseret
+    Last: Temuari
+
+  • Daniel woldetsadik
+    Campus: Unknown
+    Clean name: DNIL WOLDTSDIK
+    First: Daniel
+    Last: woldetsadik
+
+  • Asnake Haile
+    Campus: Unknown
+    Clean name: SNK HIL
+    First: Asnake
+    Last: Haile
+
+  • Agegnehu Shaie
+    Campus: Unknown
+    Clean name: GGNHU SHI
+    First: Agegnehu
+    Last: Shaie
+
+  • Araya Muleta
+    Campus: Unknown
+    Clean name: RY MULT
+    First: Araya
+    Last: Muleta
+
+  • Aida Yemaneberhan
+    Campus: Unknown
+    Clean name: ID YMNBRHN
+    First: Aida
+    Last: Yemaneberhan
+
+  • Befekadu Habteyes , PhD
+    Campus: Unknown
+    Clean name: BFKDU HBTYS , PHD
+    First: Befekadu
+    Last: Habteyes , PhD
+
+  • Abebaw Awoke
+    Campus: Unknown
+    Clean name: BBWWOK
+    First: Abebaw
+    Last: Awoke
+
+  • W/ro Bogalech Helato
+    Campus: Unknown
+    Clean name: W/RO BOGLCH HLTO
+    First: W/ro
+    Last: Bogalech Helato
+
+  • Bethelhem Demissie
+    Campus: Unknown
+    Clean name: BTHLHM DMISSI
+    First: Bethelhem
+    Last: Demissie
+
+  • Chalachew Zeleke
+    Campus: Unknown
+    Clean name: CHLCHW ZLK
+    First: Chalachew
+    Last: Zeleke
+
+  • Tesfaye Segni
+    Campus: Unknown
+    Clean name: TSFY SGNI
+    First: Tesfaye
+    Last: Segni
+
+  • Mikiyas Girma
+    Campus: Unknown
+    Clean name: MIKIYS GIRM
+    First: Mikiyas
+    Last: Girma
+
+  • Feven Girum Mikru
+    Campus: Unknown
+    Clean name: FVN GIRUM MIKRU
+    First: Feven
+    Last: Girum Mikru
+
+  • Dn. Dr. Gizachew Giya
+    Campus: Unknown
+    Clean name: DN. DR. GIZCHW GIY
+    First: Dn.
+    Last: Dr. Gizachew Giya
+
+  • Muluwork Amsalu
+    Campus: Unknown
+    Clean name: MULUWORKMSLU
+    First: Muluwork
+    Last: Amsalu
+
+  • Dr. Mekonnen Aderaw
+    Campus: Unknown
+    Clean name: DR. MKONNNDRW
+    First: Dr.
+    Last: Mekonnen Aderaw
+
+  • Babiyew Sibhat Zewdie
+    Campus: Unknown
+    Clean name: BBIYW SIBHT ZWDI
+    First: Babiyew
+    Last: Sibhat Zewdie
+
+  • Desalew Teshale
+    Campus: Unknown
+    Clean name: DSLW TSHL
+    First: Desalew
+    Last: Teshale
+
+  • Eden Legesse
+    Campus: Unknown
+    Clean name: DN LGSS
+    First: Eden
+    Last: Legesse
+
+  • Fenot dullo
+    Campus: Unknown
+    Clean name: FNOT DULLO
+    First: Fenot
+    Last: dullo
+
+  • Hewan Dessie
+    Campus: Unknown
+    Clean name: HWN DSSI
+    First: Hewan
+    Last: Dessie
+
+  • Fisseha Tessema
+    Campus: Unknown
+    Clean name: FISSH TSSM
+    First: Fisseha
+    Last: Tessema
+
+  • Kidist  Tarekegn
+    Campus: Unknown
+    Clean name: KIDIST TRKGN
+    First: Kidist
+    Last: Tarekegn
+
+  • Melaku Enyew
+    Campus: Unknown
+    Clean name: MLKUNYW
+    First: Melaku
+    Last: Enyew
+
+  • መላኩ ምህረቴ
+    Campus: Unknown
+    Clean name: መላኩ ምህረቴ
+    First: መላኩ
+    Last: ምህረቴ
+
+  • GETACHEW TADESSE LEMMA
+    Campus: Unknown
+    Clean name: GTCHW TDSS LMM
+    First: GETACHEW
+    Last: TADESSE LEMMA
+
+  • Mesfin M Abebe
+    Campus: Unknown
+    Clean name: MSFIN MBB
+    First: Mesfin
+    Last: M Abebe
+
+  • Dn. Lidetu Atnafu
+    Campus: Unknown
+    Clean name: DN. LIDTUTNFU
+    First: Dn.
+    Last: Lidetu Atnafu
+
+  • Misganew
+    Campus: Unknown
+    Clean name: MISGNW
+    First: Misganew
+    Last: 
+
+  • Memhir Addis Tefera
+    Campus: Unknown
+    Clean name: MMHIRDDIS TFR
+    First: Memhir
+    Last: Addis Tefera
+
+  • Nebiyat A. Worku
+    Campus: Unknown
+    Clean name: NBIYT. WORKU
+    First: Nebiyat
+    Last: A. Worku
+
+  • Serkalem  mamo
+    Campus: Unknown
+    Clean name: SRKLM MMO
+    First: Serkalem
+    Last: mamo
+
+  • Mulugeta Ayele
+    Campus: Unknown
+    Clean name: MULUGTYL
+    First: Mulugeta
+    Last: Ayele
+
+  • Selamawit Degu
+    Campus: Unknown
+    Clean name: SLMWIT DGU
+    First: Selamawit
+    Last: Degu
+
+  • Dr. Fekerte Yitagesu
+    Campus: Unknown
+    Clean name: DR. FKRT YITGSU
+    First: Dr.
+    Last: Fekerte Yitagesu
+
+  • Tseday Meny
+    Campus: Unknown
+    Clean name: TSDY MNY
+    First: Tseday
+    Last: Meny
+
+  • Tegegne Hailu
+    Campus: Unknown
+    Clean name: TGGN HILU
+    First: Tegegne
+    Last: Hailu
+
+  • Biruktawit Workineh
+    Campus: Unknown
+    Clean name: BIRUKTWIT WORKINH
+    First: Biruktawit
+    Last: Workineh
+
+  • Amaru Getahun Fetene
+    Campus: Unknown
+    Clean name: MRU GTHUN FTN
+    First: Amaru
+    Last: Getahun Fetene
+
+  • Zelalem Getahun Tekle(LT)
+    Campus: Unknown
+    Clean name: ZLLM GTHUN TKL(LT)
+    First: Zelalem
+    Last: Getahun Tekle(LT)
+
+  • Tinsay Ambachew Woreta
+    Campus: Unknown
+    Clean name: TINSYMBCHW WORT
+    First: Tinsay
+    Last: Ambachew Woreta
+
+  • Mikias Wassie Ewunetie
+    Campus: Unknown
+    Clean name: MIKIS WSSIWUNTI
+    First: Mikias
+    Last: Wassie Ewunetie
+
+  • Hailemichael
+    Campus: Unknown
+    Clean name: HILMICHL
+    First: Hailemichael
+    Last: 
+
+  • Selamawit Teshome
+    Campus: Unknown
+    Clean name: SLMWIT TSHOM
+    First: Selamawit
+    Last: Teshome
+
+  • Dn Deginet fisiha
+    Campus: Unknown
+    Clean name: DN DGINT FISIH
+    First: Dn
+    Last: Deginet fisiha
+
+  • BetelehemMulugeta
+    Campus: Unknown
+    Clean name: BTLHMMULUGT
+    First: BetelehemMulugeta
+    Last: 
+
+  • Eshetu Sileshi Haile
+    Campus: Unknown
+    Clean name: SHTU SILSHI HIL
+    First: Eshetu
+    Last: Sileshi Haile
+
+  • SERKALEM GETAYENEH
+    Campus: Unknown
+    Clean name: SRKLM GTYNH
+    First: SERKALEM
+    Last: GETAYENEH
+
+  • Wubeshet Bekele Diro
+    Campus: Unknown
+    Clean name: WUBSHT BKL DIRO
+    First: Wubeshet
+    Last: Bekele Diro
+
+  • Yemsrach sisay
+    Campus: Unknown
+    Clean name: YMSRCH SISY
+    First: Yemsrach
+    Last: sisay
+
+  • Aman Temesgen
+    Campus: Unknown
+    Clean name: MN TMSGN
+    First: Aman
+    Last: Temesgen
+
+  • Melake Tsion Belachew worku
+    Campus: Unknown
+    Clean name: MLK TSION BLCHW WORKU
+    First: Melake
+    Last: Tsion Belachew worku
+
+  • Berhane Temesgen
+    Campus: Unknown
+    Clean name: BRHN TMSGN
+    First: Berhane
+    Last: Temesgen
+
+  • Nardos Nana
+    Campus: Unknown
+    Clean name: NRDOS NN
+    First: Nardos
+    Last: Nana
+
+  • Mesfin Wodajo
+    Campus: Unknown
+    Clean name: MSFIN WODJO
+    First: Mesfin
+    Last: Wodajo
+
+  • Meseret Negash
+    Campus: Unknown
+    Clean name: MSRT NGSH
+    First: Meseret
+    Last: Negash
+
+  • Aynalem Asamnew
+    Campus: Unknown
+    Clean name: YNLMSMNW
+    First: Aynalem
+    Last: Asamnew
+
+  • Betredawit Arega
+    Campus: Unknown
+    Clean name: BTRDWITRG
+    First: Betredawit
+    Last: Arega
+
+
+ALL FILES ANALYZED:
+  • input_data/BADGE (CLEAN FILE).xlsx: 306 names
+  • input_data/BADGE_ASSIGNMENTS_FINAL.xlsx: 306 names
+  • input_data/General Assembly Dorm Assignment.xlsx: 127 names
+  • input_data/General Assembly Dorm Assignment1.xlsx: 133 names
+  • input_data/General Assembly Dorm Assignment2.xlsx: 140 names
+  • input_data/East-registration .xlsx: 206 names
