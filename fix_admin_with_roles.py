@@ -1,8 +1,9 @@
 import pandas as pd
 import json
+import re
 
-def update_main_admin_html():
-    """Update the main admin.html file with current participant data"""
+def fix_admin_with_roles():
+    """Fix the admin panel to include role information"""
     
     # Read the CSV with correct participant data
     df = pd.read_csv('/Users/nahomnigatu/Downloads/campusministrybadges/data/csv/badge_assignments.csv')
@@ -14,14 +15,13 @@ def update_main_admin_html():
         dorm = str(row['dorm']).strip() if pd.notna(row['dorm']) else 'N/A'
         table = str(row['table_assignment']).strip() if pd.notna(row['table_assignment']) else 'TBD'
         discussion = str(row['discussion_assignment']).strip() if pd.notna(row['discussion_assignment']) else 'TBD'
+        role = str(row['role']).strip() if pd.notna(row['role']) else 'PARTICIPANT'
         
         # Clean up campus ministry names for display
         if campus == 'NEW':
             campus = 'New Participant'
         elif len(campus) > 50:
             campus = campus[:47] + '...'
-        
-        role = str(row['role']).strip() if pd.notna(row['role']) else 'PARTICIPANT'
         
         participant = {
             'name': name,
@@ -36,34 +36,35 @@ def update_main_admin_html():
     # Sort participants by name
     participants.sort(key=lambda x: x['name'])
     
-    # Read the admin HTML template
+    # Convert to JS format
+    js_data = json.dumps(participants, indent=2, ensure_ascii=False)
+    
+    # Read the current admin.html
     with open('/Users/nahomnigatu/Downloads/campusministrybadges/web/admin.html', 'r', encoding='utf-8') as f:
         html_content = f.read()
     
-    # Convert participants to JavaScript format
-    js_data = json.dumps(participants, indent=2, ensure_ascii=False)
+    # Find and replace the participant data using regex
+    pattern = r'const PARTICIPANT_DATA = \[.*?\];'
+    replacement = f'const PARTICIPANT_DATA = {js_data};'
     
-    # Replace the placeholder with actual data
-    html_content = html_content.replace('const PARTICIPANT_DATA = [];', f'const PARTICIPANT_DATA = {js_data};')
+    # Use DOTALL flag to match across lines
+    html_content = re.sub(pattern, replacement, html_content, flags=re.DOTALL)
     
-    # Write the updated HTML file
+    # Write the updated HTML
     with open('/Users/nahomnigatu/Downloads/campusministrybadges/web/admin.html', 'w', encoding='utf-8') as f:
         f.write(html_content)
     
-    print(f"✅ Updated /Users/nahomnigatu/Downloads/campusministrybadges/web/admin.html with {len(participants)} participants")
-    print(f"📊 Sample Statistics:")
-    print(f"   Total Participants: {len(participants)}")
+    print(f'✅ Updated admin.html with {len(participants)} participants including role information')
+    print(f'📊 Role breakdown:')
+    print(f'   Coordinators: {len([p for p in participants if p["role"] == "COORDINATOR"])}')
+    print(f'   Participants: {len([p for p in participants if p["role"] == "PARTICIPANT"])}')
     
-    # Campus breakdown
-    campus_counts = {}
-    for p in participants:
-        campus_counts[p['campus']] = campus_counts.get(p['campus'], 0) + 1
-    
-    top_campus = max(campus_counts.items(), key=lambda x: x[1])
-    print(f"   Unique Campuses: {len(campus_counts)}")
-    print(f"   Top Campus: {top_campus[0]} ({top_campus[1]} participants)")
+    # Show first coordinator example
+    coordinator_example = next((p for p in participants if p["role"] == "COORDINATOR"), None)
+    if coordinator_example:
+        print(f'\n🎯 Example coordinator: {coordinator_example["name"]}')
     
     return len(participants)
 
 if __name__ == "__main__":
-    update_main_admin_html()
+    fix_admin_with_roles()
