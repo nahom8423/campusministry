@@ -416,7 +416,7 @@ def get_checkin_count():
 
 if __name__ == '__main__':
     print("Starting Admin Server...")
-    print("Admin panel will be available at: http://localhost:5000")
+    print("Admin panel will be available at: http://localhost:5001")
     print("API endpoints:")
     print("  GET /api/participants - Get all participants")
     print("  POST /api/participants - Add new participant")
@@ -427,4 +427,4 @@ if __name__ == '__main__':
     print("  GET /api/checkin/all - Get all checked-in participants")
     print("  GET /api/checkin/count - Get total check-in count")
     
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=5001, host='0.0.0.0')
