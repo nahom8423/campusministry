@@ -18,12 +18,26 @@
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #ff9500 0%, #ffb347 100%);
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             padding: 20px;
+        }
+        
+        .date-pill {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            color: #333;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
         }
         
         .container {
@@ -38,7 +52,7 @@
         
         .logo {
             font-size: 2.5em;
-            color: #667eea;
+            color: #ff9500;
             margin-bottom: 10px;
             font-weight: bold;
         }
@@ -65,7 +79,7 @@
         }
         
         input[type="text"]:focus {
-            border-color: #667eea;
+            border-color: #ff9500;
         }
         
         .suggestions {
@@ -172,14 +186,6 @@
             display: none;
         }
         
-        .stats {
-            background: #e3f2fd;
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 20px;
-            font-size: 0.9em;
-            color: #1565c0;
-        }
         
         /* Clean icon styles */
         .icon {
@@ -229,6 +235,11 @@
     </style>
 </head>
 <body id="checkinPage">
+    <!-- Date Pill -->
+    <div class="date-pill" id="datePill">
+        Saturday, July 19
+    </div>
+    
     <div class="container">
         <img src="assets/mk-logo-300.png" alt="MK Logo" class="logo-icon">
         <h1>Campus Ministry Check-In</h1>
@@ -254,10 +265,6 @@
             <p>There was an error checking you in. Please try again or ask for assistance.</p>
         </div>
         
-        <div class="stats" id="stats">
-            <p><strong>Total Registered:</strong> <span id="totalCount">-</span></p>
-            <p><strong>Checked In:</strong> <span id="checkedInCount">-</span></p>
-        </div>
     </div>
 
     <script>
@@ -2920,6 +2927,21 @@
     "role": "COORDINATOR"
   }
 ];
+
+// Set current date in the date pill
+document.addEventListener('DOMContentLoaded', function() {
+    const datePill = document.getElementById('datePill');
+    if (datePill) {
+        const today = new Date();
+        const options = { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        };
+        datePill.textContent = today.toLocaleDateString('en-US', options);
+    }
+});
     </script>
 </body>
 </html>

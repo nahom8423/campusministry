@@ -28,7 +28,7 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #ff9500 0%, #ffb347 100%);
         }
         
         .login-box {
@@ -58,13 +58,13 @@
         
         .login-box input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #ff9500;
         }
         
         .login-box button {
             width: 100%;
             padding: 15px;
-            background: #667eea;
+            background: #ff9500;
             color: white;
             border: none;
             border-radius: 10px;
@@ -75,7 +75,7 @@
         }
         
         .login-box button:hover {
-            background: #5a6fd8;
+            background: #e6800a;
         }
         
         .login-error {
@@ -140,7 +140,7 @@
         .stat-number {
             font-size: 2.5em;
             font-weight: bold;
-            color: #667eea;
+            color: #ff9500;
         }
         
         .stat-label {
@@ -157,7 +157,7 @@
         }
         
         .table-header {
-            background: #667eea;
+            background: #ff9500;
             color: white;
             padding: 20px;
             font-size: 1.2em;
@@ -288,6 +288,7 @@
         <div class="table-container">
             <div class="table-header">
                 ✅ Real-time Check-ins (Live Updates)
+                <button onclick="checkoutAll()" style="background: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 0.9em; margin-right: 10px;">🚪 Checkout All</button>
                 <span id="connectionStatus" style="float: right; font-size: 0.8em;">
                     🟡 Connecting...
                 </span>
@@ -318,9 +319,134 @@
         // Configuration
         const ADMIN_PASSWORD = "campus2024";
         
+        // Emergency: Set this to true to disable backup system if causing issues
+        const DISABLE_BACKUP_SYSTEM = false;
+        
         // Global variables for stats
         let totalCheckedIn = 0;
         let participantStatus = new Map(); // Track current status of each participant
+        
+        // Data persistence and recovery functions
+        function saveDataToLocalStorage() {
+            try {
+                const dataToSave = {
+                    participantStatus: Array.from(participantStatus.entries()),
+                    totalCheckedIn: totalCheckedIn,
+                    timestamp: Date.now()
+                };
+                localStorage.setItem('campusMinistryAdminData', JSON.stringify(dataToSave));
+                console.log('Data backed up to localStorage');
+            } catch (error) {
+                console.warn('Failed to save data to localStorage:', error);
+            }
+        }
+        
+        function loadDataFromLocalStorage() {
+            try {
+                const savedData = localStorage.getItem('campusMinistryAdminData');
+                if (savedData) {
+                    const parsed = JSON.parse(savedData);
+                    // Only restore data if it's from today (within 24 hours)
+                    const isFromToday = (Date.now() - parsed.timestamp) < (24 * 60 * 60 * 1000);
+                    
+                    if (isFromToday && parsed.participantStatus) {
+                        participantStatus = new Map(parsed.participantStatus);
+                        totalCheckedIn = parsed.totalCheckedIn || 0;
+                        console.log('Data restored from localStorage:', participantStatus.size, 'participants');
+                        return true;
+                    } else {
+                        // Clear old data
+                        localStorage.removeItem('campusMinistryAdminData');
+                        console.log('Cleared old localStorage data');
+                    }
+                }
+            } catch (error) {
+                console.warn('Failed to load data from localStorage:', error);
+                localStorage.removeItem('campusMinistryAdminData');
+            }
+            return false;
+        }
+        
+        // Auto-save data every 30 seconds
+        setInterval(saveDataToLocalStorage, 30000);
+        
+        // Save data when participant status changes
+        function updateParticipantStatus(name, status) {
+            participantStatus.set(name, status);
+            if (!DISABLE_BACKUP_SYSTEM) {
+                saveDataToLocalStorage();
+            }
+        }
+        
+        // Rebuild table from backed up data
+        function rebuildTableFromBackup() {
+            const tbody = document.querySelector('#checkinsTable tbody');
+            if (!tbody) return;
+            
+            console.log('Attempting to rebuild table from backup...');
+            
+            // Only proceed if there's actual backup data
+            if (participantStatus.size === 0) {
+                console.log('No backup data to restore');
+                return;
+            }
+            
+            // Don't clear existing content, just add missing entries
+            let hasCheckedInParticipants = false;
+            let addedCount = 0;
+            
+            // Rebuild table from participantStatus map
+            for (const [nameKey, status] of participantStatus) {
+                if (status === 'checked-in') {
+                    hasCheckedInParticipants = true;
+                    const [name, campus] = nameKey.split('_', 2);
+                    if (name && campus) {
+                        // Check if this participant is already in the table
+                        const existingRow = tbody.querySelector(`tr[data-participant="${nameKey}"]`);
+                        if (!existingRow) {
+                            // Create a mock checkin data object for display
+                            const mockCheckinData = {
+                                name: name,
+                                campus: campus,
+                                ts: Date.now() - (addedCount * 1000), // Stagger timestamps slightly
+                                status: status
+                            };
+                            // Add to table (use true for isInitialLoad to prevent stat updates)
+                            window.addCheckinToTable(mockCheckinData, true);
+                            addedCount++;
+                        }
+                    }
+                }
+            }
+            
+            // Remove loading row if we have data
+            if (hasCheckedInParticipants) {
+                const loadingRow = document.getElementById('loadingRow');
+                if (loadingRow) {
+                    loadingRow.remove();
+                }
+            }
+            
+            console.log(`Table rebuild complete - added ${addedCount} participants from backup`);
+        }
+        
+        // Connection recovery function
+        function handleConnectionError() {
+            console.warn('Connection issue detected - data is safely backed up');
+            // Save current state immediately
+            saveDataToLocalStorage();
+        }
+        
+        // Add error event listeners for better recovery
+        window.addEventListener('error', function(event) {
+            console.error('JavaScript error detected:', event.error);
+            handleConnectionError();
+        });
+        
+        window.addEventListener('beforeunload', function() {
+            // Save data before page unloads
+            saveDataToLocalStorage();
+        });
         
         // Authentication functions
         function login() {
@@ -329,6 +455,28 @@
                 document.getElementById('loginContainer').style.display = 'none';
                 document.getElementById('adminContainer').style.display = 'block';
                 document.getElementById('loginError').style.display = 'none';
+                
+                // Only try to restore data if backup system is enabled
+                if (!DISABLE_BACKUP_SYSTEM) {
+                    setTimeout(() => {
+                        const dataRestored = loadDataFromLocalStorage();
+                        if (dataRestored && participantStatus.size > 0) {
+                            console.log('Restored previous session data');
+                            updateStats();
+                            // Only rebuild if there's no existing data from Firebase
+                            setTimeout(() => {
+                                const tbody = document.querySelector('#checkinsTable tbody');
+                                const hasExistingData = tbody && tbody.querySelectorAll('tr:not(#loadingRow)').length > 0;
+                                if (!hasExistingData) {
+                                    console.log('No Firebase data found, rebuilding from backup');
+                                    rebuildTableFromBackup();
+                                } else {
+                                    console.log('Firebase data already loaded, skipping backup restoration');
+                                }
+                            }, 2000);
+                        }
+                    }, 1000);
+                }
             } else {
                 document.getElementById('loginError').style.display = 'block';
             }
@@ -358,6 +506,77 @@
             }
         };
         
+        // Checkout all function
+        function checkoutAll() {
+            if (!window.saveCheckout) {
+                console.error("Checkout function not available");
+                alert("Checkout function is not available. Please ensure Firebase is connected.");
+                return;
+            }
+            
+            if (!confirm("Are you sure you want to checkout ALL checked-in participants? This action cannot be undone.")) {
+                return;
+            }
+            
+            let checkoutPromises = [];
+            let checkedInCount = 0;
+            let participantsToCheckout = [];
+            
+            // Get all currently checked-in participants from the table
+            const tableRows = document.querySelectorAll('#checkinsTable tbody tr');
+            
+            tableRows.forEach(row => {
+                // Skip loading row and empty state rows
+                if (row.id === 'loadingRow' || row.cells.length < 4) return;
+                
+                const statusCell = row.cells[3]; // Status column
+                const nameCell = row.cells[0]; // Name column  
+                const campusCell = row.cells[1]; // Campus column
+                
+                if (statusCell && statusCell.textContent.includes('Checked In')) {
+                    const name = nameCell.textContent.trim();
+                    const campus = campusCell.textContent.trim();
+                    
+                    if (name && campus) {
+                        participantsToCheckout.push({name, campus});
+                        checkedInCount++;
+                    }
+                }
+            });
+            
+            if (checkedInCount === 0) {
+                alert("No participants are currently checked in.");
+                return;
+            }
+            
+            console.log(`Found ${checkedInCount} participants to checkout:`, participantsToCheckout);
+            
+            // Execute all checkouts
+            participantsToCheckout.forEach(participant => {
+                checkoutPromises.push(
+                    window.saveCheckout(participant.name, participant.campus)
+                        .catch(error => {
+                            console.error(`Failed to checkout ${participant.name}:`, error);
+                            return Promise.reject(error);
+                        })
+                );
+            });
+            
+            Promise.all(checkoutPromises)
+                .then(() => {
+                    console.log(`Successfully checked out ${checkedInCount} participants`);
+                    alert(`Successfully checked out ${checkedInCount} participants`);
+                })
+                .catch((error) => {
+                    console.error("Error during bulk checkout:", error);
+                    if (window.showAdminError) {
+                        window.showAdminError("Failed to checkout all participants: " + error.message);
+                    } else {
+                        alert("Error during checkout. Please try again.");
+                    }
+                });
+        }
+        
         // Update stats display
         function updateStats() {
             const total = 332; // Total participants
@@ -382,7 +601,19 @@
         // Global function to be called by Firebase app.js
         window.addCheckinToTable = function(checkinData, isInitialLoad = false) {
             const tbody = document.querySelector('#checkinsTable tbody');
-            const row = document.createElement('tr');
+            
+            const status = checkinData.status || 'checked-in';
+            const isCheckedOut = status === 'checked-out';
+            
+            // Update participant status tracking
+            updateParticipantStatus(checkinData.name, status);
+            
+            // If participant is checked out, remove them from the table
+            if (isCheckedOut) {
+                removeParticipantFromTable(checkinData.name, checkinData.campus);
+                updateStats();
+                return;
+            }
             
             // Remove empty state message if it exists
             const emptyMessage = tbody.querySelector('td[colspan="5"]');
@@ -390,35 +621,23 @@
                 emptyMessage.parentElement.remove();
             }
             
-            const status = checkinData.status || 'checked-in';
-            const isCheckedOut = status === 'checked-out';
-            
-            // Update participant status tracking
-            participantStatus.set(checkinData.name, status);
-            
             // Update stats based on current status
             if (!isInitialLoad) {
                 if (status === 'checked-in') {
                     totalCheckedIn++;
-                } else if (status === 'checked-out') {
-                    totalCheckedIn--;
                 }
             }
             
-            const statusBadge = isCheckedOut ? 
-                '<span class="status-badge status-checked-out">🚪 Checked Out</span>' : 
-                '<span class="status-badge status-checked-in">✅ Checked In</span>';
-                
-            const actionButton = isCheckedOut ? 
-                `<button class="checkout-btn" disabled>Checked Out</button>` :
-                `<button class="checkout-btn" onclick="checkoutParticipant('${checkinData.name}', '${checkinData.campus}')">🚪 Check Out</button>`;
+            // Only show checked-in participants
+            const row = document.createElement('tr');
+            row.setAttribute('data-participant', `${checkinData.name}_${checkinData.campus}`);
             
             row.innerHTML = `
                 <td><strong>${checkinData.name}</strong></td>
                 <td>${checkinData.campus}</td>
                 <td>${new Date(checkinData.ts).toLocaleString()}</td>
-                <td>${statusBadge}</td>
-                <td>${actionButton}</td>
+                <td><span class="status-badge status-checked-in">✅ Checked In</span></td>
+                <td><button class="checkout-btn" onclick="checkoutParticipant('${checkinData.name}', '${checkinData.campus}')">🚪 Check Out</button></td>
             `;
             
             // Add to top of table
@@ -429,13 +648,37 @@
                 updateStats();
                 
                 // Add animation for new entries
-                const bgColor = isCheckedOut ? '#f8d7da' : '#d4edda';
-                row.style.backgroundColor = bgColor;
+                row.style.backgroundColor = '#d4edda';
                 setTimeout(() => {
                     row.style.backgroundColor = '';
                 }, 2000);
             }
         };
+        
+        // Function to remove participant from table when checked out
+        function removeParticipantFromTable(name, campus) {
+            const tbody = document.querySelector('#checkinsTable tbody');
+            const participantKey = `${name}_${campus}`;
+            const rows = tbody.querySelectorAll('tr[data-participant]');
+            
+            rows.forEach(row => {
+                if (row.getAttribute('data-participant') === participantKey) {
+                    row.remove();
+                }
+            });
+            
+            // If table is empty, show empty state
+            const remainingRows = tbody.querySelectorAll('tr:not(#loadingRow)');
+            if (remainingRows.length === 0) {
+                const emptyRow = document.createElement('tr');
+                emptyRow.innerHTML = `
+                    <td colspan="5" style="text-align: center; padding: 30px; color: #666;">
+                        📋 No participants currently checked in. Ready for tomorrow!
+                    </td>
+                `;
+                tbody.appendChild(emptyRow);
+            }
+        }
         
         // Initialize admin stats with existing check-ins count
         window.initializeAdminStats = function(existingCount) {
@@ -477,6 +720,11 @@
         
         // Function to show admin errors
         window.showAdminError = function(error) {
+            console.error('Admin error occurred:', error);
+            
+            // Immediately save current data state in case of issues
+            handleConnectionError();
+            
             const errorDiv = document.getElementById('adminMessages');
             const errorText = document.getElementById('errorText');
             errorText.textContent = error;
@@ -485,21 +733,26 @@
             // Update connection status
             const statusElement = document.getElementById('connectionStatus');
             if (statusElement) {
-                statusElement.innerHTML = '🔴 Error';
+                statusElement.innerHTML = '🔴 Error (Data Backed Up)';
             }
             
             // Remove loading row and show error
             const loadingRow = document.getElementById('loadingRow');
             if (loadingRow) {
                 loadingRow.innerHTML = `
-                    <td colspan="4" style="text-align: center; padding: 30px; color: #dc3545;">
-                        ❌ Failed to connect to database
+                    <td colspan="5" style="text-align: center; padding: 30px; color: #dc3545;">
+                        ❌ Connection issue detected - Data is safely backed up
+                        <br><small>Refresh page to restore if needed</small>
                     </td>
                 `;
             }
             
             setTimeout(() => {
                 errorDiv.style.display = 'none';
+                // Update status to show recovery
+                if (statusElement) {
+                    statusElement.innerHTML = '🟡 Reconnecting...';
+                }
             }, 5000);
         };
         
