@@ -28,7 +28,7 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: linear-gradient(135deg, #ff9500 0%, #ffb347 100%);
+            background: linear-gradient(135deg, #20b2aa 0%, #87ceeb 100%);
         }
         
         .login-box {
@@ -58,13 +58,13 @@
         
         .login-box input:focus {
             outline: none;
-            border-color: #ff9500;
+            border-color: #20b2aa;
         }
         
         .login-box button {
             width: 100%;
             padding: 15px;
-            background: #ff9500;
+            background: #20b2aa;
             color: white;
             border: none;
             border-radius: 10px;
@@ -75,7 +75,7 @@
         }
         
         .login-box button:hover {
-            background: #e6800a;
+            background: #1a9d98;
         }
         
         .login-error {
@@ -140,7 +140,7 @@
         .stat-number {
             font-size: 2.5em;
             font-weight: bold;
-            color: #ff9500;
+            color: #20b2aa;
         }
         
         .stat-label {
@@ -157,7 +157,7 @@
         }
         
         .table-header {
-            background: #ff9500;
+            background: #20b2aa;
             color: white;
             padding: 20px;
             font-size: 1.2em;
@@ -289,6 +289,9 @@
             <div class="table-header">
                 ✅ Real-time Check-ins (Live Updates)
                 <button onclick="checkoutAll()" style="background: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 0.9em; margin-right: 10px;">🚪 Checkout All</button>
+                <button onclick="archiveSaturday()" style="background: #6f42c1; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 0.9em; margin-right: 10px;">📚 Archive Saturday</button>
+                <button onclick="viewSaturdayArchive()" style="background: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 0.9em; margin-right: 10px;">👁️ View Saturday</button>
+                <button onclick="exportSaturdayArchive()" style="background: #17a2b8; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 0.9em; margin-right: 10px;">💾 Export Saturday</button>
                 <span id="connectionStatus" style="float: right; font-size: 0.8em;">
                     🟡 Connecting...
                 </span>
@@ -575,6 +578,151 @@
                         alert("Error during checkout. Please try again.");
                     }
                 });
+        }
+        
+        // Archive function that saves Saturday and switches to Sunday
+        function archiveSaturday() {
+            if (!confirm("Archive Saturday's data and switch to Sunday?\n\nThis will:\n- Save Saturday's 127 check-ins to browser storage\n- Clear the table and switch to Sunday's data\n- Start fresh for Sunday check-ins\n\nProceed?")) {
+                return;
+            }
+            
+            try {
+                // Count current checked-in participants
+                let checkedInCount = 0;
+                for (const [name, status] of participantStatus) {
+                    if (status === 'checked-in') {
+                        checkedInCount++;
+                    }
+                }
+                
+                // Create archive
+                const archiveData = {
+                    date: "Saturday, July 19",
+                    timestamp: new Date().toISOString(),
+                    checkedInCount: checkedInCount,
+                    participantStatuses: Array.from(participantStatus.entries())
+                };
+                
+                // Save to localStorage
+                localStorage.setItem('saturdayArchive', JSON.stringify(archiveData));
+                
+                // Clear current data
+                participantStatus.clear();
+                
+                // Update table to show switch to Sunday
+                const tbody = document.querySelector('#checkinsTable tbody');
+                if (tbody) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: 30px; color: #28a745;">
+                                ✅ Saturday archived! (${checkedInCount} participants saved)<br>
+                                <small>Now showing Sunday's data. Page will refresh in 3 seconds...</small>
+                            </td>
+                        </tr>
+                    `;
+                }
+                
+                // Update stats
+                updateStats();
+                
+                alert(`✅ Saturday archived successfully!\n\n${checkedInCount} participants saved.\n\nSwitching to Sunday's data...`);
+                
+                // Refresh page to load Sunday's Firebase path
+                setTimeout(() => {
+                    window.location.reload();
+                }, 3000);
+                
+            } catch (error) {
+                console.error('Archive error:', error);
+                alert('❌ Archive failed. Please try again.');
+            }
+        }
+        
+        // Function to view archived Saturday data
+        function viewSaturdayArchive() {
+            try {
+                const archiveData = localStorage.getItem('saturdayArchive');
+                if (!archiveData) {
+                    alert('❌ No Saturday archive found.\n\nThe archive may have been cleared or Saturday data was never archived.');
+                    return;
+                }
+                
+                const parsed = JSON.parse(archiveData);
+                
+                // Create detailed summary
+                let participantsList = '';
+                if (parsed.participantStatuses && parsed.participantStatuses.length > 0) {
+                    const checkedInParticipants = parsed.participantStatuses.filter(([name, status]) => status === 'checked-in');
+                    participantsList = checkedInParticipants.slice(0, 10).map(([name]) => `• ${name}`).join('\n');
+                    if (checkedInParticipants.length > 10) {
+                        participantsList += `\n... and ${checkedInParticipants.length - 10} more participants`;
+                    }
+                }
+                
+                const summary = `📊 Saturday Archive Summary
+
+📅 Date: ${parsed.date}
+⏰ Archived: ${new Date(parsed.timestamp).toLocaleString()}
+👥 Total Checked In: ${parsed.checkedInCount} participants
+
+${participantsList ? `🔸 Sample Participants:\n${participantsList}` : ''}
+
+✅ Saturday data safely preserved!`;
+                
+                alert(summary);
+                
+            } catch (error) {
+                console.error('Error viewing Saturday archive:', error);
+                alert('❌ Error loading archive data.\n\nThe archive file may be corrupted.');
+            }
+        }
+        
+        // Function to export Saturday archive as CSV
+        function exportSaturdayArchive() {
+            try {
+                const archiveData = localStorage.getItem('saturdayArchive');
+                if (!archiveData) {
+                    alert('❌ No Saturday archive found to export.');
+                    return;
+                }
+                
+                const parsed = JSON.parse(archiveData);
+                
+                if (!parsed.participantStatuses || parsed.participantStatuses.length === 0) {
+                    alert('❌ No participant data found in archive.');
+                    return;
+                }
+                
+                // Create CSV content
+                let csvContent = "Name,Status,Archived Date,Archived Time\n";
+                
+                parsed.participantStatuses.forEach(([name, status]) => {
+                    const archiveDate = new Date(parsed.timestamp);
+                    csvContent += `"${name}","${status}","${archiveDate.toLocaleDateString()}","${archiveDate.toLocaleTimeString()}"\n`;
+                });
+                
+                // Create and download file
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                
+                if (link.download !== undefined) {
+                    const url = URL.createObjectURL(blob);
+                    link.setAttribute('href', url);
+                    link.setAttribute('download', `saturday_checkins_${parsed.timestamp.split('T')[0]}.csv`);
+                    link.style.visibility = 'hidden';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    alert(`✅ Saturday archive exported!\n\n${parsed.checkedInCount} participants exported to CSV file.`);
+                } else {
+                    alert('❌ Download not supported in this browser.');
+                }
+                
+            } catch (error) {
+                console.error('Error exporting Saturday archive:', error);
+                alert('❌ Error exporting archive data.');
+            }
         }
         
         // Update stats display
