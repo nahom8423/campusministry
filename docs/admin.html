@@ -226,6 +226,66 @@
             background: #6c757d;
             cursor: not-allowed;
         }
+        
+        .menu-container {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .menu-button {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-right: 10px;
+        }
+        
+        .menu-button:hover {
+            background: #5a6268;
+        }
+        
+        .menu-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            z-index: 1000;
+            min-width: 180px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+        
+        .menu-dropdown.show {
+            display: block;
+        }
+        
+        .menu-item {
+            display: block;
+            width: 100%;
+            padding: 10px 15px;
+            border: none;
+            background: none;
+            text-align: left;
+            cursor: pointer;
+            font-size: 0.9em;
+            border-bottom: 1px solid #eee;
+            transition: background 0.2s;
+        }
+        
+        .menu-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .menu-item:last-child {
+            border-bottom: none;
+        }
     </style>
 </head>
 <body id="adminPage">
@@ -288,10 +348,17 @@
         <div class="table-container">
             <div class="table-header">
                 ✅ Real-time Check-ins (Live Updates)
-                <button onclick="checkoutAll()" style="background: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 0.9em; margin-right: 10px;">🚪 Checkout All</button>
-                <button onclick="archiveSaturday()" style="background: #6f42c1; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 0.9em; margin-right: 10px;">📚 Archive Saturday</button>
-                <button onclick="viewSaturdayArchive()" style="background: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 0.9em; margin-right: 10px;">👁️ View Saturday</button>
-                <button onclick="exportSaturdayArchive()" style="background: #17a2b8; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 0.9em; margin-right: 10px;">💾 Export Saturday</button>
+                <button onclick="checkoutAll()" style="background: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 0.9em; margin-right: 10px;">🚪 Checkout All</button>
+                
+                <div class="menu-container">
+                    <button class="menu-button" onclick="toggleMenu()">⋯ More</button>
+                    <div class="menu-dropdown" id="menuDropdown">
+                        <button class="menu-item" onclick="archiveSaturday(); toggleMenu();">📚 Archive Saturday</button>
+                        <button class="menu-item" onclick="viewSaturdayArchive(); toggleMenu();">👁️ View Saturday Archive</button>
+                        <button class="menu-item" onclick="exportSaturdayArchive(); toggleMenu();">💾 Export Saturday Archive</button>
+                    </div>
+                </div>
+                
                 <span id="connectionStatus" style="float: right; font-size: 0.8em;">
                     🟡 Connecting...
                 </span>
@@ -904,9 +971,27 @@ ${participantsList ? `🔸 Sample Participants:\n${participantsList}` : ''}
             }, 5000);
         };
         
+        // Toggle menu function
+        function toggleMenu() {
+            const dropdown = document.getElementById('menuDropdown');
+            dropdown.classList.toggle('show');
+        }
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const menuContainer = event.target.closest('.menu-container');
+            if (!menuContainer) {
+                const dropdown = document.getElementById('menuDropdown');
+                if (dropdown) {
+                    dropdown.classList.remove('show');
+                }
+            }
+        });
+        
         // Make functions global
         window.login = login;
         window.logout = logout;
+        window.toggleMenu = toggleMenu;
         
         // Handle Enter key on password input
         document.addEventListener('DOMContentLoaded', function() {
