@@ -7,6 +7,22 @@ function getTodayPath() {
   return new Date().toISOString().slice(0,10);
 }
 
+// Function to get Saturday's date (July 19)
+function getSaturdayPath() {
+  return "2025-07-19";
+}
+
+// Function to get the date path for admin panel (defaults to Saturday until archived)
+function getAdminDatePath() {
+  // Check if Saturday data has been archived
+  const saturdayArchived = localStorage.getItem('saturdayArchive');
+  if (saturdayArchived) {
+    return getTodayPath(); // Use today's date if Saturday is archived
+  } else {
+    return getSaturdayPath(); // Use Saturday's date if not archived yet
+  }
+}
+
 // Initialize Firebase
 let app, db, checkinsRef;
 
@@ -58,7 +74,7 @@ function saveCheckout(name, campus) {
     return Promise.reject("Firebase not initialized");
   }
   
-  return push(checkinsRef(getTodayPath()), { 
+  return push(checkinsRef(getAdminDatePath()), { 
     name, 
     campus, 
     ts: Date.now(),
@@ -267,7 +283,7 @@ if (document.body.id === "adminPage") {
   window.saveCheckout = saveCheckout;
   
   if (db && checkinsRef) {    
-    onChildAdded(checkinsRef(getTodayPath()), snap => {
+    onChildAdded(checkinsRef(getAdminDatePath()), snap => {
       const checkinData = snap.val();
       
       if (isInitialLoad) {
